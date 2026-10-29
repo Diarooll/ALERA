@@ -1,0 +1,75 @@
+/* ALERA · tokens.css (v0.1)
+   Paleta B · Noite de Chuva · Fontes Plus Jakarta Sans + Source Sans 3 · Escala Expressiva (1,25) · Cantos Suave
+   Arquivo COMPARTILHADO entre index.html (site) e app.html (prévia do app).
+   Linkar ANTES de site.css / app.css. Contraste conferido pela WCAG 2.1. */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Source+Sans+3:wght@400;700&display=swap");
+
+:root {
+  /* Marca */
+  --cor-primaria:    #1E2A5A; /* branco: 13,69:1 */
+  --cor-destaque:    #0B6E78; /* só gamificação (pontos, progresso) · branco: 5,97:1 */
+  --cor-fundo:       #F6F5F1;
+  --cor-superficie:  #FFFFFF;
+  --cor-texto:       #1A1D27; /* no fundo: 15,41:1 */
+  --cor-texto-suave: #555A66; /* no fundo: 6,33:1 */
+  --cor-borda:       #7D8290; /* UI no branco: 3,84:1 */
+  --cor-erro:        #D7261E; /* branco: 5,02:1 */
+
+  /* Níveis de risco: iguais no site, no app, no Python e no hardware.
+     Cada nível tem a cor de fundo e a cor do texto que vai em cima dela. */
+  --cor-risco-normal:           #34A853; /* verde mais claro */
+  --cor-risco-normal-texto:     #1A1D27; /* 5,50:1 */
+  --cor-risco-atencao:          #F2C200;
+  --cor-risco-atencao-texto:    #1A1D27; /* 9,83:1 */
+  --cor-risco-alerta:           #F07A1A; /* laranja mais vivo */
+  --cor-risco-alerta-texto:     #1A1D27; /* 6,01:1 */
+  --cor-risco-emergencia:       #D7261E; /* vermelho mais forte */
+  --cor-risco-emergencia-texto: #FFFFFF; /* 5,02:1 — o único com texto branco, pra se destacar dos outros */
+
+  /* Fontes */
+  --fonte-titulo: "Plus Jakarta Sans", system-ui, sans-serif;
+  --fonte-texto:  "Source Sans 3", system-ui, sans-serif;
+
+  /* Tamanhos (escala 1,25) */
+  --fs-sm:  14px; /* apoio, legendas */
+  --fs-md:  16px; /* texto corrido: nunca menos */
+  --fs-lg:  20px; /* destaque, orientação do alerta */
+  --fs-xl:  25px; /* títulos de seção */
+  --fs-2xl: 31px; /* título de página no app */
+  --fs-3xl: 39px; /* título principal do site */
+  --peso-texto: 400; --peso-forte: 700; --peso-titulo: 800;
+  --altura-texto: 1.5; --altura-titulo: 1.15;
+
+  /* Espaçamento (base 4px) */
+  --esp-1: 4px; --esp-2: 8px; --esp-3: 12px; --esp-4: 16px;
+  --esp-5: 24px; --esp-6: 32px; --esp-7: 48px; --esp-8: 64px;
+
+  /* Cantos */
+  --raio-campo: 8px;
+  --raio-card:  16px;
+  --raio-botao: 999px;
+
+  /* Sombras */
+  --sombra-card:  0 2px 8px rgb(20 32 43 / .10);
+  --sombra-forte: 0 8px 24px rgb(20 32 43 / .18); /* só o card de alerta */
+
+  /* Acessibilidade */
+  --toque-min: 48px;
+  --foco: 0 0 0 3px #FFFFFF, 0 0 0 6px var(--cor-primaria);
+}
+
+/* Base comum às duas páginas */
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: var(--fs-md);
+  line-height: var(--altura-texto);
+}
+h1, h2, h3, h4 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  line-height: var(--altura-titulo);
+}
