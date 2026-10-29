@@ -57,6 +57,22 @@
   /* Acessibilidade */
   --toque-min: 48px;
   --foco: 0 0 0 3px #FFFFFF, 0 0 0 6px var(--cor-primaria);
+
+  /* Modo escuro (criado no app; disponível pro site usar também).
+     Só tokens novos: nenhum token acima muda. Contraste conferido pela WCAG 2.1.
+     As cores de risco são as mesmas nos dois modos. */
+  --cor-escuro-fundo:       #111827;
+  --cor-escuro-superficie:  #1F2937; /* cartões */
+  --cor-escuro-texto:       #F3F4F6; /* no cartão: 13,3:1 */
+  --cor-escuro-texto-suave: #9CA3AF; /* no cartão: 5,7:1 */
+  --cor-escuro-borda:       #9CA3AF; /* UI no cartão: 5,7:1 */
+  --cor-escuro-linha:       #374151; /* divisórias */
+  --cor-escuro-azul:        #60A5FA; /* botões, links · no cartão: 5,77:1 · texto escuro em cima: 6,98:1 */
+  --cor-escuro-azul-hover:  #93C5FD;
+  --cor-escuro-azul-fundo:  #1E3A8A; /* realce · texto claro em cima: 9,4:1 */
+  --cor-escuro-sobre-azul:  #111827; /* texto em cima do azul e do destaque */
+  --cor-escuro-destaque:    #22D3EE; /* só gamificação · no cartão: 8,1:1 · texto escuro em cima: 9,8:1 */
+  --cor-escuro-erro:        #F87171; /* --cor-erro não passa no fundo escuro (2,9:1); este dá 5,3:1 */
 }
 
 /* Base comum às duas páginas */
