@@ -1,0 +1,428 @@
+/* ALERA · site.css
+   Estilos do site/index.html. Só var(--token) do tokens.css. Mobile first. */
+
+/* Layout */
+.container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 var(--esp-4);
+}
+
+.secao {
+  padding: var(--esp-7) 0;
+}
+
+/* Foco visível em tudo que é clicável */
+a:focus-visible {
+  outline: none;
+  box-shadow: var(--foco);
+}
+
+/* Header */
+/* Header fixo: o botão "Testar o app" fica sempre a um toque */
+.topo {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--cor-superficie);
+  box-shadow: var(--sombra-card);
+}
+
+/* Ao clicar na nav, o título da seção não fica escondido atrás do header */
+section[id] {
+  scroll-margin-top: var(--esp-8);
+}
+
+.topo-conteudo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-4);
+  min-height: var(--esp-8);
+}
+
+.logo {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  color: var(--cor-primaria);
+  text-decoration: none;
+}
+
+.nav-lista {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* No celular só o botão "Testar o app" fica no header; o resto está no rodapé */
+.nav-item {
+  display: none;
+}
+
+.nav-item a {
+  color: var(--cor-texto);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+}
+
+@media (min-width: 768px) {
+  .nav-item {
+    display: block;
+  }
+}
+
+/* Botão */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--toque-min);
+  padding: var(--esp-3) var(--esp-5);
+  border: 2px solid var(--cor-primaria);
+  border-radius: var(--raio-botao);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-md);
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.botao-principal {
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+}
+
+.botao-secundario {
+  background: transparent;
+  color: var(--cor-primaria);
+}
+
+/* Hero */
+.hero {
+  padding: var(--esp-8) 0 var(--esp-7);
+}
+
+.hero h1 {
+  font-size: var(--fs-3xl);
+  margin: 0 0 var(--esp-4);
+}
+
+.hero-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-5);
+}
+
+/* Na tela grande o conteúdo do hero vai para a direita; no celular fica normal */
+@media (min-width: 768px) {
+  .hero-conteudo {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    text-align: right;
+  }
+
+  .hero-botoes {
+    justify-content: flex-end;
+  }
+}
+
+.sobretitulo {
+  margin: 0 0 var(--esp-2);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+  color: var(--cor-texto-suave);
+}
+
+.hero-texto {
+  max-width: 60ch;
+  font-size: var(--fs-lg);
+}
+
+/* Seções */
+.secao h2 {
+  font-size: var(--fs-xl);
+  margin: 0 0 var(--esp-3);
+}
+
+.secao-clara {
+  background: var(--cor-superficie);
+}
+
+.secao-intro {
+  margin: 0 0 var(--esp-5);
+  color: var(--cor-texto-suave);
+}
+
+.subtitulo {
+  font-size: var(--fs-lg);
+  margin: var(--esp-6) 0 var(--esp-4);
+}
+
+.nota {
+  font-size: var(--fs-sm);
+  color: var(--cor-texto-suave);
+}
+
+/* Listas em grade: 1 coluna no celular, mais colunas na tela grande */
+.numeros,
+.passos,
+.missoes,
+.dispositivos,
+.equipe {
+  display: grid;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 768px) {
+  .numeros,
+  .missoes,
+  .equipe {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .passos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dispositivos {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Cards (mesma base para número, passo, missão e dispositivo) */
+.numero,
+.passo,
+.missao,
+.dispositivo {
+  padding: var(--esp-5);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+}
+
+.secao-clara .passo,
+.secao-clara .dispositivo {
+  background: var(--cor-fundo);
+}
+
+.passo h3,
+.missao h3,
+.dispositivo h3 {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--esp-2);
+}
+
+.passo p,
+.missao p,
+.dispositivo p {
+  margin: 0;
+}
+
+/* O problema */
+.numero {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+}
+
+.numero-valor {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-3xl);
+  line-height: var(--altura-titulo);
+  color: var(--cor-primaria);
+}
+
+.numero-fonte {
+  font-size: var(--fs-sm);
+  color: var(--cor-texto-suave);
+}
+
+.destaque-texto {
+  margin: var(--esp-6) 0 0;
+  font-size: var(--fs-lg);
+  font-weight: var(--peso-forte);
+}
+
+/* Como funciona */
+.passo-numero {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  margin-bottom: var(--esp-3);
+  border-radius: var(--raio-botao);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+}
+
+/* Componente: alerta (é o único com sombra forte) */
+.card-alerta {
+  max-width: 480px;
+  margin: var(--esp-6) 0 0;
+  padding: var(--esp-5);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-forte);
+}
+
+.card-alerta-titulo {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+  color: var(--cor-texto-suave);
+}
+
+.card-alerta-texto {
+  margin: var(--esp-3) 0 0;
+  font-size: var(--fs-lg);
+}
+
+/* Componente: selo de risco (sempre cor + palavra) */
+.selo-risco {
+  display: inline-block;
+  padding: var(--esp-1) var(--esp-3);
+  border-radius: var(--raio-campo);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-sm);
+}
+
+.selo-normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
+.selo-atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
+.selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
+.selo-emergencia { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
+
+.niveis-risco {
+  display: grid;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nivel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-3);
+}
+
+/* Gamificação (único lugar com --cor-destaque) */
+.pontos {
+  display: inline-block;
+  margin-top: var(--esp-3);
+  font-weight: var(--peso-forte);
+  color: var(--cor-destaque);
+}
+
+.ranking {
+  margin-top: var(--esp-6);
+  padding: var(--esp-5);
+  background: var(--cor-superficie);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+}
+
+.ranking h3 {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--esp-3);
+}
+
+.ranking-lista {
+  margin: 0;
+  padding-left: var(--esp-5);
+}
+
+.ranking-lista li {
+  padding: var(--esp-2) 0;
+}
+
+.ranking-lista .pontos {
+  margin: 0 0 0 var(--esp-2);
+}
+
+.link-app {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-min);
+  margin-top: var(--esp-4);
+  font-weight: var(--peso-forte);
+  color: var(--cor-primaria);
+}
+
+/* Hardware */
+.dispositivo-itens {
+  margin: var(--esp-3) 0 0;
+  padding-left: var(--esp-5);
+}
+
+/* Quem somos */
+.integrante {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  font-weight: var(--peso-forte);
+}
+
+.integrante-iniciais {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: var(--raio-botao);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+  font-family: var(--fonte-titulo);
+  font-size: var(--fs-sm);
+}
+
+/* Chamada final */
+.chamada-final {
+  text-align: center;
+}
+
+/* Rodapé */
+.rodape {
+  padding: var(--esp-6) 0;
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+}
+
+.rodape-logo {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  margin: 0;
+}
+
+.rodape-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2) var(--esp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rodape a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-min);
+  color: var(--cor-superficie);
+}

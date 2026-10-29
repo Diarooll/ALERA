@@ -27,8 +27,8 @@ Dois HTML que formam um produto só, ligados por link:
 - `app.html` (MEU AMIGO): prévia de como seria o aplicativo. Não mexer nele sem eu pedir.
 
 Seções do `index.html`, nesta ordem:
-1. Header: logo "ALERA" + navegação (O problema, Como funciona, Gamificação, Ver o app).
-2. Hero: proposta em uma frase + botões "Ver o app" (link para `app.html`) e "Como funciona".
+1. Header: logo "ALERA" + navegação (O problema, Como funciona, Gamificação, Testar o app).
+2. Hero: proposta em uma frase + botões "Testar o app" (link para `../app/index.html`) e "Como funciona".
 3. O problema: Juiz de Fora, números acima em destaque.
 4. Como funciona: 3 passos da Fase 1 (cadastro → IA monitora o clima → alerta no WhatsApp) + os 4 níveis de risco.
 5. Gamificação: exemplos de missão, pontos e ranking por rua.
