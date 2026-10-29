@@ -12,7 +12,14 @@
   <!-- TOPO -->
   <header class="topo">
     <div class="container">
-      <span class="topo__marca">A.L.E.R.A</span>
+      <!-- Logo ALERA: mesmo SVG do site (gota de pixels com "!" vazado + gotas de chuva). Usa currentColor. -->
+      <span class="topo__marca">
+        <svg class="topo__logo" viewBox="-21 -7 108 102" aria-hidden="true" focusable="false">
+          <path d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"/>
+          <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z"/>
+        </svg>
+        A.L.E.R.A
+      </span>
       <span class="topo__slogan">No lugar certo, na hora certa</span>
       <!-- Tema claro/escuro só com CSS: o checkbox liga o tema escuro, o label é o botão -->
       <input class="tema__controle visualmente-oculto" type="checkbox" id="tema" role="switch">

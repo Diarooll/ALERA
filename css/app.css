@@ -106,10 +106,20 @@ body {
 :root:has(#tema:checked) .tema__icone--sol { display: block; }
 :root:has(#tema:checked) .tema__icone--lua { display: none; }
 .topo__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
   font-size: var(--fs-xl);
   letter-spacing: .04em;
+}
+/* Logo ao lado do A.L.E.R.A (mesmo do site), na cor do texto do topo */
+.topo__logo {
+  width: var(--esp-6);
+  height: var(--esp-6);
+  fill: currentColor;
+  flex-shrink: 0;
 }
 .topo__slogan {
   font-size: var(--fs-sm);
