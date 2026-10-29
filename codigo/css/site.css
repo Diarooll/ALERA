@@ -563,6 +563,149 @@ figure img {
   padding-left: var(--esp-5);
 }
 
+/* Fluxo do Sensor ALERA: o que mede → ESP32 → como avisa (slide 16 do PowerPoint) */
+.fluxo-sensor {
+  display: grid;
+  gap: var(--esp-1);
+  margin: var(--esp-3) 0;
+}
+
+.fluxo-titulo {
+  margin: var(--esp-3) 0 var(--esp-1);
+  font-size: var(--fs-md);
+}
+
+.fluxo-grupo .fluxo-titulo {
+  margin-top: 0;
+}
+
+/* Lista compacta: "Nome: descrição" numa linha só, para o card
+   ficar com a mesma altura do Bueiro ALERA */
+.fluxo-lista {
+  display: grid;
+  gap: var(--esp-1);
+  margin: 0;
+  padding-left: var(--esp-5);
+}
+
+.fluxo-lista strong::after {
+  content: ":";
+}
+
+.fluxo-seta {
+  justify-self: center;
+  color: var(--cor-texto-suave);
+  line-height: 1;
+}
+
+/* O ESP32 é o centro do fluxo: bloco escuro como no PowerPoint */
+.fluxo-esp {
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+  border-radius: var(--raio-campo);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+
+.fluxo-esp strong {
+  font-family: var(--fonte-titulo);
+  font-size: var(--fs-md);
+  margin-right: var(--esp-1);
+}
+
+.limites-sensor {
+  display: grid;
+  gap: var(--esp-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.limites-sensor li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--esp-2);
+}
+
+/* Ilustração do Bueiro ALERA (SVG). Só tokens: muda sozinha no modo escuro.
+   Os números usam o azul da marca, não o laranja do PowerPoint,
+   para não confundir com o nível ALERTA. */
+.ilustracao-bueiro {
+  margin: var(--esp-4) 0 var(--esp-3);
+}
+
+.ilustracao-bueiro svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--fonte-texto);
+}
+
+.ib-rua,
+.ib-galeria     { fill: var(--cor-texto-suave); }
+.ib-grade       { fill: var(--cor-texto); }
+.ib-fenda       { fill: var(--cor-superficie); }
+.ib-caixa       { fill: var(--cor-superficie); stroke: var(--cor-texto); stroke-width: 3; }
+.ib-agua        { fill: color-mix(in srgb, var(--cor-primaria) 22%, var(--cor-superficie)); }
+.ib-cesto       { fill: none; stroke: var(--cor-texto-suave); stroke-width: 2; stroke-dasharray: 6 4; }
+.ib-lixo        { fill: color-mix(in srgb, var(--cor-texto-suave) 45%, var(--cor-superficie)); }
+.ib-sensor      { fill: var(--cor-primaria); }
+.ib-ligacao     { stroke: var(--cor-primaria); stroke-width: 2; stroke-dasharray: 4 4; }
+.ib-fio         { stroke: var(--cor-texto-suave); stroke-width: 1.5; stroke-dasharray: 2 3; }
+.ib-boia        { fill: var(--cor-superficie); stroke: var(--cor-primaria); stroke-width: 3; }
+.ib-esp         { fill: var(--cor-primaria); }
+.ib-whats       { fill: var(--cor-superficie); stroke: var(--cor-primaria); stroke-width: 2; }
+.ib-seta        { stroke: var(--cor-texto-suave); stroke-width: 2; }
+.ib-ponta       { fill: var(--cor-texto-suave); }
+
+.ib-rotulo {
+  fill: var(--cor-texto-suave);
+  font-size: var(--fs-sm);
+}
+
+.ib-esp-texto,
+.ib-esp-sub,
+.ib-whats-texto,
+.ib-whats-sub,
+.ib-numero text {
+  text-anchor: middle;
+}
+
+.ib-esp-texto,
+.ib-whats-texto {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-md);
+}
+
+.ib-esp-sub,
+.ib-whats-sub {
+  font-size: var(--fs-sm);
+}
+
+.ib-esp-texto,
+.ib-esp-sub     { fill: var(--cor-superficie); }
+.ib-whats-texto,
+.ib-whats-sub   { fill: var(--cor-primaria); }
+
+.ib-numero circle { fill: var(--cor-primaria); stroke: var(--cor-superficie); stroke-width: 2; }
+.ib-numero text {
+  fill: var(--cor-superficie);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-sm);
+}
+
+.legenda-numerada {
+  margin: 0;
+  padding-left: var(--esp-5);
+}
+
+.legenda-numerada li {
+  padding: var(--esp-1) 0;
+}
+
 /* Quem somos */
 .integrante {
   display: flex;

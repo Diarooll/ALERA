@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ALERA · No lugar certo, na hora certa</title>
-  <link rel="stylesheet" href="../css/tokens.css">
-  <link rel="stylesheet" href="../css/site.css">
+  <link rel="stylesheet" href="css/tokens.css">
+  <link rel="stylesheet" href="css/site.css">
 </head>
 <body>
   <!-- Logo ALERA (gota de pixels com "!" vazado + gotas de chuva).
@@ -29,7 +29,7 @@
           <li class="nav-item"><a href="#problema">O problema</a></li>
           <li class="nav-item"><a href="#como-funciona">Como funciona</a></li>
           <li class="nav-item"><a href="#gamificacao">Gamificação</a></li>
-          <li><a class="botao botao-principal" href="../app/index.html">Testar o app</a></li>
+          <li><a class="botao botao-principal" href="app/index.html">Testar o app</a></li>
         </ul>
       </nav>
       <!-- Modo escuro sem JS: o checkbox liga o tema escuro do tokens.css -->
@@ -51,7 +51,7 @@
         <h1>O alerta de chuva com o nome da sua rua, no seu WhatsApp</h1>
         <p class="hero-texto">A ALERA cruza a previsão do tempo com as áreas de risco de Juiz de Fora e avisa você antes da água subir ou do barranco ceder. ALERA no lugar certo, na hora certa.</p>
         <div class="hero-botoes">
-          <a class="botao botao-principal" href="../app/index.html">Testar o app</a>
+          <a class="botao botao-principal" href="app/index.html">Testar o app</a>
           <a class="botao botao-secundario" href="#como-funciona">Como funciona</a>
         </div>
         </div>
@@ -193,7 +193,7 @@
           <p class="nota">Valores simulados: os pontos das missões e o ranking são exemplos.</p>
         </div>
 
-        <a class="link-app" href="../app/index.html">Ver missões no app</a>
+        <a class="link-app" href="app/index.html">Ver missões no app</a>
       </div>
     </section>
 
@@ -206,19 +206,87 @@
           <li class="dispositivo">
             <h3>Sensor ALERA</h3>
             <p>Fica na encosta e mede o risco ali mesmo, antes da terra descer.</p>
-            <ul class="dispositivo-itens">
-              <li>Umidade do solo e chuva acumulada</li>
-              <li>Acelerômetro que detecta se o terreno inclinou</li>
-              <li>LEDs e sirene na rua, mesmo sem internet</li>
-              <li>Notifica a Defesa Civil e a Secretaria de Obras quando o risco sobe</li>
+            <!-- Fluxo do PowerPoint (slide 16): o que o sensor mede → ESP32 decide → como avisa -->
+            <div class="fluxo-sensor">
+              <div class="fluxo-grupo">
+                <h4 class="fluxo-titulo">O que mede</h4>
+                <ul class="fluxo-lista">
+                  <li><strong>Umidade do solo</strong> sensor capacitivo, em %</li>
+                  <li><strong>Pluviômetro</strong> chuva acumulada em 24 h e 72 h</li>
+                  <li><strong>Acelerômetro MPU-6050</strong> detecta se o terreno inclinou</li>
+                </ul>
+              </div>
+              <span class="fluxo-seta" aria-hidden="true">↓</span>
+              <div class="fluxo-esp">
+                <strong>ESP32</strong>
+                <span>compara as medidas com os limites e define o nível de alerta</span>
+              </div>
+              <span class="fluxo-seta" aria-hidden="true">↓</span>
+              <div class="fluxo-grupo">
+                <h4 class="fluxo-titulo">Como avisa</h4>
+                <ul class="fluxo-lista">
+                  <li><strong>LEDs na rua</strong> verde, amarelo e vermelho, sem internet</li>
+                  <li><strong>Sirene</strong> toca no nível de perigo</li>
+                  <li><strong>WhatsApp</strong> o aviso da Fase 1, também para Defesa Civil e Obras</li>
+                </ul>
+              </div>
+            </div>
+            <h4 class="fluxo-titulo">Limites de cada nível</h4>
+            <ul class="limites-sensor">
+              <li><span class="selo-risco selo-normal">NORMAL</span> tudo abaixo dos limites</li>
+              <li><span class="selo-risco selo-atencao">ATENÇÃO</span> umidade ≥ 60% ou 30 mm em 24 h</li>
+              <li><span class="selo-risco selo-alerta">ALERTA</span> umidade ≥ 80% ou 50 mm em 24 h</li>
+              <li><span class="selo-risco selo-perigo">PERIGO</span> terreno inclinou ≥ 2°: sair de casa</li>
             </ul>
           </li>
           <li class="dispositivo">
             <h3>Bueiro ALERA</h3>
             <p>Um cesto segura o lixo e o sensor avisa a Secretaria de Obras quando é hora de limpar.</p>
+            <!-- Ilustração do PowerPoint (slide 17) refeita em SVG: cores vêm dos tokens via CSS -->
+            <figure class="ilustracao-bueiro">
+              <svg viewBox="0 0 480 300" role="img" aria-label="Corte do Bueiro ALERA: sob a grade da rua fica o sensor (1); abaixo dele, o cesto de tela com lixo (2); no fundo, a água e a boia (3) ao lado da saída para a galeria. O sensor é ligado ao ESP32 na calçada (4), que manda o aviso no WhatsApp.">
+                <text class="ib-rotulo" x="40" y="26">rua</text>
+                <rect class="ib-rua" x="20" y="36" width="270" height="10"/>
+                <rect class="ib-grade" x="80" y="32" width="120" height="18"/>
+                <rect class="ib-fenda" x="88" y="37" width="10" height="8"/>
+                <rect class="ib-fenda" x="108" y="37" width="10" height="8"/>
+                <rect class="ib-fenda" x="128" y="37" width="10" height="8"/>
+                <rect class="ib-fenda" x="148" y="37" width="10" height="8"/>
+                <rect class="ib-fenda" x="168" y="37" width="10" height="8"/>
+                <rect class="ib-fenda" x="188" y="37" width="8" height="8"/>
+                <rect class="ib-caixa" x="40" y="46" width="200" height="236"/>
+                <rect class="ib-agua" x="42" y="226" width="196" height="54"/>
+                <rect class="ib-galeria" x="240" y="236" width="50" height="20"/>
+                <text class="ib-rotulo" x="244" y="276">galeria</text>
+                <line class="ib-ligacao" x1="140" y1="74" x2="140" y2="130"/>
+                <rect class="ib-cesto" x="70" y="130" width="140" height="80"/>
+                <rect class="ib-lixo" x="82" y="186" width="30" height="18" rx="4"/>
+                <rect class="ib-lixo" x="118" y="190" width="22" height="14" rx="4"/>
+                <rect class="ib-lixo" x="150" y="182" width="32" height="20" rx="4"/>
+                <rect class="ib-sensor" x="124" y="58" width="32" height="16"/>
+                <circle class="ib-boia" cx="214" cy="222" r="10"/>
+                <line class="ib-fio" x1="156" y1="66" x2="320" y2="88"/>
+                <rect class="ib-esp" x="320" y="60" width="140" height="56" rx="10"/>
+                <text class="ib-esp-texto" x="390" y="86">ESP32</text>
+                <text class="ib-esp-sub" x="390" y="104">na calçada</text>
+                <line class="ib-seta" x1="390" y1="116" x2="390" y2="156"/>
+                <path class="ib-ponta" d="M383 152 L390 162 L397 152 Z"/>
+                <rect class="ib-whats" x="320" y="164" width="140" height="56" rx="10"/>
+                <text class="ib-whats-texto" x="390" y="190">WhatsApp</text>
+                <text class="ib-whats-sub" x="390" y="208">Obras e Defesa Civil</text>
+                <g class="ib-numero"><circle cx="106" cy="66" r="11"/><text x="106" y="70">1</text></g>
+                <g class="ib-numero"><circle cx="56" cy="170" r="11"/><text x="56" y="174">2</text></g>
+                <g class="ib-numero"><circle cx="214" cy="252" r="11"/><text x="214" y="256">3</text></g>
+                <g class="ib-numero"><circle cx="322" cy="58" r="11"/><text x="322" y="62">4</text></g>
+              </svg>
+            </figure>
+            <ol class="legenda-numerada">
+              <li><strong>Sensor ultrassônico:</strong> mede a altura do lixo e da água</li>
+              <li><strong>Cesto de tela:</strong> segura o lixo antes da galeria</li>
+              <li><strong>Chave boia:</strong> dispara se a água subir demais</li>
+              <li><strong>ESP32:</strong> lê os sensores e envia o aviso</li>
+            </ol>
             <ul class="dispositivo-itens">
-              <li>Sensor que mede a altura do lixo e da água</li>
-              <li>Boia que dispara se a água subir demais</li>
               <li>Notifica a Secretaria de Obras para limpar antes da chuva</li>
               <li>Notifica a Defesa Civil se o bueiro entupir</li>
             </ul>
@@ -231,7 +299,7 @@
       <div class="container">
         <h2>Veja como o alerta chega até você</h2>
         <p>Experimente a prévia do aplicativo ALERA.</p>
-        <a class="botao botao-principal" href="../app/index.html">Testar o app</a>
+        <a class="botao botao-principal" href="app/index.html">Testar o app</a>
       </div>
     </section>
 

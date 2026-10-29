@@ -1,0 +1,7 @@
+Projeto: ALERA - Acompanhamento Local de Emergências e Riscos Ambientais
+Grupo: MonkeyNerds
+
+Daniel Souza Gomes - RM 575813
+Victor Santos Ferreira de Morais - RM 575508
+Diego Ramos Pereira Gonzalez - RM 574620
+Diego Alejandro Ribeiro Olalla - RM 575447

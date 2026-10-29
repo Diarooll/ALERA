@@ -1,11 +1,11 @@
 # ALERA · site (Front-End Design, Sprint 1)
 
 ## Quem mexe em quê
-- **Diego** mexe SOMENTE na pasta `site/` (e em `css/site.css`), na branch `diego-site`.
-- **Victor** mexe SOMENTE na pasta `app/` (e em `css/app.css`), na branch `victor-app`.
-- `css/tokens.css` é compartilhado: não alterar sem avisar o outro.
-- Se você é o Claude do Diego, não edite `app/`. Se é o Claude do Victor, não edite `site/`.
-- Os arquivos usam `../css/...` porque ficam dentro de `site/` e `app/`.
+- **Diego** mexe SOMENTE no site (`codigo/index.html` e `codigo/css/site.css`), na branch `diego-site`.
+- **Victor** mexe SOMENTE no app (`codigo/app/` e `codigo/css/app.css`), na branch `victor-app`.
+- `codigo/css/tokens.css` é compartilhado: não alterar sem avisar o outro.
+- Se você é o Claude do Diego, não edite `codigo/app/`. Se é o Claude do Victor, não edite o site.
+- Caminhos: o site (`codigo/index.html`) usa `css/...`, `img/...` e `app/index.html`; o app (`codigo/app/index.html`) usa `../css/...` e volta pro site com `../index.html`.
 
 ## O projeto
 ALERA = Acompanhamento Local de Emergências e Riscos Ambientais. Slogan: "ALERA no lugar certo, na hora certa".
@@ -19,16 +19,16 @@ Solução:
 - Usuário: só o morador de área de risco (celular, pressa, internet ruim), que recebe os alertas.
 - 4 níveis de risco, sempre os mesmos em tudo: NORMAL, ATENÇÃO, ALERTA, PERIGO. (No `tokens.css` o 4º ainda se chama `--cor-risco-emergencia`; é o mesmo nível.)
 
-Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 65 mortes (Polícia Civil, via DGABC) e 8.854 desabrigados; 128 mil pessoas em área de risco (Cemaden, via Estado de Minas); 142 áreas de risco; 250 t de lixo tiradas dos bueiros de jan. a nov. de 2025 (as 35 t da Acessa.com são só de novembro). A Fase 1 se chama "ALERA Web". Logo: gota de pixels com "!" vazado (SVG `#logo-gota` no site/index.html). Pontos e ranking da gamificação são simulados. As fotos do site não são de Juiz de Fora (ilustrativas). NÃO colocar valores em reais (a banca pediu para tirar).
+Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 65 mortes (Polícia Civil, via DGABC) e 8.854 desabrigados; 128 mil pessoas em área de risco (Cemaden, via Estado de Minas); 142 áreas de risco; 250 t de lixo tiradas dos bueiros de jan. a nov. de 2025 (as 35 t da Acessa.com são só de novembro). A Fase 1 se chama "ALERA Web". Logo: gota de pixels com "!" vazado (SVG `#logo-gota` no codigo/index.html). Pontos e ranking da gamificação são simulados. As fotos do site não são de Juiz de Fora (ilustrativas). NÃO colocar valores em reais (a banca pediu para tirar).
 
 ## O que estamos construindo
 Dois HTML que formam um produto só, ligados por link:
-- `index.html` (EU): site que apresenta a ideia.
-- `app.html` (MEU AMIGO): prévia de como seria o aplicativo. Não mexer nele sem eu pedir.
+- `codigo/index.html` (EU): site que apresenta a ideia.
+- `codigo/app/index.html` (MEU AMIGO): prévia de como seria o aplicativo. Não mexer nele sem eu pedir.
 
 Seções do `index.html`, nesta ordem:
 1. Header: logo "ALERA" + navegação (O problema, Como funciona, Gamificação, Testar o app).
-2. Hero: proposta em uma frase + botões "Testar o app" (link para `../app/index.html`) e "Como funciona".
+2. Hero: proposta em uma frase + botões "Testar o app" (link para `app/index.html`) e "Como funciona".
 3. O problema: Juiz de Fora, números acima em destaque.
 4. Como funciona: 3 passos da Fase 1 (cadastro → IA monitora o clima → alerta no WhatsApp) + os 4 níveis de risco.
 5. Gamificação: exemplos de missão, pontos e ranking por rua.
@@ -40,11 +40,16 @@ Seções do `index.html`, nesta ordem:
 - Só HTML e CSS puros. Sem framework, sem build. JavaScript só se for realmente necessário (ex.: menu mobile).
 - Estrutura de pastas:
   ```
-  css/tokens.css   ← COMPARTILHADO, não alterar sem avisar
-  css/site.css     ← estilos do index.html
-  css/app.css      ← estilos do app.html (do meu amigo)
-  index.html
-  app.html
+  ALERA_FrontEnd_DesignSystem_Sprint1.pdf   ← entrega (design system)
+  integrantes.txt                           ← entrega (grupo e RMs)
+  codigo/
+    index.html          ← site (Diego)
+    app/index.html      ← prévia do app (Victor)
+    css/tokens.css      ← COMPARTILHADO, não alterar sem avisar
+    css/site.css        ← estilos do site
+    css/app.css         ← estilos do app
+    img/                ← fotos do site
+    referencias/        ← PowerPoint e logo original (fora do git)
   ```
 - No `<head>`: `css/tokens.css` SEMPRE antes de `css/site.css`.
 - Toda cor, fonte, tamanho, espaçamento, raio e sombra vem de `var(--token)` do `tokens.css`. Nunca escrever hex, px de fonte ou font-family direto no `site.css`.
