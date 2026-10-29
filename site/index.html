@@ -8,9 +8,22 @@
   <link rel="stylesheet" href="../css/site.css">
 </head>
 <body>
+  <!-- Logo ALERA (gota de pixels com "!" vazado + gotas de chuva).
+       Desenhado uma vez aqui e reusado no header e no rodapé com <use>.
+       Usa currentColor: pega a cor do texto onde estiver. -->
+  <svg width="0" height="0" style="position: absolute" aria-hidden="true" focusable="false">
+    <symbol id="logo-gota" viewBox="-21 -7 108 102">
+      <path d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"/>
+      <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z"/>
+    </symbol>
+  </svg>
+
   <header class="topo">
     <div class="container topo-conteudo">
-      <a class="logo" href="#inicio" aria-label="ALERA, voltar ao início">A.L.E.R.A</a>
+      <a class="logo" href="#inicio" aria-label="ALERA, voltar ao início">
+        <svg class="logo-icone" aria-hidden="true" focusable="false"><use href="#logo-gota"/></svg>
+        A.L.E.R.A
+      </a>
       <nav aria-label="Principal">
         <ul class="nav-lista">
           <li class="nav-item"><a href="#problema">O problema</a></li>
@@ -58,9 +71,9 @@
         <!-- Na tela grande: 2 linhas de 2 cards e o 250 t centralizado embaixo -->
         <ul class="numeros">
             <li class="numero">
-              <strong class="numero-valor">60+</strong>
-              <span class="numero-texto">mortes entre 23 e 28 de fevereiro</span>
-              <small class="numero-fonte"><a href="https://www.gazetadigital.com.br/editorias/brasil/juiz-de-fora-para-sobreviventes-sistemas-de-alertas-nao-funcionaram/838490">Gazeta Digital</a></small>
+              <strong class="numero-valor">65</strong>
+              <span class="numero-texto">mortes em Juiz de Fora nas chuvas de fevereiro</span>
+              <small class="numero-fonte">Polícia Civil, via <a href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba">DGABC</a></small>
             </li>
             <li class="numero">
               <strong class="numero-valor">8.854</strong>
@@ -70,7 +83,7 @@
             <li class="numero">
               <strong class="numero-valor">128 mil</strong>
               <span class="numero-texto">pessoas vivem em áreas de risco</span>
-              <small class="numero-fonte"><a href="https://www.mpf.mp.br/o-mpf/unidades/pr-mg/noticias/mpf-apura-falhas-na-prevencao-e-na-resposta-a-desastres-climaticos-em-juiz-de-fora-e-uba-mg">MPF</a> / Cemaden</small>
+              <small class="numero-fonte">Cemaden, via <a href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html">Estado de Minas</a></small>
             </li>
             <li class="numero">
               <strong class="numero-valor">142</strong>
@@ -79,7 +92,7 @@
             </li>
             <li class="numero numero-central">
               <strong class="numero-valor">250 t</strong>
-              <span class="numero-texto">de lixo retiradas dos bueiros em 2025</span>
+              <span class="numero-texto">de lixo tiradas dos bueiros de janeiro a novembro de 2025</span>
               <small class="numero-fonte">Prefeitura, via Acessa.com</small>
             </li>
           </ul>
@@ -90,7 +103,7 @@
     <section class="secao secao-clara" id="fase-1">
       <div class="container">
         <p class="sobretitulo">Fase 1</p>
-        <h2>ALERA WEB</h2>
+        <h2>ALERA Web</h2>
         <p class="secao-intro">Começa sem instalar nada: só o seu celular.</p>
 
         <div class="subsecao" id="como-funciona">
@@ -250,7 +263,10 @@
 
   <footer class="rodape">
     <div class="container">
-      <p class="rodape-logo"><span aria-hidden="true">A.L.E.R.A</span><span class="visualmente-oculto">ALERA</span></p>
+      <p class="rodape-logo">
+        <svg class="logo-icone" aria-hidden="true" focusable="false"><use href="#logo-gota"/></svg>
+        <span aria-hidden="true">A.L.E.R.A</span><span class="visualmente-oculto">ALERA</span>
+      </p>
       <p>ALERA no lugar certo, na hora certa.</p>
       <nav aria-label="Rodapé">
         <ul class="rodape-lista">
@@ -276,7 +292,10 @@
           <li>TRIBUNA DE MINAS. Áreas de risco devem permanecer isoladas mesmo com trégua das chuvas. 28 fev. 2026.</li>
           <li>ESTADO DE MINAS. <a href="https://www.em.com.br/trends/2026/02/7358972-como-funciona-o-alerta-da-defesa-civil-que-chega-por-sms-no-seu-celular.html">Como funciona o alerta da Defesa Civil que chega por SMS no seu celular</a>. fev. 2026.</li>
           <li>TELETIME. <a href="https://teletime.com.br/20/07/2026/mg-sp-e-am-lideram-alertas-extremos-da-defesa-civil-no-primeiro-semestre/">MG, SP e AM lideram alertas extremos da Defesa Civil no primeiro semestre</a>. 20 jul. 2026.</li>
-          <li>REZENDE, Anderson. Retorno sobre o pitch da ALERA (entrevista à equipe). FIAP, 29 out. 2026.</li>
+          <li>DGABC. <a href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba">Após chuvas em MG, mortes passam de 70 em Juiz de Fora e Ubá</a>. 1 mar. 2026.</li>
+          <li>ESTADO DE MINAS. <a href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html">Minas tem 3 das 10 cidades com mais pessoas em áreas de risco no país</a>. 25 fev. 2026.</li>
+          <li>N/ LUGARES FUTUROS. <a href="https://n-lf.com">Consultoria de place branding, placemaking e futuros estratégicos</a>. Acesso em: 29 out. 2026.</li>
+          <li>TRIBUNA DE MINAS. Que Juiz de Fora queremos ser? Projeto amplia debate sobre identidade e futuro da cidade. 14 set. 2026.</li>
         </ul>
       </section>
       <p>MonkeyNerds · FIAP · Challenge 2026</p>

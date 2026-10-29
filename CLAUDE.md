@@ -19,7 +19,7 @@ Solução:
 - Usuário: só o morador de área de risco (celular, pressa, internet ruim), que recebe os alertas.
 - 4 níveis de risco, sempre os mesmos em tudo: NORMAL, ATENÇÃO, ALERTA, PERIGO. (No `tokens.css` o 4º ainda se chama `--cor-risco-emergencia`; é o mesmo nível.)
 
-Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 60+ mortes e 8.854 desabrigados; 128 mil pessoas em área de risco; 142 áreas de risco; 250 t de lixo retiradas dos bueiros em 2025 (total do ano; as 35 t da Acessa.com são só de novembro). Pontos e ranking da gamificação são simulados. As fotos do site não são de Juiz de Fora (ilustrativas). NÃO colocar valores em reais (a banca pediu para tirar).
+Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 65 mortes (Polícia Civil, via DGABC) e 8.854 desabrigados; 128 mil pessoas em área de risco (Cemaden, via Estado de Minas); 142 áreas de risco; 250 t de lixo tiradas dos bueiros de jan. a nov. de 2025 (as 35 t da Acessa.com são só de novembro). A Fase 1 se chama "ALERA Web". Logo: gota de pixels com "!" vazado (SVG `#logo-gota` no site/index.html). Pontos e ranking da gamificação são simulados. As fotos do site não são de Juiz de Fora (ilustrativas). NÃO colocar valores em reais (a banca pediu para tirar).
 
 ## O que estamos construindo
 Dois HTML que formam um produto só, ligados por link:
