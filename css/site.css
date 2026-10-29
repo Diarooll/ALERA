@@ -16,14 +16,22 @@
   --cor-erro:        var(--cor-escuro-erro);
 }
 
-/* No escuro o rodapé não fica azul claro: vira cartão escuro com texto claro */
+/* No escuro o rodapé não fica azul claro nem some junto com o "Quem somos"
+   (que é cartão escuro): usa o azul do topo do app com texto claro (9,4:1) */
 :root:has(#tema:checked) .rodape,
-:root:has(#tema:checked) .rodape a {
-  color: var(--cor-texto);
+:root:has(#tema:checked) .rodape a,
+:root:has(#tema:checked) .rodape h2 {
+  color: var(--cor-escuro-texto);
 }
 
 :root:has(#tema:checked) .rodape {
-  background: var(--cor-superficie);
+  background: var(--cor-escuro-azul-fundo);
+}
+
+/* No escuro a marca e o ícone do tema ficam brancos (texto claro do tema escuro) */
+:root:has(#tema:checked) .logo,
+:root:has(#tema:checked) .tema-botao {
+  color: var(--cor-escuro-texto);
 }
 
 /* Layout */
@@ -70,6 +78,7 @@ a:focus-visible {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
   font-size: var(--fs-xl);
+  letter-spacing: .04em; /* igual à marca do app */
   color: var(--cor-primaria);
   text-decoration: none;
 }
@@ -111,23 +120,34 @@ a:focus-visible {
   pointer-events: none;
 }
 
+/* Igual ao botão do app: ícone de traço, sem borda, anel só no hover */
 .tema-botao {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   flex-shrink: 0;
   width: var(--toque-min);
   height: var(--toque-min);
-  border: 2px solid var(--cor-borda);
   border-radius: var(--raio-botao);
   color: var(--cor-texto);
-  font-size: var(--fs-lg);
   cursor: pointer;
-  box-sizing: border-box;
+}
+
+.tema-botao:hover {
+  box-shadow: inset 0 0 0 2px var(--cor-texto);
 }
 
 .tema-input:focus-visible + .tema-botao {
   box-shadow: var(--foco);
+}
+
+.tema-icone {
+  width: var(--esp-5);
+  height: var(--esp-5);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .tema-icone-sol,
@@ -136,7 +156,7 @@ a:focus-visible {
 }
 
 .tema-input:checked + .tema-botao .tema-icone-sol {
-  display: inline;
+  display: block;
 }
 
 /* Some da tela, mas o leitor de tela lê */
@@ -145,7 +165,7 @@ a:focus-visible {
   width: 1px;
   height: 1px;
   overflow: hidden;
-  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
   white-space: nowrap;
 }
 
@@ -573,10 +593,12 @@ figure img {
   color: var(--cor-superficie);
 }
 
+/* Mesma marca do header */
 .rodape-logo {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
   font-size: var(--fs-xl);
+  letter-spacing: .04em;
   margin: 0;
 }
 
