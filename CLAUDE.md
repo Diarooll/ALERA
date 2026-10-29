@@ -50,6 +50,7 @@ Seções do `index.html`, nesta ordem:
 - Toda cor, fonte, tamanho, espaçamento, raio e sombra vem de `var(--token)` do `tokens.css`. Nunca escrever hex, px de fonte ou font-family direto no `site.css`.
 - Nível de risco: sempre cor + palavra escrita (nunca só cor). Usar o par `--cor-risco-X` (fundo) com `--cor-risco-X-texto` (texto).
 - `--cor-destaque` é só para gamificação (pontos, progresso).
+- Modo escuro: checkbox `#tema` (botão sol/lua do topo, sem JS). No site, o `site.css` faz os tokens `--cor-*` apontarem para os `--cor-escuro-*` do `tokens.css` quando o `#tema` está marcado.
 - Mobile first, sem rolagem horizontal. Área de toque mínima `var(--toque-min)`. Foco visível com `var(--foco)`.
 - HTML semântico (header, nav, main, section, footer), `lang="pt-BR"`, textos em português.
 - Classes em português e descritivas (`.hero`, `.passo`, `.card-alerta`).

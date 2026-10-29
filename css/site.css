@@ -1,6 +1,31 @@
 /* ALERA · site.css
    Estilos do site/index.html. Só var(--token) do tokens.css. Mobile first. */
 
+/* Modo escuro: o botão sol/lua do topo marca o checkbox #tema (mesmo nome do app).
+   Os tokens do site passam a apontar para os --cor-escuro-* do tokens.css,
+   então todo o resto do CSS muda sozinho. As cores de risco não mudam. */
+:root:has(#tema:checked) {
+  color-scheme: dark;
+  --cor-primaria:    var(--cor-escuro-azul);
+  --cor-destaque:    var(--cor-escuro-destaque);
+  --cor-fundo:       var(--cor-escuro-fundo);
+  --cor-superficie:  var(--cor-escuro-superficie);
+  --cor-texto:       var(--cor-escuro-texto);
+  --cor-texto-suave: var(--cor-escuro-texto-suave);
+  --cor-borda:       var(--cor-escuro-borda);
+  --cor-erro:        var(--cor-escuro-erro);
+}
+
+/* No escuro o rodapé não fica azul claro: vira cartão escuro com texto claro */
+:root:has(#tema:checked) .rodape,
+:root:has(#tema:checked) .rodape a {
+  color: var(--cor-texto);
+}
+
+:root:has(#tema:checked) .rodape {
+  background: var(--cor-superficie);
+}
+
 /* Layout */
 .container {
   max-width: 1080px;
@@ -361,6 +386,11 @@ figure img {
 .numero-fonte {
   font-size: var(--fs-sm);
   color: var(--cor-texto-suave);
+}
+
+/* Link da fonte com a cor do site (o azul padrão do navegador some no escuro) */
+.numero-fonte a {
+  color: var(--cor-primaria);
 }
 
 .destaque-texto {
