@@ -19,12 +19,20 @@
           <li><a class="botao botao-principal" href="../app/index.html">Testar o app</a></li>
         </ul>
       </nav>
+      <!-- Modo escuro sem JS: o checkbox liga o tema escuro do tokens.css -->
+      <input class="tema-input" type="checkbox" id="tema">
+      <label class="tema-botao" for="tema">
+        <span class="tema-icone-lua" aria-hidden="true">☾</span>
+        <span class="tema-icone-sol" aria-hidden="true">☀</span>
+        <span class="visualmente-oculto">Modo escuro</span>
+      </label>
     </div>
   </header>
 
   <main>
     <section class="hero" id="inicio">
-      <div class="container hero-conteudo">
+      <div class="container hero-grade">
+        <div class="hero-conteudo">
         <p class="sobretitulo">Acompanhamento Local de Emergências e Riscos Ambientais</p>
         <h1>O alerta de chuva com o nome da sua rua, no seu WhatsApp</h1>
         <p class="hero-texto">A ALERA cruza a previsão do tempo com as áreas de risco de Juiz de Fora e avisa você antes da água subir ou do barranco ceder. ALERA no lugar certo, na hora certa.</p>
@@ -32,6 +40,13 @@
           <a class="botao botao-principal" href="../app/index.html">Testar o app</a>
           <a class="botao botao-secundario" href="#como-funciona">Como funciona</a>
         </div>
+        </div>
+        <figure class="hero-imagem">
+          <img src="img/deslizamento.jpg" width="1200" height="798" alt="Casas destruídas e escombros depois de um deslizamento de terra em uma encosta.">
+        </figure>
+      </div>
+      <div class="container">
+        <p class="nota">Imagem ilustrativa: a foto não é de Juiz de Fora, é só um exemplo.</p>
       </div>
     </section>
 
@@ -39,55 +54,60 @@
       <div class="container">
         <h2>O problema</h2>
         <p class="secao-intro">Fevereiro de 2026 foi o pior verão da história recente de Juiz de Fora (MG).</p>
+        <!-- Na tela grande: 2 linhas de 2 cards e o 250 t centralizado embaixo -->
         <ul class="numeros">
-          <li class="numero">
-            <strong class="numero-valor">60+</strong>
-            <span class="numero-texto">mortes entre 23 e 28 de fevereiro</span>
-            <small class="numero-fonte">Gazeta Digital</small>
-          </li>
-          <li class="numero">
-            <strong class="numero-valor">8.854</strong>
-            <span class="numero-texto">pessoas desabrigadas ou desalojadas</span>
-            <small class="numero-fonte">Prefeitura, via Agência Pública</small>
-          </li>
-          <li class="numero">
-            <strong class="numero-valor">128 mil</strong>
-            <span class="numero-texto">pessoas vivem em áreas de risco</span>
-            <small class="numero-fonte">MPF / Cemaden</small>
-          </li>
-          <li class="numero">
-            <strong class="numero-valor">142</strong>
-            <span class="numero-texto">áreas de risco geológico mapeadas</span>
-            <small class="numero-fonte">Defesa Civil, via Tribuna de Minas</small>
-          </li>
-          <li class="numero">
-            <strong class="numero-valor">250 t</strong>
-            <span class="numero-texto">de lixo retiradas dos bueiros em 2025</span>
-            <small class="numero-fonte">Prefeitura, via Acessa.com</small>
-          </li>
-        </ul>
+            <li class="numero">
+              <strong class="numero-valor">60+</strong>
+              <span class="numero-texto">mortes entre 23 e 28 de fevereiro</span>
+              <small class="numero-fonte">Gazeta Digital</small>
+            </li>
+            <li class="numero">
+              <strong class="numero-valor">8.854</strong>
+              <span class="numero-texto">pessoas desabrigadas ou desalojadas</span>
+              <small class="numero-fonte">Prefeitura, via Agência Pública</small>
+            </li>
+            <li class="numero">
+              <strong class="numero-valor">128 mil</strong>
+              <span class="numero-texto">pessoas vivem em áreas de risco</span>
+              <small class="numero-fonte">MPF / Cemaden</small>
+            </li>
+            <li class="numero">
+              <strong class="numero-valor">142</strong>
+              <span class="numero-texto">áreas de risco geológico mapeadas</span>
+              <small class="numero-fonte"><a href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html">Tribuna de Minas, fev. 2024</a></small>
+            </li>
+            <li class="numero numero-central">
+              <strong class="numero-valor">250 t</strong>
+              <span class="numero-texto">de lixo retiradas dos bueiros em 2025</span>
+              <small class="numero-fonte">Prefeitura, via Acessa.com</small>
+            </li>
+          </ul>
         <p class="destaque-texto">O alerta que existe hoje vale para a cidade toda. Ele não diz qual rua ou qual encosta corre risco, e quando todo aviso parece igual, ninguém sai de casa.</p>
       </div>
     </section>
 
-    <section class="secao secao-clara" id="como-funciona">
+    <section class="secao secao-clara" id="fase-1">
       <div class="container">
-        <h2>Como funciona</h2>
+        <p class="sobretitulo">Fase 1</p>
+        <h2>ALERA WEB</h2>
         <p class="secao-intro">Começa sem instalar nada: só o seu celular.</p>
+
+        <div class="subsecao" id="como-funciona">
+        <h3 class="subtitulo">Como funciona</h3>
         <ol class="passos">
           <li class="passo">
             <span class="passo-numero" aria-hidden="true">1</span>
-            <h3>Cadastre sua rua</h3>
+            <h4>Cadastre sua rua</h4>
             <p>Informe seu telefone e a rua onde você mora.</p>
           </li>
           <li class="passo">
             <span class="passo-numero" aria-hidden="true">2</span>
-            <h3>A IA acompanha o clima</h3>
+            <h4>A IA acompanha o clima</h4>
             <p>A ALERA cruza a previsão de chuva com as 142 áreas de risco da cidade.</p>
           </li>
           <li class="passo">
             <span class="passo-numero" aria-hidden="true">3</span>
-            <h3>O alerta chega no WhatsApp</h3>
+            <h4>O alerta chega no WhatsApp</h4>
             <p>Com o nome da sua rua, o nível de risco, o que fazer e o abrigo mais próximo.</p>
           </li>
         </ol>
@@ -98,7 +118,7 @@
           <p class="card-alerta-texto">Rua das Acácias, Jardim Parque Burnier: previsão de 60 mm nas próximas 24 h. Fique atento e veja o abrigo mais próximo.</p>
         </div>
 
-        <h3 class="subtitulo">Os 4 níveis de risco</h3>
+        <h4 class="subtitulo-menor">Os 4 níveis de risco</h4>
         <ul class="niveis-risco">
           <li class="nivel">
             <span class="selo-risco selo-normal">NORMAL</span>
@@ -113,10 +133,11 @@
             <span>Previsão de 50 mm ou mais em 24 h.</span>
           </li>
           <li class="nivel">
-            <span class="selo-risco selo-emergencia">EMERGÊNCIA</span>
+            <span class="selo-risco selo-perigo">PERIGO</span>
             <span>Alerta oficial da Defesa Civil para a área: saia de casa.</span>
           </li>
         </ul>
+        </div>
       </div>
     </section>
 
@@ -124,7 +145,7 @@
       <div class="container">
         <h2>Gamificação</h2>
         <p class="secao-intro">Cuidar da rua vira missão. Cada missão vale pontos para você e para a sua rua.</p>
-        <!-- Pontos e ranking são exemplos: os valores ainda não foram definidos pelo grupo -->
+        <!-- Pontos e ranking são valores simulados -->
         <ul class="missoes">
           <li class="missao">
             <h3>Limpar o bueiro</h3>
@@ -155,7 +176,7 @@
             <li><span>Rua dos Ipês</span> <span class="pontos">980 pts</span></li>
             <li><span>Rua das Palmeiras</span> <span class="pontos">760 pts</span></li>
           </ol>
-          <p class="nota">Ruas e pontos ilustrativos.</p>
+          <p class="nota">Valores simulados: os pontos das missões e o ranking são exemplos.</p>
         </div>
 
         <a class="link-app" href="../app/index.html">Ver missões no app</a>
@@ -164,8 +185,9 @@
 
     <section class="secao secao-clara" id="hardware">
       <div class="container">
-        <h2>Hardware (Fase 2)</h2>
-        <p class="secao-intro">Os sensores entram aos poucos, área por área, e o dado medido entra no mesmo alerta do WhatsApp.</p>
+        <p class="sobretitulo">Fase 2</p>
+        <h2>Gadgets ALERA</h2>
+        <p class="secao-intro">Os gadgets entram aos poucos, área por área. O dado medido entra no mesmo alerta do WhatsApp do morador, e os gadgets também enviam notificações para a Defesa Civil e para a Secretaria de Obras de Juiz de Fora.</p>
         <ul class="dispositivos">
           <li class="dispositivo">
             <h3>Sensor ALERA</h3>
@@ -174,6 +196,7 @@
               <li>Umidade do solo e chuva acumulada</li>
               <li>Acelerômetro que detecta se o terreno inclinou</li>
               <li>LEDs e sirene na rua, mesmo sem internet</li>
+              <li>Notifica a Defesa Civil e a Secretaria de Obras quando o risco sobe</li>
             </ul>
           </li>
           <li class="dispositivo">
@@ -182,7 +205,8 @@
             <ul class="dispositivo-itens">
               <li>Sensor que mede a altura do lixo e da água</li>
               <li>Boia que dispara se a água subir demais</li>
-              <li>Aviso de limpeza antes da chuva chegar</li>
+              <li>Notifica a Secretaria de Obras para limpar antes da chuva</li>
+              <li>Notifica a Defesa Civil se o bueiro entupir</li>
             </ul>
           </li>
         </ul>
@@ -200,23 +224,23 @@
     <section class="secao secao-clara" id="quem-somos">
       <div class="container">
         <h2>Quem somos</h2>
-        <p class="secao-intro">Somos os MonkeyNerds, da FIAP, no Challenge 2026 com a N/ Lugares Futuros.</p>
+        <p class="secao-intro">Somos os MonkeyNerds.</p>
         <ul class="equipe">
           <li class="integrante">
             <span class="integrante-iniciais" aria-hidden="true">DS</span>
-            <span>Daniel Souza Gomes</span>
+            <span class="integrante-dados">Daniel Souza Gomes <small>RM 575813</small></span>
           </li>
           <li class="integrante">
             <span class="integrante-iniciais" aria-hidden="true">VS</span>
-            <span>Victor Santos Ferreira de Morais</span>
+            <span class="integrante-dados">Victor Santos Ferreira de Morais <small>RM 575508</small></span>
           </li>
           <li class="integrante">
             <span class="integrante-iniciais" aria-hidden="true">DG</span>
-            <span>Diego Ramos Pereira Gonzalez</span>
+            <span class="integrante-dados">Diego Ramos Pereira Gonzalez <small>RM 574620</small></span>
           </li>
           <li class="integrante">
             <span class="integrante-iniciais" aria-hidden="true">DO</span>
-            <span>Diego Alejandro Ribeiro Olalla</span>
+            <span class="integrante-dados">Diego Alejandro Ribeiro Olalla <small>RM 575447</small></span>
           </li>
         </ul>
       </div>
@@ -236,6 +260,24 @@
           <li><a href="#quem-somos">Quem somos</a></li>
         </ul>
       </nav>
+      <section class="referencias" aria-labelledby="referencias-titulo">
+        <h2 id="referencias-titulo">Referências</h2>
+        <ul class="referencias-lista">
+          <li>AGÊNCIA PÚBLICA. <a href="https://apublica.org/2026/03/eu-vi-a-agua-no-outro-dia-a-lama-juiz-de-fora-tem-8-mil-desabrigados-pelas-chuvas/">“Eu vi a água... no outro dia, a lama”: Juiz de Fora tem 8 mil desabrigados pelas chuvas</a>. mar. 2026.</li>
+          <li>GAZETA DIGITAL. <a href="https://www.gazetadigital.com.br/editorias/brasil/juiz-de-fora-para-sobreviventes-sistemas-de-alertas-nao-funcionaram/838490">Juiz de Fora: para sobreviventes, sistemas de alertas não funcionaram</a>. fev. 2026.</li>
+          <li>MINISTÉRIO PÚBLICO FEDERAL. <a href="https://www.mpf.mp.br/o-mpf/unidades/pr-mg/noticias/mpf-apura-falhas-na-prevencao-e-na-resposta-a-desastres-climaticos-em-juiz-de-fora-e-uba-mg">MPF apura falhas na prevenção e na resposta a desastres climáticos em Juiz de Fora e Ubá (MG)</a>. 2026.</li>
+          <li>ACESSA.COM. <a href="https://www.acessa.com/cidade/2026/10/341533-chuvas-intensas-colocam-juiz-de-fora-em-alerta-para-deslizamentos-apos-media-de-uma-ocorrencia-por-hora.html">Chuvas intensas colocam Juiz de Fora em alerta para deslizamentos</a>. out. 2026.</li>
+          <li>O TEMPO. <a href="https://www.otempo.com.br/tempo/2026/10/3/juiz-de-fora-mg-em-alerta-vermelho-para-mais-de-100-mm-de-chuva-e-risco-de-grandes-deslizamentos-diz-inmet">Juiz de Fora em alerta vermelho para mais de 100 mm de chuva e risco de grandes deslizamentos</a>. out. 2026.</li>
+          <li>TRIBUNA DE MINAS. Temporal em Juiz de Fora expõe falhas em drenagem de diferentes vias. 9 fev. 2026.</li>
+          <li>ACESSA.COM. Juiz de Fora recolhe mais de 35 toneladas de lixo das bocas de lobo em novembro. 6 dez. 2025.</li>
+          <li>TRIBUNA DE MINAS. <a href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html">Juiz de Fora é a terceira cidade de Minas com mais áreas de risco geológico</a>. 10 fev. 2024.</li>
+          <li>ALMA PRETA. Juiz de Fora é a 9ª cidade do país com mais pessoas em áreas de risco, aponta Cemaden. 27 fev. 2026.</li>
+          <li>TRIBUNA DE MINAS. Áreas de risco devem permanecer isoladas mesmo com trégua das chuvas. 28 fev. 2026.</li>
+          <li>ESTADO DE MINAS. <a href="https://www.em.com.br/trends/2026/02/7358972-como-funciona-o-alerta-da-defesa-civil-que-chega-por-sms-no-seu-celular.html">Como funciona o alerta da Defesa Civil que chega por SMS no seu celular</a>. fev. 2026.</li>
+          <li>TELETIME. <a href="https://teletime.com.br/20/07/2026/mg-sp-e-am-lideram-alertas-extremos-da-defesa-civil-no-primeiro-semestre/">MG, SP e AM lideram alertas extremos da Defesa Civil no primeiro semestre</a>. 20 jul. 2026.</li>
+          <li>REZENDE, Anderson. Retorno sobre o pitch da ALERA (entrevista à equipe). FIAP, 29 out. 2026.</li>
+        </ul>
+      </section>
       <p>MonkeyNerds · FIAP · Challenge 2026</p>
     </div>
   </footer>

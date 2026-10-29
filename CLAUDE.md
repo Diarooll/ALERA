@@ -16,10 +16,10 @@ Solução:
 - Fase 1 (sem hardware): morador se cadastra com telefone + rua e recebe alerta no WhatsApp, gerado por IA a partir de APIs de clima. O alerta traz nível de risco, orientação ("evite esta rua") e abrigo/rota segura.
 - Fase 2: hardware instalado aos poucos: Sensor ALERA (encosta, deslizamento) e Bueiro ALERA (nível de água/entupimento).
 - Gamificação: avatar, missões (limpar bueiro, reportar lixo, plantar muda na encosta, salvar abrigo), pontos e ranking comunitário POR RUA.
-- Usuários: morador de área de risco (celular, pressa, internet ruim) e gestor da Defesa Civil (painel).
-- 4 níveis de risco, sempre os mesmos em tudo: NORMAL, ATENÇÃO, ALERTA, EMERGÊNCIA.
+- Usuário: só o morador de área de risco (celular, pressa, internet ruim), que recebe os alertas.
+- 4 níveis de risco, sempre os mesmos em tudo: NORMAL, ATENÇÃO, ALERTA, PERIGO. (No `tokens.css` o 4º ainda se chama `--cor-risco-emergencia`; é o mesmo nível.)
 
-Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 60+ mortes e 8.854 desabrigados; 128 mil pessoas em área de risco; 142 áreas de risco; 250 t de lixo retiradas dos bueiros. NÃO colocar valores em reais (a banca pediu para tirar).
+Dados usados no pitch (conferir fonte antes de publicar no site): enchentes de fev/2026 em Juiz de Fora com 60+ mortes e 8.854 desabrigados; 128 mil pessoas em área de risco; 142 áreas de risco; 250 t de lixo retiradas dos bueiros em 2025 (total do ano; as 35 t da Acessa.com são só de novembro). Pontos e ranking da gamificação são simulados. As fotos do site não são de Juiz de Fora (ilustrativas). NÃO colocar valores em reais (a banca pediu para tirar).
 
 ## O que estamos construindo
 Dois HTML que formam um produto só, ligados por link:

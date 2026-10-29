@@ -29,7 +29,7 @@ a:focus-visible {
 }
 
 /* Ao clicar na nav, o título da seção não fica escondido atrás do header */
-section[id] {
+[id] {
   scroll-margin-top: var(--esp-8);
 }
 
@@ -75,6 +75,55 @@ section[id] {
   }
 }
 
+/* Botão do modo escuro: lua no claro, sol no escuro */
+.topo-conteudo nav {
+  margin-left: auto;
+}
+
+.tema-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tema-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio-botao);
+  color: var(--cor-texto);
+  font-size: var(--fs-lg);
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.tema-input:focus-visible + .tema-botao {
+  box-shadow: var(--foco);
+}
+
+.tema-icone-sol,
+.tema-input:checked + .tema-botao .tema-icone-lua {
+  display: none;
+}
+
+.tema-input:checked + .tema-botao .tema-icone-sol {
+  display: inline;
+}
+
+/* Some da tela, mas o leitor de tela lê */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
 /* Botão */
 .botao {
   display: inline-flex;
@@ -118,20 +167,6 @@ section[id] {
   margin-top: var(--esp-5);
 }
 
-/* Na tela grande o conteúdo do hero vai para a direita; no celular fica normal */
-@media (min-width: 768px) {
-  .hero-conteudo {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  .hero-botoes {
-    justify-content: flex-end;
-  }
-}
-
 .sobretitulo {
   margin: 0 0 var(--esp-2);
   font-size: var(--fs-sm);
@@ -142,6 +177,81 @@ section[id] {
 .hero-texto {
   max-width: 60ch;
   font-size: var(--fs-lg);
+}
+
+/* Hero: a foto ocupa o fundo inteiro e o texto fica num card por cima.
+   Foto e card dividem a mesma célula da grade; o card define a altura. */
+.hero-grade {
+  display: grid;
+}
+
+.hero-imagem,
+.hero-conteudo {
+  grid-area: 1 / 1;
+}
+
+.hero-imagem img {
+  height: 100%;
+}
+
+/* Card quase opaco: a foto aparece por trás,
+   mas as letras ficam sempre sobre um fundo claro (contraste garantido) */
+.hero-conteudo {
+  position: relative;
+  z-index: 1;
+  align-self: end;
+  margin: var(--esp-8) var(--esp-3) var(--esp-3);
+  padding: var(--esp-5);
+  background: color-mix(in srgb, var(--cor-fundo) 95%, transparent);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
+}
+
+@media (min-width: 768px) {
+  .hero-grade {
+    aspect-ratio: 16 / 9;
+  }
+
+  .hero-conteudo {
+    align-self: center;
+    justify-self: start;
+    max-width: 60%;
+    margin: var(--esp-7);
+    padding: var(--esp-6);
+  }
+
+  /* Linhas curtas: o título quebra em poucas linhas e o texto em blocos curtos */
+  .hero h1 {
+    max-width: 16ch;
+  }
+
+  .hero-texto {
+    max-width: 42ch;
+  }
+}
+
+/* Imagens: nunca passam da largura da tela */
+figure {
+  margin: 0;
+}
+
+figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: var(--raio-card);
+}
+
+/* O problema: 2 linhas de 2 cards e o 250 t centralizado embaixo,
+   com a mesma largura dos outros (metade da linha menos meio espaço) */
+@media (min-width: 768px) {
+  .numero-central {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: calc(50% - var(--esp-2));
+    box-sizing: border-box;
+  }
 }
 
 /* Seções */
@@ -162,6 +272,12 @@ section[id] {
 .subtitulo {
   font-size: var(--fs-lg);
   margin: var(--esp-6) 0 var(--esp-4);
+}
+
+/* Título dentro de uma subseção (ex.: os níveis dentro de "Como funciona") */
+.subtitulo-menor {
+  font-size: var(--fs-md);
+  margin: var(--esp-6) 0 var(--esp-3);
 }
 
 .nota {
@@ -214,7 +330,7 @@ section[id] {
   background: var(--cor-fundo);
 }
 
-.passo h3,
+.passo h4,
 .missao h3,
 .dispositivo h3 {
   font-size: var(--fs-lg);
@@ -304,21 +420,33 @@ section[id] {
 .selo-normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
 .selo-atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
 .selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.selo-emergencia { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
+/* O nível se chama PERIGO; o token continua com o nome antigo (tokens.css é compartilhado) */
+.selo-perigo     { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
 
+/* Níveis lado a lado (2 no celular, 4 na tela grande), com a regra embaixo do selo */
 .niveis-risco {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: var(--esp-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+@media (min-width: 768px) {
+  .niveis-risco {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .nivel {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--esp-3);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  background: var(--cor-fundo);
+  border-radius: var(--raio-card);
 }
 
 /* Gamificação (único lugar com --cor-destaque) */
@@ -378,6 +506,17 @@ section[id] {
   font-weight: var(--peso-forte);
 }
 
+.integrante-dados {
+  display: flex;
+  flex-direction: column;
+}
+
+.integrante-dados small {
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-texto);
+  color: var(--cor-texto-suave);
+}
+
 .integrante-iniciais {
   display: inline-flex;
   align-items: center;
@@ -425,4 +564,28 @@ section[id] {
   align-items: center;
   min-height: var(--toque-min);
   color: var(--cor-superficie);
+}
+
+.referencias {
+  margin-top: var(--esp-6);
+}
+
+.referencias h2 {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--esp-3);
+}
+
+.referencias-lista {
+  display: grid;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+}
+
+/* Links das referências ficam no meio do texto: não viram bloco de 48px */
+.referencias-lista a {
+  display: inline;
+  min-height: 0;
 }
