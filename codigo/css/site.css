@@ -13,6 +13,7 @@
   --cor-texto:       var(--cor-escuro-texto);
   --cor-texto-suave: var(--cor-escuro-texto-suave);
   --cor-borda:       var(--cor-escuro-borda);
+  --cor-linha:       var(--cor-escuro-linha);
   --cor-erro:        var(--cor-escuro-erro);
 }
 
@@ -371,6 +372,7 @@ figure img {
 .dispositivo {
   padding: var(--esp-5);
   background: var(--cor-superficie);
+  border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
   box-shadow: var(--sombra-card);
 }
@@ -446,6 +448,7 @@ figure img {
   margin: var(--esp-6) 0 0;
   padding: var(--esp-5);
   background: var(--cor-superficie);
+  border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
   box-shadow: var(--sombra-forte);
 }
@@ -500,6 +503,7 @@ figure img {
   gap: var(--esp-2);
   padding: var(--esp-4);
   background: var(--cor-fundo);
+  border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
 }
 
@@ -515,6 +519,7 @@ figure img {
   margin-top: var(--esp-6);
   padding: var(--esp-5);
   background: var(--cor-superficie);
+  border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
   box-shadow: var(--sombra-card);
 }
@@ -637,9 +642,9 @@ figure img {
 .ib-grade       { fill: var(--cor-texto); }
 .ib-fenda       { fill: var(--cor-superficie); }
 .ib-caixa       { fill: var(--cor-superficie); stroke: var(--cor-texto); stroke-width: 3; }
-.ib-agua        { fill: color-mix(in srgb, var(--cor-primaria) 22%, var(--cor-superficie)); }
+.ib-agua        { fill: color-mix(in srgb, var(--cor-primaria) 60%, var(--cor-superficie)); } /* no branco: 3,94:1 · no escuro: 3,02:1 */
 .ib-cesto       { fill: none; stroke: var(--cor-texto-suave); stroke-width: 2; stroke-dasharray: 6 4; }
-.ib-lixo        { fill: color-mix(in srgb, var(--cor-texto-suave) 45%, var(--cor-superficie)); }
+.ib-lixo        { fill: color-mix(in srgb, var(--cor-texto-suave) 70%, var(--cor-superficie)); } /* no branco: 3,39:1 · no escuro: 3,60:1 */
 .ib-sensor      { fill: var(--cor-primaria); }
 .ib-ligacao     { stroke: var(--cor-primaria); stroke-width: 2; stroke-dasharray: 4 4; }
 .ib-fio         { stroke: var(--cor-texto-suave); stroke-width: 1.5; stroke-dasharray: 2 3; }

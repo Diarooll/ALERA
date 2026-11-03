@@ -9,11 +9,12 @@
   /* Marca */
   --cor-primaria:    #1E2A5A; /* branco: 13,69:1 */
   --cor-destaque:    #0B6E78; /* só gamificação (pontos, progresso) · branco: 5,97:1 */
-  --cor-fundo:       #F6F5F1;
+  --cor-fundo:       #ECEAE2; /* branco: 1,20:1 */
   --cor-superficie:  #FFFFFF;
-  --cor-texto:       #1A1D27; /* no fundo: 15,41:1 */
-  --cor-texto-suave: #555A66; /* no fundo: 6,33:1 */
+  --cor-texto:       #1A1D27; /* no fundo: 13,96:1 */
+  --cor-texto-suave: #555A66; /* no fundo: 5,73:1 */
   --cor-borda:       #7D8290; /* UI no branco: 3,84:1 */
+  --cor-linha:       #D6D3C9; /* divisórias e borda de cartão · no branco: 1,50:1 */
   --cor-erro:        #D7261E; /* branco: 5,02:1 */
 
   /* Níveis de risco: iguais no site, no app, no Python e no hardware.
@@ -21,7 +22,7 @@
   --cor-risco-normal:             #34A853; /* verde mais claro */
   --cor-risco-normal-texto:       #1A1D27; /* 5,50:1 */
   --cor-risco-atencao:            #F2C200;
-  --cor-risco-atencao-texto:      #1A1D27; /* 9,83:1 */
+  --cor-risco-atencao-texto:      #1A1D27; /* 10,0:1 */
   --cor-risco-alerta:             #F07A1A; /* laranja mais vivo */
   --cor-risco-alerta-texto:       #1A1D27; /* 6,01:1 */
   --cor-risco-perigo:             #D7261E; /* vermelho mais forte */
