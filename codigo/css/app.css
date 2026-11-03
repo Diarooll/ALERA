@@ -48,15 +48,6 @@ body {
   padding-bottom: var(--esp-8); /* espaço pra navegação fixa não cobrir o rodapé */
 }
 
-.visualmente-oculto {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
-
 .container {
   width: min(100% - 2 * var(--esp-4), 960px);
   margin-inline: auto;
@@ -158,7 +149,7 @@ body {
   background: var(--app-azul-hover);
 }
 .botao:focus-visible {
-  outline: 2px solid transparent; 
+  outline: 2px solid transparent;
   box-shadow: var(--app-foco);
 }
 
@@ -194,7 +185,7 @@ body {
 .alerta--normal     .alerta__faixa { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
 .alerta--atencao    .alerta__faixa { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
 .alerta--alerta     .alerta__faixa { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.alerta--emergencia .alerta__faixa { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
+.alerta--perigo .alerta__faixa { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
 
 .alerta__corpo {
   display: flex;
@@ -255,7 +246,7 @@ body {
 .nivel--normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
 .nivel--atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
 .nivel--alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.nivel--emergencia { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
+.nivel--perigo { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
 
 /*  Cadastro  */
 .cadastro {

@@ -1,5 +1,5 @@
 /* ALERA · site.css
-   Estilos do site/index.html. Só var(--token) do tokens.css. Mobile first. */
+   Estilos de ../index.html (site). Só var(--token) do tokens.css. Mobile first. */
 
 /* Modo escuro: o botão sol/lua do topo marca o checkbox #tema (mesmo nome do app).
    Os tokens do site passam a apontar para os --cor-escuro-* do tokens.css,
@@ -172,16 +172,6 @@ a:focus-visible {
 
 .tema-input:checked + .tema-botao .tema-icone-sol {
   display: block;
-}
-
-/* Some da tela, mas o leitor de tela lê */
-.visualmente-oculto {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
 }
 
 /* Botão */
@@ -485,8 +475,7 @@ figure img {
 .selo-normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
 .selo-atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
 .selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-/* O nível se chama PERIGO; o token continua com o nome antigo (tokens.css é compartilhado) */
-.selo-perigo     { background: var(--cor-risco-emergencia); color: var(--cor-risco-emergencia-texto); }
+.selo-perigo     { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
 
 /* Níveis lado a lado (2 no celular, 4 na tela grande), com a regra embaixo do selo */
 .niveis-risco {
