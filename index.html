@@ -16,6 +16,27 @@
       <path d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"/>
       <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z"/>
     </symbol>
+    <!-- Ícones e mapa da prévia do app na Fase 1: os mesmos de codigo/app/index.html -->
+    <symbol id="p-normal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="p-atencao" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 7v6"/><path d="M12 17h.01"/></symbol>
+    <symbol id="p-alerta" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+    <symbol id="p-perigo" viewBox="0 0 24 24"><path d="M7.9 2h8.2L22 7.9v8.2L16.1 22H7.9L2 16.1V7.9z"/><path d="M12 7v6"/><path d="M12 17h.01"/></symbol>
+    <symbol id="p-missoes" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></symbol>
+    <symbol id="p-ranking" viewBox="0 0 24 24"><path d="M8 21h8"/><path d="M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3"/><path d="M7 5H4v2a3 3 0 0 0 3 3"/></symbol>
+    <symbol id="p-dados" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+    <symbol id="p-telefone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+    <symbol id="p-mapa" viewBox="0 0 320 200">
+      <line class="mapa-rua" x1="60" y1="0" x2="60" y2="200"/>
+      <line class="mapa-rua" x1="0" y1="150" x2="320" y2="150"/>
+      <line class="mapa-rua" x1="250" y1="0" x2="250" y2="200"/>
+      <path class="mapa-caminho" d="M60 100 V150 H250 V110"/>
+      <circle class="mapa-ponto" cx="60" cy="100" r="9"/>
+      <path class="mapa-ponto" d="M238 98 L250 86 L262 98 V110 H238 Z"/>
+      <text class="mapa-rotulo" x="118" y="176">Rua da Paz</text>
+      <text class="mapa-rotulo" x="276" y="124" text-anchor="middle" transform="rotate(-90 276 124)">Av. Exemplo</text>
+      <text class="mapa-rotulo" x="76" y="105">Você</text>
+      <text class="mapa-rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
+    </symbol>
   </svg>
 
   <a class="pular" href="#conteudo">Pular para o conteúdo</a>
@@ -61,17 +82,17 @@
           <figure class="hero-imagem">
             <img src="codigo/img/deslizamento.jpg" width="1200" height="798" alt="Casas destruídas e escombros depois de um deslizamento de terra em uma encosta.">
           </figure>
-          <!-- A peça central do site: o alerta como ele chega no WhatsApp -->
-          <div class="conversa conversa-hero">
-            <div class="conversa-topo">
-              <svg class="logo-icone" aria-hidden="true" focusable="false"><use href="#logo-gota"/></svg>
-              <p class="conversa-nome"><strong>ALERA</strong> <span>Exemplo de alerta</span></p>
+          <!-- O alerta como aparece no app: mesmos estilos da prévia da Fase 1 -->
+          <div class="alerta-hero">
+            <div class="alerta-hero-faixa">
+              <p class="previa-rua">ALERA Web</p>
+              <p class="previa-apoio">Bairro Exemplo · atualizado há 5 min</p>
             </div>
-            <div class="conversa-corpo">
-              <div class="balao">
-                <span class="selo-risco selo-alerta">ALERTA</span>
-                <p>Rua das Acácias, Jardim Parque Burnier: previsão de 60 mm nas próximas 24 h. Fique atento e veja o abrigo mais próximo.</p>
-              </div>
+            <div class="alerta-hero-corpo">
+              <p class="previa-selo selo-alerta"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-alerta"/></svg>ALERTA</p>
+              <p class="previa-ordem">Chuva forte nas próximas 2&nbsp;horas. Evite a Rua Exemplo.</p>
+              <p class="alerta-hero-abrigo">Abrigo mais perto: Escola Municipal Exemplo, 600 m</p>
+              <a class="previa-botao" href="#fase-1">Ver Fase 1 do aplicativo</a>
             </div>
           </div>
           <p class="nota">Imagem ilustrativa: a foto não é de Juiz de Fora, é só um exemplo.</p>
@@ -142,52 +163,105 @@
         </ol>
 
         <h4 class="subtitulo-menor" id="niveis-titulo">Os 4 níveis de risco</h4>
-        <!-- Escolha um nível e a mensagem muda. Sem JavaScript: site.css usa :has() nos botões de opção -->
-        <div class="niveis-bloco">
-          <fieldset class="niveis-risco" aria-labelledby="niveis-titulo">
-            <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-normal">
-            <label class="nivel" for="nivel-normal">
-              <span class="selo-risco selo-normal">NORMAL</span>
-              <span>Sem chuva forte prevista.</span>
-            </label>
-            <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-atencao">
-            <label class="nivel" for="nivel-atencao">
-              <span class="selo-risco selo-atencao">ATENÇÃO</span>
-              <span>Previsão de 30 mm ou mais em 24 h.</span>
-            </label>
-            <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-alerta" checked>
-            <label class="nivel" for="nivel-alerta">
-              <span class="selo-risco selo-alerta">ALERTA</span>
-              <span>Previsão de 50 mm ou mais em 24 h.</span>
-            </label>
-            <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-perigo">
-            <label class="nivel" for="nivel-perigo">
-              <span class="selo-risco selo-perigo">PERIGO</span>
-              <span>Alerta oficial da Defesa Civil para a área: saia de casa.</span>
-            </label>
-          </fieldset>
-          <div class="conversa">
-            <div class="conversa-topo">
-              <svg class="logo-icone" aria-hidden="true" focusable="false"><use href="#logo-gota"/></svg>
-              <p class="conversa-nome"><strong>ALERA</strong> <span>Exemplo de alerta</span></p>
+        <p class="previa-intro">Esta é a tela de alerta do app. Escolha um nível e veja o que muda.</p>
+        <!-- Prévia da tela de Alerta do app, com o mesmo desenho de codigo/css/app.css.
+             Escolher um nível troca a tela sem JavaScript: site.css usa :has() nos botões de opção.
+             Os botões e o menu levam para o app de verdade. data-ui marca que isto é um pedaço de interface. -->
+        <div class="previa" data-ui>
+          <a class="previa-marca" href="codigo/app/index.html">
+            <svg class="logo-icone" aria-hidden="true" focusable="false"><use href="#logo-gota"/></svg>
+            <span>A.L.E.R.A</span>
+          </a>
+
+          <nav class="previa-menu" aria-label="Telas do app">
+            <a class="previa-aba previa-aba-ativa" href="codigo/app/index.html#alerta"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-alerta"/></svg>Alerta</a>
+            <a class="previa-aba" href="codigo/app/index.html#missoes"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-missoes"/></svg>Missões</a>
+            <a class="previa-aba" href="codigo/app/index.html#ranking"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-ranking"/></svg>Ranking</a>
+            <a class="previa-aba" href="codigo/app/index.html#cadastro"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-dados"/></svg>Meus dados</a>
+          </nav>
+
+          <a class="previa-ligar" href="tel:199"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-telefone"/></svg>Ligar 199</a>
+
+          <div class="previa-faixa">
+            <p class="previa-rua">Rua Exemplo</p>
+            <p class="previa-apoio">Bairro Exemplo · atualizado há 5 min</p>
+          </div>
+
+          <div class="previa-corpo">
+            <div class="previa-estados" aria-live="polite">
+              <div class="previa-estado previa-estado-normal">
+                <p class="previa-selo selo-normal"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-normal"/></svg>NORMAL</p>
+                <p class="previa-ordem">Sem risco na sua rua. Siga sua rotina.</p>
+                <div class="previa-medidor" aria-hidden="true"><span class="previa-cheia"></span><span></span><span></span><span></span></div>
+                <p class="previa-legenda">Nível 1 de 4</p>
+              </div>
+              <div class="previa-estado previa-estado-atencao">
+                <p class="previa-selo selo-atencao"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-atencao"/></svg>ATENÇÃO</p>
+                <p class="previa-ordem">Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro.</p>
+                <div class="previa-medidor" aria-hidden="true"><span class="previa-cheia"></span><span class="previa-cheia"></span><span></span><span></span></div>
+                <p class="previa-legenda">Nível 2 de 4</p>
+              </div>
+              <div class="previa-estado previa-estado-alerta">
+                <p class="previa-selo selo-alerta"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-alerta"/></svg>ALERTA</p>
+                <p class="previa-ordem">Chuva forte nas próximas 2&nbsp;horas. Evite a Rua Exemplo.</p>
+                <div class="previa-medidor" aria-hidden="true"><span class="previa-cheia"></span><span class="previa-cheia"></span><span class="previa-cheia"></span><span></span></div>
+                <p class="previa-legenda">Nível 3 de 4</p>
+              </div>
+              <div class="previa-estado previa-estado-perigo">
+                <p class="previa-selo selo-perigo"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-perigo"/></svg>PERIGO</p>
+                <p class="previa-ordem">Risco agora. Saia de casa e vá para o abrigo.</p>
+                <div class="previa-medidor" aria-hidden="true"><span class="previa-cheia"></span><span class="previa-cheia"></span><span class="previa-cheia"></span><span class="previa-cheia"></span></div>
+                <p class="previa-legenda">Nível 4 de 4</p>
+              </div>
             </div>
-            <div class="conversa-corpo" aria-live="polite">
-              <div class="balao balao-nivel balao-normal">
-                <span class="selo-risco selo-normal">NORMAL</span>
-                <p>Rua das Acácias, Jardim Parque Burnier: sem chuva forte prevista. Siga sua rotina.</p>
+
+            <fieldset class="niveis-risco" aria-labelledby="niveis-titulo">
+              <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-normal">
+              <label class="nivel" for="nivel-normal">
+                <span class="nivel-cor selo-normal"></span>
+                <strong class="nivel-nome">NORMAL</strong>
+                <span class="nivel-regra">Sem chuva forte prevista.</span>
+              </label>
+              <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-atencao">
+              <label class="nivel" for="nivel-atencao">
+                <span class="nivel-cor selo-atencao"></span>
+                <strong class="nivel-nome">ATENÇÃO</strong>
+                <span class="nivel-regra">Previsão de 30 mm ou mais em 24 h.</span>
+              </label>
+              <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-alerta" checked>
+              <label class="nivel" for="nivel-alerta">
+                <span class="nivel-cor selo-alerta"></span>
+                <strong class="nivel-nome">ALERTA</strong>
+                <span class="nivel-regra">Previsão de 50 mm ou mais em 24 h.</span>
+              </label>
+              <input class="nivel-input visualmente-oculto" type="radio" name="nivel" id="nivel-perigo">
+              <label class="nivel" for="nivel-perigo">
+                <span class="nivel-cor selo-perigo"></span>
+                <strong class="nivel-nome">PERIGO</strong>
+                <span class="nivel-regra">Alerta oficial da Defesa Civil para a área: saia de casa.</span>
+              </label>
+            </fieldset>
+
+            <div class="previa-rota">
+              <svg class="previa-mapa previa-mapa-livre" viewBox="0 0 320 200" role="img" aria-label="Mapa: saia de casa, vire à direita na Rua da Paz, suba a Av. Exemplo até o abrigo.">
+                <use href="#p-mapa"/>
+                <line class="mapa-rua" x1="0" y1="40" x2="320" y2="40"/>
+                <text class="mapa-rotulo" x="118" y="26">Rua Exemplo</text>
+              </svg>
+              <svg class="previa-mapa previa-mapa-risco" viewBox="0 0 320 200" role="img" aria-label="Mapa: saia de casa, vire à direita na Rua da Paz, suba a Av. Exemplo até o abrigo. A Rua Exemplo está alagada.">
+                <use href="#p-mapa"/>
+                <line class="mapa-perigo" x1="0" y1="40" x2="320" y2="40"/>
+                <text class="mapa-rotulo" x="96" y="26">Rua Exemplo · alagada</text>
+              </svg>
+              <div class="previa-destino">
+                <div>
+                  <p class="previa-destino-rotulo">Abrigo mais perto</p>
+                  <p class="previa-destino-nome">Escola Municipal Exemplo</p>
+                  <p class="previa-destino-rotulo">600 m · 8 min a pé · aberto agora</p>
+                </div>
+                <a class="previa-botao" href="codigo/app/index.html#rota">Ver rota segura</a>
               </div>
-              <div class="balao balao-nivel balao-atencao">
-                <span class="selo-risco selo-atencao">ATENÇÃO</span>
-                <p>Rua das Acácias, Jardim Parque Burnier: previsão de 35 mm nas próximas 24 h. Confira seu abrigo e tire o lixo da frente do bueiro.</p>
-              </div>
-              <div class="balao balao-nivel balao-alerta">
-                <span class="selo-risco selo-alerta">ALERTA</span>
-                <p>Rua das Acácias, Jardim Parque Burnier: previsão de 60 mm nas próximas 24 h. Fique atento e veja o abrigo mais próximo.</p>
-              </div>
-              <div class="balao balao-nivel balao-perigo">
-                <span class="selo-risco selo-perigo">PERIGO</span>
-                <p>Rua das Acácias, Jardim Parque Burnier: alerta oficial da Defesa Civil para a área. Saia de casa e vá para o abrigo.</p>
-              </div>
+              <a class="previa-botao previa-botao-texto" href="tel:199"><svg class="previa-icone" aria-hidden="true" focusable="false"><use href="#p-telefone"/></svg>Ligar 199 · Defesa Civil</a>
             </div>
           </div>
         </div>
