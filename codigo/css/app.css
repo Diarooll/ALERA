@@ -1,33 +1,40 @@
 /* ALERA · app.css (prévia do app)
-   Paleta do app: branco, cinza e azul. As cores ficam em tokens locais (--app-*)
-   pra não mexer no tokens.css compartilhado. Fontes, tamanhos, espaços, raios,
-   sombras, toque mínimo e cores de risco continuam vindo do tokens.css. */
+   Direção "Noite de Chuva": azul-marinho e bege, a mesma paleta do site e das apresentações.
+   As cores da marca e de risco vêm do tokens.css; os --app-* só escolhem qual usar em cada tema.
+   Sem JavaScript: cada aba é uma tela aberta por :target. */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
 /* Tema claro (padrão) */
 :root {
   color-scheme: light;
-  --app-azul:        #1D4ED8; /* botões, links · branco: 6,70:1 · no fundo: 6,09:1 */
-  --app-azul-hover:  #1E3A8A; /* botão com o dedo/mouse em cima */
-  --app-azul-claro:  #DBEAFE; /* realce da "sua rua" · texto em cima: 14,5:1 */
-  --app-sobre-azul:  #FFFFFF; /* texto em cima do azul e do destaque */
-  --app-destaque:    #0E7490; /* só gamificação (pontos, progresso) · ciano, pra não confundir com o azul dos botões · branco: 5,36:1 */
-  --app-topo:        #1E3A8A; /* fundo do topo nos dois temas · branco: 10,36:1 */
+  --app-azul:        var(--cor-primaria);    /* botões, links · branco: 13,69:1 */
+  --app-azul-hover:  #141D42;
+  --app-azul-claro:  #DDE1F0;                /* realce da "sua rua" */
+  --app-sobre-azul:  #FFFFFF;
+  --app-destaque:    var(--cor-destaque);    /* só gamificação · no realce: 4,57:1 */
+  --app-topo:        var(--cor-primaria);    /* faixa azul nos dois temas */
   --app-topo-texto:  #FFFFFF;
-  --app-fundo:       #F3F4F6;
-  --app-superficie:  #FFFFFF;
-  --app-texto:       #111827; /* no fundo: 16,1:1 */
-  --app-texto-suave: #4B5563; /* no fundo: 6,87:1 */
-  --app-borda:       #6B7280; /* UI no branco: 4,83:1 */
-  --app-linha:       #E5E7EB; /* divisórias e trilho da barra de progresso */
+  --app-topo-suave:  #DDE1F0;                /* na faixa azul: 9,9:1 */
+  --app-fundo:       var(--cor-fundo);
+  --app-superficie:  var(--cor-superficie);
+  --app-texto:       var(--cor-texto);
+  --app-texto-suave: var(--cor-texto-suave);
+  --app-borda:       var(--cor-borda);
+  --app-linha:       var(--cor-linha);
   --app-erro:        var(--cor-erro);
   --app-foco: 0 0 0 3px var(--app-superficie), 0 0 0 6px var(--app-azul);
+  --app-raio: 10px;
+  --app-largura: 1120px;
+  --app-altura-abas: 64px;
 }
 
 /* Tema escuro: ligado pelo botão sol/lua do topo.
    As cores de risco não mudam: são iguais em tudo. */
 :root:has(#tema:checked) {
   color-scheme: dark;
-  /* Cores escuras vêm do tokens.css (--cor-escuro-*), compartilhadas com o site */
   --app-azul:        var(--cor-escuro-azul);
   --app-azul-hover:  var(--cor-escuro-azul-hover);
   --app-azul-claro:  var(--cor-escuro-azul-fundo);
@@ -42,28 +49,94 @@
   --app-erro:        var(--cor-escuro-erro);
 }
 
+/* Níveis de risco: fundo e texto sempre juntos, vindos do tokens.css */
+.nivel--normal  { background: var(--cor-risco-normal);  color: var(--cor-risco-normal-texto); }
+.nivel--atencao { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
+.nivel--alerta  { background: var(--cor-risco-alerta);  color: var(--cor-risco-alerta-texto); }
+.nivel--perigo  { background: var(--cor-risco-perigo);  color: var(--cor-risco-perigo-texto); }
+
+/* ---------- Base ---------- */
 body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
   background: var(--app-fundo);
   color: var(--app-texto);
-  padding-bottom: var(--esp-8); /* espaço pra navegação fixa não cobrir o rodapé */
+  /* espaço pras abas fixas não cobrirem o rodapé */
+  padding-bottom: calc(var(--app-altura-abas) + env(safe-area-inset-bottom));
 }
-
-.container {
-  width: min(100% - 2 * var(--esp-4), 960px);
+.desenhos {
+  position: absolute;
+}
+.icone {
+  display: block;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.conteudo {
+  width: min(100% - 2 * var(--esp-4), var(--app-largura));
   margin-inline: auto;
 }
 
-/*  Topo  */
+/* ---------- Topo ---------- */
 .topo {
   background: var(--app-topo);
   color: var(--app-topo-texto);
-  padding-block: var(--esp-2);
 }
-.topo .container {
+.topo__faixa {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: var(--esp-1) var(--esp-3);
+  gap: var(--esp-5);
+  width: min(100% - 2 * var(--esp-4), var(--app-largura));
+  min-height: var(--esp-8);
+  margin-inline: auto;
+}
+.topo__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  border-radius: var(--app-raio);
+  color: inherit;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .04em;
+  text-decoration: none;
+}
+.topo__logo {
+  width: var(--esp-6);
+  height: var(--esp-6);
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.topo__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin-left: auto;
+}
+.topo__ligar {
+  display: none; /* no celular o Ligar 199 fica na tela de alerta, logo abaixo da rota */
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-4);
+  border-radius: var(--app-raio);
+  box-shadow: inset 0 0 0 2px var(--app-topo-texto);
+  color: var(--app-topo-texto);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+}
+.topo__ligar:hover {
+  background: var(--app-topo-texto);
+  color: var(--cor-primaria);
 }
 
 /* Botão de tema: mostra a lua no claro (pra escurecer) e o sol no escuro (pra clarear) */
@@ -72,78 +145,143 @@ body {
   place-items: center;
   width: var(--toque-min);
   height: var(--toque-min);
-  margin-left: auto;
-  border-radius: var(--raio-botao);
+  border-radius: var(--app-raio);
   cursor: pointer;
 }
 .tema:hover {
-  box-shadow: inset 0 0 0 2px var(--app-topo-texto);
+  box-shadow: inset 0 0 0 2px var(--app-topo-suave);
 }
-/* Os dois botões (topo e tela de rota) apontam pro mesmo #tema, então leem o estado dele pelo :has() */
-:root:has(#tema:focus-visible) .tema {
+.tema__sol { display: none; }
+:root:has(#tema:checked) .tema__sol { display: block; }
+:root:has(#tema:checked) .tema__lua { display: none; }
+
+/* Foco dentro da faixa azul: anel branco, que aparece nos dois temas */
+#tema:focus-visible + .tema,
+.topo__marca:focus-visible,
+.topo__ligar:focus-visible,
+.faixa__voltar:focus-visible {
   outline: 2px solid transparent;
   box-shadow: 0 0 0 3px var(--app-topo-texto);
 }
-.tema__icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+
+/* ---------- Menu: abas embaixo no celular, no topo a partir de 900px ---------- */
+.menu {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
+  background: var(--app-superficie);
+  border-top: 1px solid var(--app-linha);
+  padding-bottom: env(safe-area-inset-bottom); /* barra de gestos do iPhone */
 }
-.tema__icone--sol { display: none; }
-:root:has(#tema:checked) .tema__icone--sol { display: block; }
-:root:has(#tema:checked) .tema__icone--lua { display: none; }
-.topo__marca {
+.menu__lista {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menu__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--app-altura-abas);
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.menu__link:hover {
+  color: var(--app-azul);
+}
+.menu__link:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: inset 0 0 0 3px var(--app-azul);
+}
+
+/* Aba ativa: quem manda é a tela aberta (:target). Rota é parte do Alerta. */
+body:not(:has(.tela:target)) .menu__link[href="#alerta"],
+body:has(#alerta:target)     .menu__link[href="#alerta"],
+body:has(#rota:target)       .menu__link[href="#alerta"],
+body:has(#missoes:target)    .menu__link[href="#missoes"],
+body:has(#ranking:target)    .menu__link[href="#ranking"],
+body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
+  color: var(--app-azul);
+  font-weight: var(--peso-forte);
+  box-shadow: inset 0 3px 0 var(--app-azul);
+}
+
+/* ---------- Telas: só uma aparece. Sem nenhuma aberta, vale o Alerta. ---------- */
+.telas {
+  flex: 1;
+}
+.tela {
+  display: none;
+  scroll-margin-top: 200px; /* maior que o topo: abrir uma tela não esconde o topo */
+  padding-bottom: var(--esp-6);
+}
+.tela:target,
+body:not(:has(.tela:target)) #alerta {
+  display: block;
+}
+
+/* Faixa azul com o título de cada tela */
+.faixa {
+  padding-block: var(--esp-3) var(--esp-5);
+  margin-bottom: var(--esp-5);
+  background: var(--app-topo);
+  color: var(--app-topo-texto);
+}
+.faixa__titulo {
+  margin: 0;
+  font-size: var(--fs-2xl);
+  letter-spacing: -.015em;
+}
+.faixa__apoio {
+  margin: var(--esp-1) 0 0;
+  color: var(--app-topo-suave);
+}
+.faixa__voltar {
   display: inline-flex;
   align-items: center;
-  gap: var(--esp-2);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-xl);
-  letter-spacing: .04em;
+  gap: var(--esp-1);
+  min-height: var(--toque-min);
+  margin-bottom: var(--esp-1);
+  padding-right: var(--esp-3);
+  border-radius: var(--app-raio);
+  color: var(--app-topo-texto);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
 }
-/* Logo ao lado do A.L.E.R.A (mesmo do site), na cor do texto do topo */
-.topo__logo {
-  width: var(--esp-6);
-  height: var(--esp-6);
-  fill: currentColor;
-  flex-shrink: 0;
+.faixa__voltar:hover {
+  text-decoration: underline;
 }
-.topo__slogan {
-  font-size: var(--fs-sm);
-}
-
-/*  Seções  */
-.secao {
-  padding-block: var(--esp-6) 0;
-}
-.secao:last-child {
+/* No alerta, o selo do nível sobe e fica metade em cima da faixa */
+.faixa--selo {
   padding-bottom: var(--esp-7);
-}
-.secao__titulo {
-  font-size: var(--fs-xl);
-  margin: 0 0 var(--esp-4);
+  margin-bottom: 0;
 }
 
-/*  Botão  */
+/* ---------- Botões ---------- */
 .botao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--esp-2);
   width: 100%;
-  min-height: var(--toque-min);
+  min-height: 52px;
   padding: 0 var(--esp-5);
   border: none;
-  border-radius: var(--raio-botao);
+  border-radius: var(--app-raio);
   background: var(--app-azul);
   color: var(--app-sobre-azul);
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-forte);
   font-size: var(--fs-md);
+  text-align: center;
+  text-decoration: none;
   cursor: pointer;
+  transition: background-color .15s ease;
 }
 .botao:hover {
   background: var(--app-azul-hover);
@@ -152,493 +290,202 @@ body {
   outline: 2px solid transparent;
   box-shadow: var(--app-foco);
 }
-
-/*  Card de alerta  */
-.alerta {
-  background: var(--app-superficie);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-forte);
-  overflow: hidden;
-}
-.alerta__faixa {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  margin: 0;
-  padding: var(--esp-3) var(--esp-5);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
-  letter-spacing: .06em;
-}
-/* Ícones SVG de traço: níveis de alerta */
-.alerta__icone {
-  flex-shrink: 0;
-  width: var(--esp-6);
-  height: var(--esp-6);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.alerta--normal     .alerta__faixa { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
-.alerta--atencao    .alerta__faixa { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
-.alerta--alerta     .alerta__faixa { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.alerta--perigo .alerta__faixa { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
-
-.alerta__corpo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-3);
-  padding: var(--esp-5);
-}
-.alerta__corpo p {
-  margin: 0;
-}
-.alerta__rua {
-  color: var(--app-texto-suave);
-  font-size: var(--fs-sm);
-}
-.alerta__hora {
-  color: var(--app-texto);
-  font-weight: var(--peso-forte);
-}
-.alerta__orientacao {
-  font-size: var(--fs-lg);
-  font-weight: var(--peso-forte);
-}
-
-/* Versão compacta, usada na vitrine dos 4 níveis */
-.alerta--compacto {
-  box-shadow: var(--sombra-card);
-}
-.alerta--compacto .alerta__faixa {
-  font-size: var(--fs-md);
-  padding: var(--esp-2) var(--esp-4);
-}
-.alerta--compacto .alerta__icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
-}
-.alerta--compacto .alerta__corpo {
-  padding: var(--esp-4);
-}
-.alerta--compacto .alerta__orientacao {
-  font-size: var(--fs-md);
-}
-
-/*  Legenda dos níveis  */
-.niveis {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-2);
-  margin: var(--esp-4) 0 0;
-  padding: 0;
-  list-style: none;
-}
-.nivel {
-  padding: var(--esp-1) var(--esp-3);
-  border-radius: var(--raio-botao);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-}
-.nivel--normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
-.nivel--atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
-.nivel--alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.nivel--perigo { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
-
-/*  Cadastro  */
-.cadastro {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-4);
-  padding: var(--esp-5);
-  background: var(--app-superficie);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
-}
-.cadastro__titulo {
-  font-size: var(--fs-xl);
-  margin: 0;
-}
-.cadastro p {
-  margin: 0;
-  color: var(--app-texto-suave);
-}
-
-/*  Campo */
-.campo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-1);
-}
-.campo__rotulo {
-  font-weight: var(--peso-forte);
-}
-.campo__entrada {
-  min-height: var(--toque-min);
-  padding: 0 var(--esp-3);
-  border: 2px solid var(--app-borda);
-  border-radius: var(--raio-campo);
-  background: var(--app-superficie);
-  color: var(--app-texto);
-  font: inherit;
-}
-.campo__entrada:focus-visible {
-  outline: 2px solid transparent;
-  border-color: var(--app-azul);
-  box-shadow: var(--app-foco);
-}
-/* Erro: aparece só depois que a pessoa mexe no campo (:user-invalid) */
-.campo--erro .campo__entrada,
-.campo__entrada:user-invalid {
-  border-color: var(--app-erro);
-}
-.campo__erro {
-  display: none;
-  color: var(--app-erro);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-}
-.campo--erro .campo__erro,
-.campo__entrada:user-invalid + .campo__erro {
-  display: block;
-}
-
-/*  Missões  */
-.grade {
-  display: grid;
-  gap: var(--esp-4);
-}
-.missao {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-  padding: var(--esp-5);
-  background: var(--app-superficie);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
-}
-.missao__topo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.missao__icone {
-  font-size: var(--fs-2xl);
-  line-height: 1;
-}
-.missao__pontos {
-  padding: var(--esp-1) var(--esp-3);
-  border-radius: var(--raio-botao);
-  background: var(--app-destaque);
-  color: var(--app-sobre-azul);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-}
-.missao__titulo {
-  font-size: var(--fs-lg);
-  margin: 0;
-}
-.missao__texto {
-  margin: 0;
-  color: var(--app-texto-suave);
-}
-
-/* Barra de progresso */
-.progresso {
-  appearance: none;
-  width: 100%;
-  height: var(--esp-3);
-  margin-top: var(--esp-2);
-  border: none;
-  border-radius: var(--raio-botao);
-  background: var(--app-linha);
-  overflow: hidden;
-}
-.progresso::-webkit-progress-bar   { background: var(--app-linha); }
-.progresso::-webkit-progress-value { background: var(--app-destaque); border-radius: var(--raio-botao); }
-.progresso::-moz-progress-bar      { background: var(--app-destaque); border-radius: var(--raio-botao); }
-.progresso__legenda {
-  margin: 0;
-  color: var(--app-texto-suave);
-  font-size: var(--fs-sm);
-}
-
-/*  Ranking  */
-.ranking {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-2);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.ranking__item {
-  display: grid;
-  grid-template-columns: auto auto 1fr auto;
-  align-items: center;
-  gap: var(--esp-3);
-  padding: var(--esp-3) var(--esp-4);
-  background: var(--app-superficie);
-  border: 2px solid transparent;
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
-}
-.ranking__item--voce {
-  background: var(--app-azul-claro);
-  border-color: var(--app-azul);
-}
-.ranking__posicao {
-  min-width: var(--esp-5);
-  color: var(--app-azul);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
-  text-align: center;
-}
-.ranking__avatar {
-  display: grid;
-  place-items: center;
-  width: var(--toque-min);
-  height: var(--toque-min);
-  border-radius: var(--raio-botao);
-  background: var(--app-azul);
-  color: var(--app-sobre-azul);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-sm);
-}
-.ranking__nome {
-  font-weight: var(--peso-forte);
-}
-.ranking__pontos {
-  color: var(--app-destaque);
-  font-weight: var(--peso-forte);
-  white-space: nowrap;
-}
-
-/*  Rodapé */
-.rodape {
-  padding: var(--esp-6) var(--esp-4);
-  border-top: 1px solid var(--app-linha);
-  color: var(--app-texto-suave);
-  font-size: var(--fs-sm);
-  text-align: center;
-}
-.rodape__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--toque-min);
-  color: var(--app-azul);
-  font-weight: var(--peso-forte);
-}
-.rodape__link:focus-visible {
-  outline: 2px solid transparent;
-  border-radius: var(--raio-campo);
-  box-shadow: var(--app-foco);
-}
-
-/* Navegação inferior */
-.navegacao {
-  position: fixed;
-  inset: auto 0 0 0;
-  z-index: 10;
-  background: var(--app-superficie);
-  border-top: 1px solid var(--app-linha);
-  box-shadow: var(--sombra-card);
-  padding-bottom: env(safe-area-inset-bottom); /* barra de gestos do iPhone */
-}
-.navegacao__lista {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  width: min(100%, 960px);
-  margin: 0 auto;
-  padding: 0;
-  list-style: none;
-}
-.navegacao__link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--esp-8);
-  color: var(--app-texto-suave);
-  font-size: var(--fs-sm);
-  text-decoration: none;
-}
-/* Ícones SVG de traço */
-.navegacao__icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
-  margin-bottom: var(--esp-1);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.navegacao__link:hover {
-  color: var(--app-azul);
-}
-.navegacao__link:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: inset 0 0 0 3px var(--app-azul);
-}
-
-/* A seção aberta fica com :target, e o :has() leva essa informação até a navegação.
-   Sem nenhuma seção aberta (entrou agora no app), a aba ativa é Alerta. */
-.navegacao__lista::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 25%;
-  height: 3px;
-  background: var(--app-azul);
-  transition: transform .25s ease;
-}
-body:has(#missoes:target)  .navegacao__lista::before { transform: translateX(100%); }
-body:has(#ranking:target)  .navegacao__lista::before { transform: translateX(200%); }
-body:has(#cadastro:target) .navegacao__lista::before { transform: translateX(300%); }
-
-body:not(:has(:target))    .navegacao__link[href="#alerta"],
-body:has(#alerta:target)   .navegacao__link[href="#alerta"],
-body:has(#missoes:target)  .navegacao__link[href="#missoes"],
-body:has(#ranking:target)  .navegacao__link[href="#ranking"],
-body:has(#cadastro:target) .navegacao__link[href="#cadastro"] {
-  color: var(--app-azul);
-  font-weight: var(--peso-forte);
-}
-body:not(:has(:target))    .navegacao__link[href="#alerta"]   .navegacao__icone,
-body:has(#alerta:target)   .navegacao__link[href="#alerta"]   .navegacao__icone,
-body:has(#missoes:target)  .navegacao__link[href="#missoes"]  .navegacao__icone,
-body:has(#ranking:target)  .navegacao__link[href="#ranking"]  .navegacao__icone,
-body:has(#cadastro:target) .navegacao__link[href="#cadastro"] .navegacao__icone {
-  stroke-width: 2.5;
-}
-
-/* Menos movimento no celular vê a linha trocar de lugar sem deslizar */
-@media (prefers-reduced-motion: reduce) {
-  .navegacao__lista::before { transition: none; }
-}
-
-/* ---------- Tela de rota segura ----------
-   Fica escondida até o link #rota ser tocado; aí cobre a tela toda (:target, sem JavaScript).
-   "Voltar" leva pra #alerta, o que fecha a tela. */
-a.botao {
-  text-decoration: none;
-}
-.botao--secundario {
-  background: var(--app-superficie);
+.botao--secundario,
+.botao--secundario:hover {
+  background: transparent;
   color: var(--app-azul);
   box-shadow: inset 0 0 0 2px var(--app-azul);
 }
 .botao--secundario:hover {
-  background: var(--app-superficie);
   box-shadow: inset 0 0 0 3px var(--app-azul);
 }
 .botao--secundario:focus-visible {
   box-shadow: inset 0 0 0 2px var(--app-azul), var(--app-foco);
 }
-
-.rota {
-  display: none;
+.botao--texto,
+.botao--texto:hover {
+  background: transparent;
+  color: var(--app-azul);
 }
-.rota:target {
-  display: block;
-  position: fixed;
-  inset: 0;
-  z-index: 20;
-  overflow-y: auto;
-  background: var(--app-fundo);
-}
-.rota:focus {
-  outline: none; /* recebe o foco ao abrir só pra o leitor de tela começar daqui */
-}
-body:has(#rota:target) {
-  overflow: hidden; /* a página de trás não rola junto */
-}
-body:has(#rota:target) .navegacao {
-  display: none;
+.botao--texto:hover {
+  text-decoration: underline;
 }
 
-.rota__topo {
-  position: sticky;
-  top: 0;
-  z-index: 1; /* fica por cima do mapa, que tem position: relative por causa do botão sol/lua */
+/* ---------- Alerta ---------- */
+.alerta {
+  display: grid;
+  gap: var(--esp-5);
+  margin-top: -28px; /* o selo sobe em cima da faixa azul */
+}
+.selo {
   display: flex;
   align-items: center;
   gap: var(--esp-2);
-  padding: var(--esp-2) var(--esp-4);
-  background: var(--app-topo);
-  color: var(--app-topo-texto);
-}
-.rota__voltar {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-1);
-  min-height: var(--toque-min);
-  padding: 0 var(--esp-3) 0 var(--esp-1);
-  border-radius: var(--raio-botao);
-  color: var(--app-topo-texto);
-  font-weight: var(--peso-forte);
-  text-decoration: none;
-}
-.rota__voltar:hover {
-  box-shadow: inset 0 0 0 2px var(--app-topo-texto);
-}
-.rota__voltar:focus-visible {
-  outline: 2px solid transparent;
-  box-shadow: 0 0 0 3px var(--app-topo-texto);
-}
-.rota__titulo {
+  min-height: 56px;
   margin: 0;
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: var(--app-raio);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .05em;
+}
+.selo .icone {
+  stroke-width: 2.5;
+}
+.alerta__ordem {
+  margin: var(--esp-4) 0 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-xl);
+  line-height: 1.22;
+  letter-spacing: -.01em;
+  text-wrap: balance; /* evita uma palavra sozinha na última linha */
+}
+.medidor {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-1);
+  margin-top: var(--esp-4);
+}
+.medidor__parte {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--app-linha);
+}
+.medidor__parte--cheia {
+  background: var(--app-azul);
+}
+.medidor__legenda {
+  margin: var(--esp-1) 0 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+.alerta__mapa {
+  display: none; /* no celular o mapa fica na tela de rota */
+  margin-bottom: var(--esp-4);
+}
+.destino {
+  display: grid;
+  gap: var(--esp-4);
+}
+.destino__rotulo,
+.destino__nome,
+.destino__info {
+  margin: 0;
+}
+.destino__rotulo,
+.destino__info {
+  color: var(--app-texto-suave);
+}
+.destino__nome {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.25;
+}
+.alerta__ligar {
+  margin-top: var(--esp-1);
+}
+
+/* Lista do que fazer em cada nível */
+.subtitulo {
+  margin: 0 0 var(--esp-3);
   font-size: var(--fs-lg);
 }
-.rota__icone {
-  flex-shrink: 0;
-  width: var(--esp-5);
-  height: var(--esp-5);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.niveis {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.niveis__item {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--app-linha);
+  color: var(--app-texto-suave);
+}
+.niveis__item > span:last-child {
+  grid-column: 2;
+}
+.niveis__cor {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+.niveis__nome {
+  color: var(--app-texto);
+  font-size: var(--fs-sm);
+  letter-spacing: .04em;
+}
+/* O nível que vale agora: a linha ganha contorno e o texto fica mais forte */
+.niveis__item--agora {
+  border-radius: var(--raio-campo);
+  border-bottom-color: transparent;
+  background: var(--app-superficie);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+  color: var(--app-texto);
+  font-weight: var(--peso-forte);
 }
 
-.rota__conteudo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-4);
-  padding-block: var(--esp-4) var(--esp-7);
-  max-width: 600px;
-}
-
-/* Mapa simplificado: ruas em cinza, rua alagada na cor do nível, caminho em azul.
-   O mapa tem tema próprio: segue o app, e o botão sol/lua (#mapa-tema) inverte.
-   App claro + botão = mapa escuro · app escuro + botão = mapa claro. */
-.rota__mapa-caixa {
+/* ---------- Mapa: tem tema próprio. Segue o app, e o botão sol/lua (#mapa-tema) inverte.
+   Os seletores usam #d-mapa porque as regras precisam alcançar o desenho original do <use>. */
+.mapa-caixa {
   position: relative;
   --mapa-fundo:   #FFFFFF;
-  --mapa-rua:     #E5E7EB;
-  --mapa-texto:   #111827; /* no fundo do mapa: 17,7:1 */
-  --mapa-caminho: #1D4ED8; /* no fundo do mapa: 6,70:1 */
-  --mapa-lua: block;       /* qual ícone o botão mostra */
+  --mapa-rua:     #E2E0D8;
+  --mapa-texto:   var(--cor-texto);
+  --mapa-caminho: var(--cor-primaria);
+  --mapa-lua: block;
   --mapa-sol: none;
 }
-:root:not(:has(#tema:checked)):has(#mapa-tema:checked) .rota__mapa-caixa,
-:root:has(#tema:checked):not(:has(#mapa-tema:checked)) .rota__mapa-caixa {
+:root:not(:has(#tema:checked)):has(#mapa-tema:checked) .rota__mapa,
+:root:has(#tema:checked):not(:has(#mapa-tema:checked)) .mapa-caixa {
   --mapa-fundo:   var(--cor-escuro-superficie);
   --mapa-rua:     var(--cor-escuro-linha);
-  --mapa-texto:   var(--cor-escuro-texto);   /* 13,3:1 */
-  --mapa-caminho: var(--cor-escuro-azul);    /* 5,77:1 */
+  --mapa-texto:   var(--cor-escuro-texto);
+  --mapa-caminho: var(--cor-escuro-azul);
   --mapa-lua: none;
   --mapa-sol: block;
 }
-
+.mapa {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--mapa-fundo);
+  border-radius: var(--app-raio);
+}
+#d-mapa .mapa__rua,
+#d-mapa .mapa__perigo {
+  stroke-width: 14;
+}
+#d-mapa .mapa__rua     { stroke: var(--mapa-rua); }
+#d-mapa .mapa__perigo  { stroke: var(--cor-risco-alerta); }
+#d-mapa .mapa__caminho {
+  fill: none;
+  stroke: var(--mapa-caminho);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+#d-mapa .mapa__ponto {
+  fill: var(--mapa-caminho);
+  stroke: var(--mapa-fundo);
+  stroke-width: 3;
+}
+#d-mapa .mapa__rotulo {
+  fill: var(--mapa-texto);
+  font-family: var(--fonte-texto);
+  font-size: 13px;
+  font-weight: var(--peso-forte);
+  paint-order: stroke; /* contorno da cor do mapa, pra ler em cima das ruas */
+  stroke: var(--mapa-fundo);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
 .mapa-tema {
   position: absolute;
   top: var(--esp-2);
@@ -647,112 +494,51 @@ body:has(#rota:target) .navegacao {
   place-items: center;
   width: var(--toque-min);
   height: var(--toque-min);
-  border-radius: var(--raio-botao);
+  border-radius: var(--app-raio);
   background: var(--mapa-fundo);
   color: var(--mapa-texto);
-  box-shadow: var(--sombra-card), inset 0 0 0 2px var(--mapa-rua);
+  box-shadow: inset 0 0 0 2px var(--mapa-rua);
   cursor: pointer;
 }
 .mapa-tema:hover {
-  box-shadow: var(--sombra-card), inset 0 0 0 2px var(--mapa-texto);
+  box-shadow: inset 0 0 0 2px var(--mapa-texto);
 }
 #mapa-tema:focus-visible + .mapa-tema {
   outline: 2px solid transparent;
   box-shadow: var(--app-foco);
 }
-.mapa-tema__icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.mapa-tema__icone--lua { display: var(--mapa-lua); }
-.mapa-tema__icone--sol { display: var(--mapa-sol); }
+.mapa-tema__lua { display: var(--mapa-lua); }
+.mapa-tema__sol { display: var(--mapa-sol); }
 
-.rota__mapa {
-  display: block;
-  width: 100%;
-  height: auto;
-  background: var(--mapa-fundo);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
-}
-.mapa__rua,
-.mapa__perigo {
-  stroke-width: 14;
-  stroke-linecap: round;
-}
-.mapa__rua     { stroke: var(--mapa-rua); }
-.mapa__perigo  { stroke: var(--cor-risco-alerta); }
-.mapa__caminho {
-  fill: none;
-  stroke: var(--mapa-caminho);
-  stroke-width: 6;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.mapa__voce,
-.mapa__abrigo {
-  fill: var(--mapa-caminho);
-  stroke: var(--mapa-fundo);
-  stroke-width: 3;
-}
-.mapa__rotulo {
-  fill: var(--mapa-texto);
-  font-family: var(--fonte-texto);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-  paint-order: stroke; /* contorno da cor do mapa por trás do texto, pra ler em cima das ruas */
-  stroke: var(--mapa-fundo);
-  stroke-width: 4;
-  stroke-linejoin: round;
-}
-
-.rota__destino {
-  padding: var(--esp-4);
-  background: var(--app-superficie);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
+/* ---------- Rota segura ---------- */
+.rota {
+  display: grid;
+  gap: var(--esp-4);
 }
 .rota__nome {
   margin: 0 0 var(--esp-1);
   font-size: var(--fs-lg);
 }
-.rota__info {
-  margin: 0;
-  color: var(--app-texto-suave);
-}
 .rota__tempo {
   color: var(--app-texto);
 }
-
 .rota__evitar {
   display: flex;
   align-items: center;
   gap: var(--esp-2);
   margin: 0;
   padding: var(--esp-3) var(--esp-4);
-  border-radius: var(--raio-card);
-  background: var(--cor-risco-alerta);
-  color: var(--cor-risco-alerta-texto);
+  border-radius: var(--app-raio);
   font-weight: var(--peso-forte);
 }
-
-/* Passos numerados em círculos azuis */
 .rota__passos {
   counter-reset: passo;
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--esp-3);
   margin: 0;
-  padding: var(--esp-4);
+  padding: var(--esp-4) 0;
+  border-block: 1px solid var(--app-linha);
   list-style: none;
-  background: var(--app-superficie);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
 }
 .rota__passos li {
   counter-increment: passo;
@@ -767,29 +553,315 @@ body:has(#rota:target) .navegacao {
   place-items: center;
   width: var(--esp-6);
   height: var(--esp-6);
-  border-radius: var(--raio-botao);
+  border-radius: 50%;
   background: var(--app-azul);
   color: var(--app-sobre-azul);
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-forte);
   font-size: var(--fs-sm);
 }
-
 .rota__acoes {
-  display: flex;
-  flex-direction: column;
+  display: grid;
   gap: var(--esp-3);
 }
-.rota__acoes .botao {
+
+/* ---------- Missões ---------- */
+.missoes {
+  display: grid;
+  gap: var(--esp-4);
+}
+.missao {
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  background: var(--app-superficie);
+  border-radius: var(--app-raio);
+}
+.missao__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--esp-1);
+}
+.missao__icone {
+  width: var(--esp-6);
+  height: var(--esp-6);
+  fill: none;
+  stroke: var(--app-azul);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.missao__pontos {
+  padding: 2px var(--esp-3);
+  border-radius: var(--raio-botao);
+  background: var(--app-destaque);
+  color: var(--app-sobre-azul);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.missao__titulo {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.missao__texto {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+.progresso {
+  appearance: none;
   width: 100%;
+  height: var(--esp-2);
+  margin-top: auto;
+  border: none;
+  border-radius: var(--raio-botao);
+  background: var(--app-linha);
+  overflow: hidden;
+}
+.progresso::-webkit-progress-bar   { background: var(--app-linha); }
+.progresso::-webkit-progress-value { background: var(--app-destaque); border-radius: var(--raio-botao); }
+.progresso::-moz-progress-bar      { background: var(--app-destaque); border-radius: var(--raio-botao); }
+.progresso__legenda {
+  margin: 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
 }
 
-/* ---------- Telas maiores ---------- */
-@media (min-width: 600px) {
-  .botao { width: auto; }
-  .grade { grid-template-columns: repeat(2, 1fr); }
+/* ---------- Ranking ---------- */
+.ranking {
+  max-width: 720px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
 }
+.ranking__item {
+  display: grid;
+  grid-template-columns: var(--esp-6) 1fr auto;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--esp-8);
+  padding: var(--esp-2) var(--esp-3);
+  border-bottom: 1px solid var(--app-linha);
+}
+.ranking__item--voce {
+  border-radius: var(--raio-campo);
+  border-bottom-color: transparent;
+  background: var(--app-azul-claro);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+}
+.ranking__posicao {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.ranking__nome {
+  font-weight: var(--peso-forte);
+}
+.ranking__sua {
+  display: block;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-texto);
+}
+:root:has(#tema:checked) .ranking__sua {
+  color: var(--app-texto);
+}
+.ranking__pontos {
+  color: var(--app-destaque);
+  font-weight: var(--peso-forte);
+  white-space: nowrap;
+}
+
+/* ---------- Meus dados ---------- */
+.cadastro {
+  display: grid;
+  gap: var(--esp-4);
+  max-width: 560px;
+}
+.cadastro__titulo {
+  margin: 0;
+  font-size: var(--fs-xl);
+}
+.cadastro__texto {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+.campo {
+  display: grid;
+  gap: var(--esp-1);
+}
+.campo__rotulo {
+  font-weight: var(--peso-forte);
+}
+.campo__entrada {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--esp-3);
+  border: 2px solid var(--app-borda);
+  border-radius: var(--raio-campo);
+  background: var(--app-superficie);
+  color: var(--app-texto);
+  font: inherit;
+}
+.campo__entrada:focus-visible {
+  outline: 2px solid transparent;
+  border-color: var(--app-azul);
+  box-shadow: var(--app-foco);
+}
+/* Erro: aparece só depois que a pessoa mexe no campo (:user-invalid) */
+.campo__entrada:user-invalid {
+  border-color: var(--app-erro);
+}
+.campo__erro {
+  display: none;
+  color: var(--app-erro);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.campo__entrada:user-invalid + .campo__erro {
+  display: block;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+  padding: var(--esp-4);
+  border-top: 1px solid var(--app-linha);
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+.rodape__texto {
+  margin: 0;
+}
+.rodape__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-min);
+  border-radius: var(--raio-campo);
+  color: var(--app-azul);
+  font-weight: var(--peso-forte);
+}
+.rodape__link:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+
+/* ---------- A partir de 600px ---------- */
+@media (min-width: 600px) {
+  .missoes { grid-template-columns: repeat(2, 1fr); }
+  .rota__acoes { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Computador: menu no topo, conteúdo em duas colunas ---------- */
 @media (min-width: 900px) {
-  .grade { grid-template-columns: repeat(3, 1fr); }
-  .grade--4 { grid-template-columns: repeat(4, 1fr); }
+  body {
+    padding-bottom: 0;
+  }
+  .conteudo,
+  .topo__faixa {
+    width: min(100% - 2 * var(--esp-6), var(--app-largura));
+  }
+  .topo__ligar {
+    display: inline-flex;
+  }
+
+  .menu {
+    position: static;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+  .menu__lista {
+    display: flex;
+    gap: var(--esp-1);
+  }
+  .menu__link {
+    flex-direction: row;
+    gap: var(--esp-2);
+    min-height: var(--toque-min);
+    padding: 0 var(--esp-3);
+    border-radius: var(--app-raio);
+    color: var(--app-topo-suave);
+    font-size: var(--fs-md);
+  }
+  .menu__link:hover {
+    color: var(--app-topo-texto);
+    box-shadow: inset 0 0 0 2px var(--app-topo-suave);
+  }
+  .menu__link:focus-visible {
+    box-shadow: 0 0 0 3px var(--app-topo-texto);
+  }
+  body:not(:has(.tela:target)) .menu__link[href="#alerta"],
+  body:has(#alerta:target)     .menu__link[href="#alerta"],
+  body:has(#rota:target)       .menu__link[href="#alerta"],
+  body:has(#missoes:target)    .menu__link[href="#missoes"],
+  body:has(#ranking:target)    .menu__link[href="#ranking"],
+  body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
+    background: var(--cor-fundo);
+    color: var(--cor-primaria);
+    box-shadow: none;
+  }
+
+  .faixa {
+    padding-block: var(--esp-4) var(--esp-6);
+    margin-bottom: var(--esp-6);
+  }
+  .faixa--selo {
+    padding-bottom: 60px;
+    margin-bottom: 0;
+  }
+  .faixa__titulo {
+    font-size: var(--fs-3xl);
+  }
+
+  .alerta {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-areas:
+      "principal rota"
+      "niveis    rota";
+    grid-template-rows: auto 1fr;
+    gap: var(--esp-5) var(--esp-7);
+  }
+  .alerta__principal { grid-area: principal; }
+  .alerta__niveis    { grid-area: niveis; }
+  .alerta__rota      { grid-area: rota; padding-top: var(--esp-7); }
+  .alerta__mapa      { display: block; }
+  .alerta__ligar     { display: none; } /* já está no topo */
+  .medidor,
+  .medidor__legenda  { display: none; } /* a lista ao lado já mostra o nível atual */
+  .destino {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .destino .botao {
+    width: auto;
+  }
+
+  .rota {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-areas:
+      "mapa destino"
+      "mapa evitar"
+      "mapa passos"
+      "mapa acoes";
+    grid-template-rows: auto auto auto 1fr;
+    gap: var(--esp-4) var(--esp-7);
+  }
+  .rota__mapa    { grid-area: mapa; }
+  .rota__destino { grid-area: destino; }
+  .rota__evitar  { grid-area: evitar; }
+  .rota__passos  { grid-area: passos; }
+  .rota__acoes   { grid-area: acoes; align-content: start; }
+
+  .missoes {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Menos movimento: sem transição nos botões */
+@media (prefers-reduced-motion: reduce) {
+  .botao { transition: none; }
 }
