@@ -1,5 +1,24 @@
 /* ALERA · site.css
-   Estilos de ../index.html (site). Só var(--token) do tokens.css. Mobile first. */
+   Estilos de ../index.html (site). Só var(--token) do tokens.css. Mobile first.
+
+   Direção visual, "A mensagem": a peça central do site é o alerta que chega no WhatsApp.
+   Cada seção tem composição própria, em vez do mesmo cartão repetido:
+   - hero: conversa por cima da foto
+   - o problema: faixa de cor com o número 65 enorme, sem caixas
+   - como funciona: passos ligados por uma linha
+   - níveis: a pessoa escolhe o nível e a mensagem muda (sem JavaScript)
+   - gamificação: lista de missões e ranking em barras
+   - gadgets: painéis largos, com fluxo do sensor e desenho do bueiro */
+
+/* Tamanhos só do site: fluidos para a tela grande ter pontos de peso.
+   Ficam aqui, e não no tokens.css, porque o app não usa. */
+:root {
+  --site-titulo:  clamp(34px, 5.2vw, 64px); /* h1 */
+  --site-secao:   clamp(31px, 3.6vw, 48px); /* h2 */
+  --site-gigante: clamp(112px, 17vw, 220px); /* o 65 */
+  --site-numero:  clamp(28px, 3.6vw, 48px);   /* os outros números */
+  --site-respiro: clamp(64px, 9vw, 120px);  /* distância entre seções */
+}
 
 /* Modo escuro: o botão sol/lua do topo marca o checkbox #tema (mesmo nome do app).
    Os tokens do site passam a apontar para os --cor-escuro-* do tokens.css,
@@ -17,8 +36,8 @@
   --cor-erro:        var(--cor-escuro-erro);
 }
 
-/* No escuro o rodapé não fica azul claro nem some junto com o "Quem somos"
-   (que é cartão escuro): usa o azul do topo do app com texto claro (9,4:1) */
+/* No escuro o rodapé e a faixa do problema não ficam azul claro:
+   usam o azul do topo do app com texto claro (9,4:1) */
 :root:has(#tema:checked) .rodape,
 :root:has(#tema:checked) .rodape a,
 :root:has(#tema:checked) .rodape h2 {
@@ -37,19 +56,38 @@
 
 /* Layout */
 .container {
-  max-width: 1080px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--esp-4);
 }
 
 .secao {
-  padding: var(--esp-7) 0;
+  padding: var(--site-respiro) 0;
 }
 
 /* Foco visível em tudo que é clicável */
-a:focus-visible {
+a:focus-visible,
+summary:focus-visible {
   outline: none;
   box-shadow: var(--foco);
+}
+
+/* Link "pular para o conteúdo": só aparece ao navegar pelo teclado */
+.pular {
+  position: absolute;
+  top: var(--esp-2);
+  left: var(--esp-2);
+  z-index: 20;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--raio-campo);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+  font-weight: var(--peso-forte);
+  transform: translateY(-200%);
+}
+
+.pular:focus {
+  transform: none;
 }
 
 /* Header */
@@ -71,14 +109,14 @@ a:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--esp-4);
+  gap: var(--esp-2);
   min-height: var(--esp-8);
 }
 
 .logo {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
-  font-size: var(--fs-xl);
+  font-size: var(--fs-lg);
   letter-spacing: .04em; /* igual à marca do app */
   color: var(--cor-primaria);
   text-decoration: none;
@@ -99,6 +137,14 @@ a:focus-visible {
   flex-shrink: 0;
 }
 
+/* Em celular muito estreito só a gota fica: o nome não cabe sem estourar a tela.
+   O link continua com o nome no aria-label. */
+@media (max-width: 359px) {
+  .logo-texto {
+    display: none;
+  }
+}
+
 .nav-lista {
   display: flex;
   align-items: center;
@@ -117,11 +163,34 @@ a:focus-visible {
   color: var(--cor-texto);
   font-weight: var(--peso-forte);
   text-decoration: none;
+  text-underline-offset: var(--esp-1);
+}
+
+.nav-item a:hover {
+  text-decoration: underline;
+}
+
+.topo .botao {
+  padding: 0 var(--esp-4);
+  font-size: var(--fs-sm);
 }
 
 @media (min-width: 768px) {
   .nav-item {
     display: block;
+  }
+
+  .topo-conteudo {
+    gap: var(--esp-4);
+  }
+
+  .logo {
+    font-size: var(--fs-xl);
+  }
+
+  .topo .botao {
+    padding: 0 var(--esp-5);
+    font-size: var(--fs-md);
   }
 }
 
@@ -188,7 +257,13 @@ a:focus-visible {
   font-weight: var(--peso-forte);
   font-size: var(--fs-md);
   text-decoration: none;
+  white-space: nowrap;
   box-sizing: border-box;
+  transition: transform .15s ease, filter .15s ease, background-color .15s ease, color .15s ease;
+}
+
+.botao:active {
+  transform: scale(.97);
 }
 
 .botao-principal {
@@ -196,19 +271,34 @@ a:focus-visible {
   color: var(--cor-superficie);
 }
 
+.botao-principal:hover {
+  filter: brightness(1.25);
+}
+
 .botao-secundario {
   background: transparent;
   color: var(--cor-primaria);
 }
 
-/* Hero */
+.botao-secundario:hover {
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+}
+
+/* Hero: título largo em cima; embaixo, o texto e a foto com a conversa por cima */
 .hero {
-  padding: var(--esp-8) 0 var(--esp-7);
+  padding: var(--esp-6) 0 var(--esp-7);
+}
+
+.hero-grade {
+  display: grid;
+  gap: var(--esp-5);
 }
 
 .hero h1 {
-  font-size: var(--fs-3xl);
-  margin: 0 0 var(--esp-4);
+  margin: 0;
+  font-size: var(--site-titulo);
+  letter-spacing: -.02em;
 }
 
 .hero-botoes {
@@ -216,6 +306,10 @@ a:focus-visible {
   flex-wrap: wrap;
   gap: var(--esp-3);
   margin-top: var(--esp-5);
+}
+
+.hero-botoes .botao {
+  flex: 1 1 100%;
 }
 
 .sobretitulo {
@@ -226,58 +320,56 @@ a:focus-visible {
 }
 
 .hero-texto {
-  max-width: 60ch;
+  margin: 0;
+  max-width: 42ch;
   font-size: var(--fs-lg);
 }
 
-/* Hero: a foto ocupa o fundo inteiro e o texto fica num card por cima.
-   Foto e card dividem a mesma célula da grade; o card define a altura. */
-.hero-grade {
-  display: grid;
-}
-
-.hero-imagem,
-.hero-conteudo {
-  grid-area: 1 / 1;
+.hero-palco {
+  position: relative;
 }
 
 .hero-imagem img {
-  height: 100%;
+  aspect-ratio: 4 / 3;
 }
 
-/* Card quase opaco: a foto aparece por trás,
-   mas as letras ficam sempre sobre um fundo claro (contraste garantido) */
-.hero-conteudo {
+/* No celular a conversa entra um pouco por cima da foto, sem escondê-la */
+.conversa-hero {
   position: relative;
-  z-index: 1;
-  align-self: end;
-  margin: var(--esp-8) var(--esp-3) var(--esp-3);
-  padding: var(--esp-5);
-  background: color-mix(in srgb, var(--cor-fundo) 95%, transparent);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
+  margin: calc(-1 * var(--esp-7)) var(--esp-3) 0;
+  box-shadow: var(--sombra-forte);
 }
 
-@media (min-width: 768px) {
+.hero-palco .nota {
+  margin: var(--esp-3) 0 0;
+}
+
+@media (min-width: 480px) {
+  .hero-botoes .botao {
+    flex: 0 1 auto;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    padding-top: var(--esp-7);
+  }
+
   .hero-grade {
-    aspect-ratio: 16 / 9;
+    grid-template-columns: 5fr 7fr;
+    column-gap: var(--esp-7);
   }
 
-  .hero-conteudo {
-    align-self: center;
-    justify-self: start;
-    max-width: 60%;
-    margin: var(--esp-7);
-    padding: var(--esp-6);
-  }
-
-  /* Linhas curtas: o título quebra em poucas linhas e o texto em blocos curtos */
   .hero h1 {
-    max-width: 16ch;
+    grid-column: 1 / -1;
   }
 
-  .hero-texto {
-    max-width: 42ch;
+  .conversa-hero {
+    position: absolute;
+    right: var(--esp-5);
+    bottom: var(--esp-8);
+    width: 360px;
+    margin: 0;
   }
 }
 
@@ -294,20 +386,55 @@ figure img {
   border-radius: var(--raio-card);
 }
 
-/* O problema: 2 linhas de 2 cards e o 250 t centralizado embaixo,
-   com a mesma largura dos outros (metade da linha menos meio espaço) */
-@media (min-width: 768px) {
-  .numero-central {
-    grid-column: 1 / -1;
-    justify-self: center;
-    width: calc(50% - var(--esp-2));
-    box-sizing: border-box;
-  }
+/* Componente: a conversa de WhatsApp, a peça central do site */
+.conversa {
+  overflow: hidden;
+  background: var(--cor-fundo);
+  border: 1px solid var(--cor-linha);
+  border-radius: var(--raio-card);
+}
+
+.conversa-topo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  padding: var(--esp-2) var(--esp-3);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+}
+
+.conversa-nome {
+  display: flex;
+  margin: 0;
+  flex-direction: column;
+  line-height: var(--altura-titulo);
+  font-size: var(--fs-sm);
+}
+
+.conversa-nome strong {
+  font-family: var(--fonte-titulo);
+  font-size: var(--fs-md);
+}
+
+.conversa-corpo {
+  padding: var(--esp-4);
+}
+
+/* Balão de mensagem: o canto reto aponta para quem enviou */
+.balao {
+  padding: var(--esp-3);
+  background: var(--cor-superficie);
+  border-radius: var(--esp-1) var(--raio-card) var(--raio-card) var(--raio-card);
+}
+
+.balao p {
+  margin: var(--esp-2) 0 0;
 }
 
 /* Seções */
 .secao h2 {
-  font-size: var(--fs-xl);
+  font-size: var(--site-secao);
+  letter-spacing: -.01em;
   margin: 0 0 var(--esp-3);
 }
 
@@ -316,19 +443,20 @@ figure img {
 }
 
 .secao-intro {
-  margin: 0 0 var(--esp-5);
-  color: var(--cor-texto-suave);
+  margin: 0 0 var(--esp-6);
+  max-width: 60ch;
+  font-size: var(--fs-lg);
 }
 
 .subtitulo {
-  font-size: var(--fs-lg);
-  margin: var(--esp-6) 0 var(--esp-4);
+  font-size: var(--fs-xl);
+  margin: var(--esp-7) 0 var(--esp-5);
 }
 
 /* Título dentro de uma subseção (ex.: os níveis dentro de "Como funciona") */
 .subtitulo-menor {
-  font-size: var(--fs-md);
-  margin: var(--esp-6) 0 var(--esp-3);
+  font-size: var(--fs-lg);
+  margin: var(--esp-7) 0 var(--esp-4);
 }
 
 .nota {
@@ -336,104 +464,151 @@ figure img {
   color: var(--cor-texto-suave);
 }
 
-/* Listas em grade: 1 coluna no celular, mais colunas na tela grande */
-.numeros,
-.passos,
-.missoes,
-.dispositivos,
-.equipe {
+/* O problema: faixa azul com um painel colorido atrás de cada número.
+   As cores vão por gravidade: vermelho nas mortes, depois laranja e amarelo,
+   e branco nos dados de contexto. Cada cor usa o texto certo do tokens.css. */
+.secao-problema {
+  --campo-fundo: var(--cor-primaria);
+  --campo-texto: var(--cor-superficie);
+  background: var(--campo-fundo);
+  color: var(--campo-texto);
+}
+
+:root:has(#tema:checked) .secao-problema {
+  --campo-fundo: var(--cor-escuro-azul-fundo);
+  --campo-texto: var(--cor-escuro-texto);
+}
+
+.secao-problema .secao-intro {
+  color: inherit;
+}
+
+.numeros {
   display: grid;
-  gap: var(--esp-4);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--esp-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-@media (min-width: 768px) {
-  .numeros,
-  .missoes,
-  .equipe {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .passos {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .dispositivos {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Cards (mesma base para número, passo, missão e dispositivo) */
-.numero,
-.passo,
-.missao,
-.dispositivo {
-  padding: var(--esp-5);
-  background: var(--cor-superficie);
-  border: 1px solid var(--cor-linha);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
-}
-
-.secao-clara .passo,
-.secao-clara .dispositivo {
-  background: var(--cor-fundo);
-}
-
-.passo h4,
-.missao h3,
-.dispositivo h3 {
-  font-size: var(--fs-lg);
-  margin: 0 0 var(--esp-2);
-}
-
-.passo p,
-.missao p,
-.dispositivo p {
-  margin: 0;
-}
-
-/* O problema */
 .numero {
   display: flex;
   flex-direction: column;
   gap: var(--esp-1);
+  padding: var(--esp-3);
+  border-radius: var(--raio-card);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
 }
 
 .numero-valor {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
-  font-size: var(--fs-3xl);
+  font-size: var(--site-numero);
+  letter-spacing: -.02em;
   line-height: var(--altura-titulo);
-  color: var(--cor-primaria);
+  white-space: nowrap;
 }
 
 .numero-fonte {
+  margin-top: auto;
+  padding-top: var(--esp-2);
   font-size: var(--fs-sm);
-  color: var(--cor-texto-suave);
 }
 
-/* Link da fonte com a cor do site (o azul padrão do navegador some no escuro) */
 .numero-fonte a {
-  color: var(--cor-primaria);
+  color: inherit;
+}
+
+.numero-alerta {
+  background: var(--cor-risco-alerta);
+  color: var(--cor-risco-alerta-texto);
+}
+
+.numero-atencao {
+  background: var(--cor-risco-atencao);
+  color: var(--cor-risco-atencao-texto);
+}
+
+/* O 65 é o maior painel: linha inteira no celular, altura inteira na tela grande */
+.numero-principal {
+  grid-column: 1 / -1;
+  padding: var(--esp-5);
+  background: var(--cor-risco-perigo);
+  color: var(--cor-risco-perigo-texto);
+}
+
+.numero-principal .numero-valor {
+  font-size: var(--site-gigante);
+  line-height: 1;
+}
+
+.numero-principal .numero-texto {
+  font-size: var(--fs-lg);
+  font-weight: var(--peso-forte);
+  max-width: 24ch;
+}
+
+@media (min-width: 900px) {
+  .numeros {
+    grid-template-columns: 5fr 3.5fr 3.5fr;
+    gap: var(--esp-4);
+  }
+
+  .numero {
+    padding: var(--esp-5);
+  }
+
+  .numero-principal {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    justify-content: center;
+    padding: var(--esp-6);
+  }
 }
 
 .destaque-texto {
   margin: var(--esp-6) 0 0;
-  font-size: var(--fs-lg);
+  max-width: 62ch;
+  font-size: var(--fs-xl);
   font-weight: var(--peso-forte);
+  line-height: 1.3;
 }
 
-/* Como funciona */
+/* Como funciona: passos ligados por uma linha, sem caixas */
+.passos {
+  display: grid;
+  gap: var(--esp-6);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.passo {
+  position: relative;
+  min-height: var(--toque-min);
+  padding-left: calc(var(--toque-min) + var(--esp-4));
+}
+
+.passo h4 {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--esp-2);
+}
+
+.passo p {
+  margin: 0;
+}
+
 .passo-numero {
+  position: absolute;
+  top: 0;
+  left: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: var(--toque-min);
   height: var(--toque-min);
-  margin-bottom: var(--esp-3);
   border-radius: var(--raio-botao);
   background: var(--cor-primaria);
   color: var(--cor-superficie);
@@ -442,27 +617,34 @@ figure img {
   font-size: var(--fs-lg);
 }
 
-/* Componente: alerta (é o único com sombra forte) */
-.card-alerta {
-  max-width: 480px;
-  margin: var(--esp-6) 0 0;
-  padding: var(--esp-5);
-  background: var(--cor-superficie);
-  border: 1px solid var(--cor-linha);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-forte);
+/* A linha que liga um passo ao próximo */
+.passo:not(:last-child)::before {
+  content: "";
+  position: absolute;
+  top: var(--toque-min);
+  bottom: calc(-1 * var(--esp-6));
+  left: calc(var(--toque-min) / 2 - 2px);
+  width: var(--esp-1);
+  background: var(--cor-primaria);
 }
 
-.card-alerta-titulo {
-  margin: 0 0 var(--esp-3);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-  color: var(--cor-texto-suave);
-}
+@media (min-width: 768px) {
+  .passos {
+    grid-template-columns: repeat(3, 1fr);
+  }
 
-.card-alerta-texto {
-  margin: var(--esp-3) 0 0;
-  font-size: var(--fs-lg);
+  .passo {
+    padding: calc(var(--toque-min) + var(--esp-4)) 0 0;
+  }
+
+  .passo:not(:last-child)::before {
+    top: calc(var(--toque-min) / 2 - 2px);
+    right: calc(-1 * var(--esp-6));
+    bottom: auto;
+    left: var(--toque-min);
+    width: auto;
+    height: var(--esp-1);
+  }
 }
 
 /* Componente: selo de risco (sempre cor + palavra) */
@@ -478,50 +660,130 @@ figure img {
 .selo-normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
 .selo-atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
 .selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.selo-perigo     { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
+.selo-perigo     { background: var(--cor-risco-perigo);     color: var(--cor-risco-perigo-texto); }
 
-/* Níveis lado a lado (2 no celular, 4 na tela grande), com a regra embaixo do selo */
-.niveis-risco {
+/* Níveis: a pessoa escolhe um nível e a mensagem ao lado muda. Sem JavaScript:
+   cada linha é o rótulo de um botão de opção, e o :has() mostra o balão certo. */
+.niveis-bloco {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  gap: var(--esp-5);
+}
+
+.niveis-risco {
+  position: relative; /* segura os botões de opção escondidos aqui, sem pulo de rolagem */
+  display: grid;
+  gap: var(--esp-1);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.nivel {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
   gap: var(--esp-3);
+  min-height: var(--toque-min);
+  padding: var(--esp-3);
+  border-radius: var(--raio-campo);
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+
+.nivel .selo-risco {
+  justify-self: start;
+}
+
+.nivel:hover {
+  background: var(--cor-fundo);
+}
+
+/* O nível escolhido ganha fundo e anel, para não depender só da cor */
+.nivel-input:checked + .nivel {
+  background: var(--cor-fundo);
+  box-shadow: inset 0 0 0 2px var(--cor-texto);
+}
+
+.nivel-input:focus-visible + .nivel {
+  box-shadow: var(--foco);
+}
+
+.balao-nivel {
+  display: none;
+}
+
+.niveis-bloco:has(#nivel-normal:checked)  .balao-normal,
+.niveis-bloco:has(#nivel-atencao:checked) .balao-atencao,
+.niveis-bloco:has(#nivel-alerta:checked)  .balao-alerta,
+.niveis-bloco:has(#nivel-perigo:checked)  .balao-perigo {
+  display: block;
+}
+
+/* Navegador sem :has(): mostra as quatro mensagens, nada se perde */
+@supports not selector(:has(*)) {
+  .balao-nivel {
+    display: block;
+    margin-top: var(--esp-3);
+  }
+}
+
+@media (min-width: 900px) {
+  .niveis-bloco {
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--esp-7);
+  }
+}
+
+/* Gamificação (único lugar com --cor-destaque): lista de missões + ranking em barras */
+.gamificacao-grade {
+  display: grid;
+  gap: var(--esp-6);
+}
+
+.missoes {
+  display: grid;
+  gap: var(--esp-5);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-@media (min-width: 768px) {
-  .niveis-risco {
-    grid-template-columns: repeat(4, 1fr);
-  }
+.missao {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  column-gap: var(--esp-4);
+  align-items: center;
 }
 
-.nivel {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--esp-2);
-  padding: var(--esp-4);
-  background: var(--cor-fundo);
-  border: 1px solid var(--cor-linha);
-  border-radius: var(--raio-card);
+.missao h3 {
+  font-size: var(--fs-lg);
+  margin: 0 0 var(--esp-1);
 }
 
-/* Gamificação (único lugar com --cor-destaque) */
+.missao p {
+  grid-column: 1;
+  margin: 0;
+}
+
 .pontos {
-  display: inline-block;
-  margin-top: var(--esp-3);
   font-weight: var(--peso-forte);
   color: var(--cor-destaque);
+  white-space: nowrap;
+}
+
+.missao .pontos {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
 }
 
 .ranking {
-  margin-top: var(--esp-6);
   padding: var(--esp-5);
   background: var(--cor-superficie);
-  border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
 }
 
 .ranking h3 {
@@ -539,8 +801,23 @@ figure img {
 }
 
 .ranking-lista .pontos {
-  margin: 0 0 0 var(--esp-2);
+  float: right;
 }
+
+/* Barra proporcional aos pontos: 1.240 = 100%, 980 = 79%, 760 = 61% */
+.ranking-lista li::after {
+  content: "";
+  display: block;
+  clear: both;
+  width: 100%;
+  height: var(--esp-2);
+  margin-top: var(--esp-1);
+  border-radius: var(--raio-botao);
+  background: var(--cor-destaque);
+}
+
+.ranking-lista li:nth-child(2)::after { width: 79%; }
+.ranking-lista li:nth-child(3)::after { width: 61%; }
 
 .link-app {
   display: inline-flex;
@@ -551,21 +828,81 @@ figure img {
   color: var(--cor-primaria);
 }
 
-/* Hardware */
+@media (min-width: 900px) {
+  .gamificacao-grade {
+    grid-template-columns: 7fr 5fr;
+    align-items: start;
+    gap: var(--esp-7);
+  }
+}
+
+/* Hardware: painéis largos, um para cada gadget */
+.dispositivos {
+  display: grid;
+  gap: var(--esp-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.dispositivo {
+  padding: var(--esp-5);
+  background: var(--cor-fundo);
+  border-radius: var(--raio-card);
+}
+
+.dispositivo h3 {
+  font-size: var(--fs-xl);
+  margin: 0 0 var(--esp-2);
+}
+
+.dispositivo p {
+  margin: 0;
+}
+
 .dispositivo-itens {
   margin: var(--esp-3) 0 0;
   padding-left: var(--esp-5);
 }
 
+/* Bueiro na tela grande: desenho à esquerda, explicação à direita */
+@media (min-width: 900px) {
+  .dispositivo {
+    padding: var(--esp-6);
+  }
+
+  .dispositivo-bueiro {
+    display: grid;
+    grid-template-columns: 6fr 5fr;
+    grid-template-rows: auto auto auto 1fr;
+    column-gap: var(--esp-7);
+  }
+
+  .dispositivo-bueiro > * {
+    grid-column: 2;
+  }
+
+  .dispositivo-bueiro .ilustracao-bueiro {
+    grid-column: 1;
+    grid-row: 1 / -1;
+    align-self: center;
+    margin: 0;
+  }
+
+  .dispositivo-bueiro .legenda-numerada {
+    margin-top: var(--esp-4);
+  }
+}
+
 /* Fluxo do Sensor ALERA: o que mede → ESP32 → como avisa (slide 16 do PowerPoint) */
 .fluxo-sensor {
   display: grid;
-  gap: var(--esp-1);
-  margin: var(--esp-3) 0;
+  gap: var(--esp-2);
+  margin: var(--esp-4) 0;
 }
 
 .fluxo-titulo {
-  margin: var(--esp-3) 0 var(--esp-1);
+  margin: var(--esp-4) 0 var(--esp-2);
   font-size: var(--fs-md);
 }
 
@@ -573,8 +910,7 @@ figure img {
   margin-top: 0;
 }
 
-/* Lista compacta: "Nome: descrição" numa linha só, para o card
-   ficar com a mesma altura do Bueiro ALERA */
+/* Lista compacta: "Nome: descrição" */
 .fluxo-lista {
   display: grid;
   gap: var(--esp-1);
@@ -588,13 +924,17 @@ figure img {
 
 .fluxo-seta {
   justify-self: center;
+  font-size: var(--fs-lg);
   color: var(--cor-texto-suave);
   line-height: 1;
 }
 
 /* O ESP32 é o centro do fluxo: bloco escuro como no PowerPoint */
 .fluxo-esp {
-  padding: var(--esp-2) var(--esp-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-1);
+  padding: var(--esp-3);
   background: var(--cor-primaria);
   color: var(--cor-superficie);
   border-radius: var(--raio-campo);
@@ -604,23 +944,47 @@ figure img {
 
 .fluxo-esp strong {
   font-family: var(--fonte-titulo);
-  font-size: var(--fs-md);
-  margin-right: var(--esp-1);
+  font-size: var(--fs-lg);
 }
 
+/* Na tela grande o fluxo corre de lado, e as setas giram junto */
+@media (min-width: 900px) {
+  .fluxo-sensor {
+    grid-template-columns: 1fr auto 220px auto 1fr;
+    align-items: center;
+    gap: var(--esp-4);
+    margin: var(--esp-5) 0;
+  }
+
+  .fluxo-seta {
+    transform: rotate(-90deg);
+  }
+}
+
+/* Limites: selo numa coluna e regra na outra, para todos alinharem */
 .limites-sensor {
   display: grid;
-  gap: var(--esp-1);
+  grid-template-columns: max-content 1fr;
+  align-items: center;
+  gap: var(--esp-2) var(--esp-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .limites-sensor li {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--esp-2);
+  display: contents;
+}
+
+.limites-sensor .selo-risco {
+  justify-self: start;
+}
+
+/* Na tela grande os 4 limites ficam em duas colunas, sem sobrar meio painel vazio */
+@media (min-width: 900px) {
+  .limites-sensor {
+    grid-template-columns: max-content 1fr max-content 1fr;
+  }
 }
 
 /* Ilustração do Bueiro ALERA (SVG). Só tokens: muda sozinha no modo escuro.
@@ -691,6 +1055,19 @@ figure img {
   font-size: var(--fs-sm);
 }
 
+/* No celular o desenho encolhe: os valores abaixo são em unidades do desenho
+   (480 de largura), maiores para o texto ficar com uns 13px na tela.
+   As legendas menores saem, porque não cabem e a lista logo abaixo já explica. */
+@media (max-width: 599px) {
+  .ib-rotulo { font-size: 22px; }
+  .ib-esp-sub,
+  .ib-whats-sub { display: none; }
+  .ib-esp-texto,
+  .ib-whats-texto { font-size: 24px; transform: translateY(8px); }
+  .ib-numero circle { r: 15px; }
+  .ib-numero text { font-size: 20px; transform: translateY(3px); }
+}
+
 .legenda-numerada {
   margin: 0;
   padding-left: var(--esp-5);
@@ -700,23 +1077,37 @@ figure img {
   padding: var(--esp-1) 0;
 }
 
+/* Chamada final */
+.chamada-final {
+  text-align: center;
+}
+
 /* Quem somos */
+.equipe {
+  display: grid;
+  gap: var(--esp-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+@media (min-width: 600px) {
+  .equipe {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .equipe {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
 .integrante {
   display: flex;
   align-items: center;
   gap: var(--esp-3);
   font-weight: var(--peso-forte);
-}
-
-.integrante-dados {
-  display: flex;
-  flex-direction: column;
-}
-
-.integrante-dados small {
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-texto);
-  color: var(--cor-texto-suave);
 }
 
 .integrante-iniciais {
@@ -733,31 +1124,32 @@ figure img {
   font-size: var(--fs-sm);
 }
 
-/* Chamada final */
-.chamada-final {
-  text-align: center;
-}
-
 /* Rodapé */
 .rodape {
-  padding: var(--esp-6) 0;
+  padding: var(--esp-7) 0 var(--esp-6);
   background: var(--cor-primaria);
   color: var(--cor-superficie);
 }
 
-/* Mesma marca do header */
+/* A marca volta bem grande para fechar a página */
 .rodape-logo {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
-  font-size: var(--fs-xl);
+  font-size: clamp(38px, 12vw, 144px);
   letter-spacing: .04em;
-  margin: 0;
+  line-height: 1;
+  margin: 0 0 var(--esp-4);
+}
+
+.rodape-logo .logo-icone {
+  width: 1em;
+  height: 1em;
 }
 
 .rodape-lista {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-2) var(--esp-5);
+  gap: 0 var(--esp-5);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -770,26 +1162,80 @@ figure img {
   color: var(--cor-superficie);
 }
 
+/* Referências recolhidas: abre ao tocar, sem JavaScript */
 .referencias {
-  margin-top: var(--esp-6);
+  margin: var(--esp-5) 0;
+}
+
+.referencias summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+  max-width: 320px;
+  min-height: var(--toque-min);
+  border-radius: var(--raio-campo);
+  list-style: none;
+  cursor: pointer;
+}
+
+.referencias summary::-webkit-details-marker {
+  display: none;
+}
+
+.referencias summary::after {
+  content: "+";
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+
+.referencias details[open] summary::after {
+  content: "\2212"; /* sinal de menos */
 }
 
 .referencias h2 {
   font-size: var(--fs-lg);
-  margin: 0 0 var(--esp-3);
+  margin: 0;
 }
 
 .referencias-lista {
   display: grid;
   gap: var(--esp-3);
-  margin: 0;
+  margin: var(--esp-3) 0 0;
   padding: 0;
   list-style: none;
-  font-size: var(--fs-sm);
 }
 
 /* Links das referências ficam no meio do texto: não viram bloco de 48px */
 .referencias-lista a {
   display: inline;
   min-height: 0;
+}
+
+/* Movimento: só quem aceita animação, e nada depende dele para aparecer */
+@media (prefers-reduced-motion: no-preference) {
+  /* O balão chega como uma mensagem: ao abrir a página e ao trocar de nível */
+  @keyframes chegar {
+    from { opacity: 0; transform: translateY(var(--esp-3)); }
+  }
+
+  .balao {
+    animation: chegar .35s ease-out;
+  }
+
+  /* As partes de cada seção sobem ao entrar na tela (só em navegador que suporta) */
+  @supports (animation-timeline: view()) {
+    .numero,
+    .passo,
+    .missao,
+    .ranking,
+    .dispositivo,
+    .integrante {
+      animation: chegar linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
 }
