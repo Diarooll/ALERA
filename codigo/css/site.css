@@ -465,8 +465,8 @@ figure img {
 }
 
 /* O problema: faixa azul com um painel colorido atrás de cada número.
-   As cores vão por gravidade: vermelho nas mortes, depois laranja e amarelo,
-   e branco nos dados de contexto. Cada cor usa o texto certo do tokens.css. */
+   Só o 65 tem cor cheia. Depois vêm laranja e amarelo em tom suave,
+   e branco nos dados de contexto. */
 .secao-problema {
   --campo-fundo: var(--cor-primaria);
   --campo-texto: var(--cor-superficie);
@@ -521,21 +521,22 @@ figure img {
   color: inherit;
 }
 
+/* Tons suaves: 25% da cor sobre o cartão, então se ajustam sozinhos no modo escuro.
+   Texto: 13,09:1 e 14,67:1 no claro; 9,15:1 e 7,53:1 no escuro */
 .numero-alerta {
-  background: var(--cor-risco-alerta);
-  color: var(--cor-risco-alerta-texto);
+  background: color-mix(in srgb, var(--cor-risco-alerta) 25%, var(--cor-superficie));
 }
 
 .numero-atencao {
-  background: var(--cor-risco-atencao);
-  color: var(--cor-risco-atencao-texto);
+  background: color-mix(in srgb, var(--cor-risco-atencao) 25%, var(--cor-superficie));
 }
 
 /* O 65 é o maior painel: linha inteira no celular, altura inteira na tela grande */
 .numero-principal {
   grid-column: 1 / -1;
   padding: var(--esp-5);
-  background: var(--cor-risco-perigo);
+  /* Vermelho mais fechado, para pesar menos sobre o azul. Texto branco: 6,67:1 */
+  background: color-mix(in srgb, var(--cor-risco-perigo) 80%, var(--cor-risco-alerta-texto));
   color: var(--cor-risco-perigo-texto);
 }
 
