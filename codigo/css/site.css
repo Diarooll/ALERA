@@ -1,12 +1,12 @@
 /* ALERA · site.css
    Estilos de ../index.html (site). Só var(--token) do tokens.css. Mobile first.
 
-   Direção visual, "A mensagem": a peça central do site é o alerta que chega no WhatsApp.
+   Direção visual, "A mensagem": a peça central do site é o alerta com o nome da rua.
    Cada seção tem composição própria, em vez do mesmo cartão repetido:
-   - hero: conversa por cima da foto
+   - hero: o alerta do app por cima da foto
    - o problema: faixa de cor com o número 65 enorme, sem caixas
    - como funciona: passos ligados por uma linha
-   - níveis: a pessoa escolhe o nível e a mensagem muda (sem JavaScript)
+   - fase 1: prévia da tela do app; a pessoa escolhe o nível e a tela muda (sem JavaScript)
    - gamificação: lista de missões e ranking em barras
    - gadgets: painéis largos, com fluxo do sensor e desenho do bueiro */
 
@@ -285,7 +285,7 @@ summary:focus-visible {
   color: var(--cor-superficie);
 }
 
-/* Hero: título largo em cima; embaixo, o texto e a foto com a conversa por cima */
+/* Hero: título largo em cima; embaixo, o texto e a foto com o alerta por cima */
 .hero {
   padding: var(--esp-6) 0 var(--esp-7);
 }
@@ -333,11 +333,42 @@ summary:focus-visible {
   aspect-ratio: 4 / 3;
 }
 
-/* No celular a conversa entra um pouco por cima da foto, sem escondê-la */
-.conversa-hero {
+/* Cartão do alerta: no celular entra um pouco por cima da foto, sem escondê-la */
+.alerta-hero {
   position: relative;
+  overflow: hidden;
   margin: calc(-1 * var(--esp-7)) var(--esp-3) 0;
+  background: var(--cor-fundo);
+  border-radius: var(--raio-card);
   box-shadow: var(--sombra-forte);
+}
+
+.alerta-hero-faixa {
+  padding: var(--esp-3) var(--esp-4) var(--esp-7);
+  background: var(--previa-topo);
+  color: var(--previa-topo-texto);
+}
+
+.alerta-hero-faixa .previa-rua {
+  font-size: var(--fs-xl);
+}
+
+.alerta-hero-corpo {
+  padding: 0 var(--esp-4) var(--esp-4);
+}
+
+.alerta-hero-corpo .previa-selo {
+  margin-top: -28px; /* o selo sobe em cima da faixa azul, como no app */
+}
+
+.alerta-hero-corpo .previa-ordem {
+  margin-top: var(--esp-3);
+  font-size: var(--fs-lg);
+}
+
+.alerta-hero-abrigo {
+  margin: var(--esp-2) 0 var(--esp-3);
+  color: var(--cor-texto-suave);
 }
 
 .hero-palco .nota {
@@ -364,7 +395,11 @@ summary:focus-visible {
     grid-column: 1 / -1;
   }
 
-  .conversa-hero {
+}
+
+/* Só com a foto bem grande o cartão fica todo em cima dela, sem escondê-la */
+@media (min-width: 1200px) {
+  .alerta-hero {
     position: absolute;
     right: var(--esp-5);
     bottom: var(--esp-8);
@@ -384,51 +419,6 @@ figure img {
   height: auto;
   object-fit: cover;
   border-radius: var(--raio-card);
-}
-
-/* Componente: a conversa de WhatsApp, a peça central do site */
-.conversa {
-  overflow: hidden;
-  background: var(--cor-fundo);
-  border: 1px solid var(--cor-linha);
-  border-radius: var(--raio-card);
-}
-
-.conversa-topo {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  padding: var(--esp-2) var(--esp-3);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-}
-
-.conversa-nome {
-  display: flex;
-  margin: 0;
-  flex-direction: column;
-  line-height: var(--altura-titulo);
-  font-size: var(--fs-sm);
-}
-
-.conversa-nome strong {
-  font-family: var(--fonte-titulo);
-  font-size: var(--fs-md);
-}
-
-.conversa-corpo {
-  padding: var(--esp-4);
-}
-
-/* Balão de mensagem: o canto reto aponta para quem enviou */
-.balao {
-  padding: var(--esp-3);
-  background: var(--cor-superficie);
-  border-radius: var(--esp-1) var(--raio-card) var(--raio-card) var(--raio-card);
-}
-
-.balao p {
-  margin: var(--esp-2) 0 0;
 }
 
 /* Seções */
@@ -663,76 +653,468 @@ figure img {
 .selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
 .selo-perigo     { background: var(--cor-risco-perigo);     color: var(--cor-risco-perigo-texto); }
 
-/* Níveis: a pessoa escolhe um nível e a mensagem ao lado muda. Sem JavaScript:
-   cada linha é o rótulo de um botão de opção, e o :has() mostra o balão certo. */
-.niveis-bloco {
-  display: grid;
-  gap: var(--esp-5);
+/* Prévia do app na Fase 1: a tela de Alerta, com o mesmo desenho de app.css.
+   Os valores seguem o app (raio de 10px, botão de 52px, selo de 56px) e as cores vêm dos tokens.
+   Ela não carrega o app.css porque os nomes de classe dos dois arquivos colidem. */
+.previa-intro {
+  margin: 0 0 var(--esp-4);
 }
 
+.previa,
+.alerta-hero {
+  --previa-raio: 10px;
+  --previa-topo: var(--cor-primaria);
+  --previa-topo-texto: var(--cor-superficie);
+  --mapa-fundo: var(--cor-superficie);
+  --mapa-rua: var(--cor-linha);
+}
+
+.previa {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "marca"
+    "faixa"
+    "corpo"
+    "menu";
+  overflow: hidden;
+  background: var(--previa-topo);
+  border-radius: var(--raio-card);
+}
+
+/* No escuro a faixa continua azul e com texto claro, como na seção do problema */
+:root:has(#tema:checked) .previa,
+:root:has(#tema:checked) .alerta-hero {
+  --previa-topo: var(--cor-escuro-azul-fundo);
+  --previa-topo-texto: var(--cor-escuro-texto);
+}
+
+.previa-icone {
+  display: block;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.previa-marca {
+  grid-area: marca;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--esp-8);
+  padding: 0 var(--esp-4);
+  background: var(--previa-topo);
+  color: var(--previa-topo-texto);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .04em;
+  text-decoration: none;
+}
+
+/* Menu: abas embaixo no celular, como no app */
+.previa-menu {
+  grid-area: menu;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--cor-superficie);
+  border-top: 1px solid var(--cor-linha);
+}
+
+.previa-aba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--esp-8);
+  color: var(--cor-texto-suave);
+  font-size: var(--fs-sm);
+  text-align: center;
+  text-decoration: none;
+}
+
+.previa-aba:hover {
+  color: var(--cor-primaria);
+}
+
+.previa-aba-ativa {
+  color: var(--cor-primaria);
+  font-weight: var(--peso-forte);
+  box-shadow: inset 0 3px 0 var(--cor-primaria);
+}
+
+/* O Ligar 199 do topo só existe na tela grande; no celular fica abaixo da rota */
+.previa-ligar {
+  display: none;
+}
+
+.previa-faixa {
+  grid-area: faixa;
+  padding: var(--esp-3) var(--esp-4) var(--esp-7);
+  background: var(--previa-topo);
+  color: var(--previa-topo-texto);
+}
+
+.previa-rua {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-2xl);
+  line-height: var(--altura-titulo);
+  letter-spacing: -.015em;
+}
+
+.previa-apoio {
+  margin: var(--esp-1) 0 0;
+}
+
+.previa-corpo {
+  grid-area: corpo;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--esp-5);
+  padding: 0 var(--esp-4) var(--esp-5);
+  background: var(--cor-fundo);
+}
+
+.previa-estados {
+  margin-top: -28px; /* o selo sobe em cima da faixa azul */
+}
+
+/* Só o estado do nível escolhido aparece */
+.previa-estado {
+  display: none;
+}
+
+.previa:has(#nivel-normal:checked)  .previa-estado-normal,
+.previa:has(#nivel-atencao:checked) .previa-estado-atencao,
+.previa:has(#nivel-alerta:checked)  .previa-estado-alerta,
+.previa:has(#nivel-perigo:checked)  .previa-estado-perigo {
+  display: block;
+}
+
+/* Navegador sem :has(): mostra os quatro estados, nada se perde */
+@supports not selector(:has(*)) {
+  .previa-estado {
+    display: block;
+    margin-bottom: var(--esp-5);
+  }
+}
+
+.previa-selo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 56px;
+  margin: 0;
+  padding: var(--esp-2) var(--esp-4);
+  box-sizing: border-box;
+  border-radius: var(--previa-raio);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .05em;
+}
+
+.previa-selo .previa-icone {
+  stroke-width: 2.5;
+}
+
+.previa-ordem {
+  margin: var(--esp-4) 0 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-xl);
+  line-height: 1.22;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+
+.previa-medidor {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-1);
+  margin-top: var(--esp-4);
+}
+
+.previa-medidor span {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--cor-linha);
+}
+
+.previa-medidor .previa-cheia {
+  background: var(--cor-primaria);
+}
+
+.previa-legenda {
+  margin: var(--esp-1) 0 0;
+  color: var(--cor-texto-suave);
+  font-size: var(--fs-sm);
+}
+
+/* Lista dos níveis: cada linha é o rótulo de um botão de opção */
 .niveis-risco {
   position: relative; /* segura os botões de opção escondidos aqui, sem pulo de rolagem */
-  display: grid;
-  gap: var(--esp-1);
+  min-width: 0;
   margin: 0;
   padding: 0;
   border: 0;
+  border-top: 1px solid var(--cor-linha);
 }
 
 .nivel {
   display: grid;
-  grid-template-columns: 96px 1fr;
+  grid-template-columns: 14px 1fr;
   align-items: center;
-  gap: var(--esp-3);
+  gap: var(--esp-1) var(--esp-3);
   min-height: var(--toque-min);
   padding: var(--esp-3);
-  border-radius: var(--raio-campo);
+  border-bottom: 1px solid var(--cor-linha);
+  color: var(--cor-texto-suave);
   cursor: pointer;
   transition: background-color .15s ease;
 }
 
-.nivel .selo-risco {
-  justify-self: start;
-}
-
 .nivel:hover {
-  background: var(--cor-fundo);
+  background: var(--cor-superficie);
 }
 
-/* O nível escolhido ganha fundo e anel, para não depender só da cor */
+.nivel-cor {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.nivel-nome {
+  color: var(--cor-texto);
+  font-size: var(--fs-sm);
+  letter-spacing: .04em;
+}
+
+.nivel-regra {
+  grid-column: 2;
+}
+
+/* O nível escolhido: contorno e texto mais forte, como o nível atual no app */
 .nivel-input:checked + .nivel {
-  background: var(--cor-fundo);
-  box-shadow: inset 0 0 0 2px var(--cor-texto);
+  border-bottom-color: transparent;
+  border-radius: var(--raio-campo);
+  background: var(--cor-superficie);
+  box-shadow: inset 0 0 0 2px var(--cor-primaria);
+  color: var(--cor-texto);
+  font-weight: var(--peso-forte);
 }
 
 .nivel-input:focus-visible + .nivel {
   box-shadow: var(--foco);
 }
 
-.balao-nivel {
+/* Mapa: a rua só aparece alagada em ALERTA e PERIGO, na cor do nível */
+.previa-mapa {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-bottom: var(--esp-4);
+  background: var(--mapa-fundo);
+  border-radius: var(--previa-raio);
+}
+
+.previa-mapa-risco,
+.previa:has(#nivel-alerta:checked) .previa-mapa-livre,
+.previa:has(#nivel-perigo:checked) .previa-mapa-livre {
   display: none;
 }
 
-.niveis-bloco:has(#nivel-normal:checked)  .balao-normal,
-.niveis-bloco:has(#nivel-atencao:checked) .balao-atencao,
-.niveis-bloco:has(#nivel-alerta:checked)  .balao-alerta,
-.niveis-bloco:has(#nivel-perigo:checked)  .balao-perigo {
+.previa:has(#nivel-alerta:checked) .previa-mapa-risco,
+.previa:has(#nivel-perigo:checked) .previa-mapa-risco {
   display: block;
 }
 
-/* Navegador sem :has(): mostra as quatro mensagens, nada se perde */
-@supports not selector(:has(*)) {
-  .balao-nivel {
-    display: block;
-    margin-top: var(--esp-3);
-  }
+.mapa-rua,
+.mapa-perigo   { stroke-width: 14; }
+.mapa-rua      { stroke: var(--mapa-rua); }
+.mapa-perigo   { stroke: var(--cor-risco-alerta); }
+.previa:has(#nivel-perigo:checked) .mapa-perigo { stroke: var(--cor-risco-perigo); }
+.mapa-caminho  { fill: none; stroke: var(--cor-primaria); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+.mapa-ponto    { fill: var(--cor-primaria); stroke: var(--mapa-fundo); stroke-width: 3; }
+
+.mapa-rotulo {
+  fill: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: 13px;
+  font-weight: var(--peso-forte);
+  paint-order: stroke; /* contorno da cor do mapa, pra ler em cima das ruas */
+  stroke: var(--mapa-fundo);
+  stroke-width: 4;
+  stroke-linejoin: round;
 }
 
+.previa-destino {
+  display: grid;
+  gap: var(--esp-4);
+}
+
+.previa-destino p {
+  margin: 0;
+}
+
+.previa-destino-rotulo {
+  color: var(--cor-texto-suave);
+}
+
+.previa-destino-nome {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.25;
+}
+
+/* Botão do app: menos arredondado que o do site, de propósito, para mostrar como ele é */
+.previa-botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--esp-5);
+  box-sizing: border-box;
+  border-radius: var(--previa-raio);
+  background: var(--cor-primaria);
+  color: var(--cor-superficie);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-md);
+  text-align: center;
+  text-decoration: none;
+  transition: background-color .15s ease, transform .15s ease;
+}
+
+.previa-botao:hover {
+  background: color-mix(in srgb, var(--cor-primaria) 75%, var(--cor-texto));
+}
+
+.previa-botao:active {
+  transform: scale(.98);
+}
+
+.previa-botao-texto,
+.previa-botao-texto:hover {
+  margin-top: var(--esp-1);
+  background: transparent;
+  color: var(--cor-primaria);
+}
+
+.previa-botao-texto:hover {
+  text-decoration: underline;
+}
+
+.previa a:focus-visible {
+  box-shadow: var(--foco);
+}
+
+/* Na faixa azul o anel de foco é claro, para aparecer nos dois temas */
+.previa-marca:focus-visible,
+.previa-ligar:focus-visible {
+  box-shadow: inset 0 0 0 3px var(--previa-topo-texto);
+}
+
+/* Tela grande: menu no topo e duas colunas, como o app a partir de 900px */
 @media (min-width: 900px) {
-  .niveis-bloco {
-    grid-template-columns: 1fr 1fr;
+  .previa {
+    grid-template-columns: auto 1fr auto;
+    grid-template-areas:
+      "marca menu  ligar"
+      "faixa faixa faixa"
+      "corpo corpo corpo";
+  }
+
+  .previa-marca {
+    padding: 0 var(--esp-5) 0 var(--esp-6);
+  }
+
+  .previa-menu {
+    display: flex;
     align-items: center;
-    gap: var(--esp-7);
+    gap: var(--esp-1);
+    background: transparent;
+    border-top: 0;
+  }
+
+  .previa-aba {
+    flex-direction: row;
+    gap: var(--esp-2);
+    min-height: var(--toque-min);
+    padding: 0 var(--esp-3);
+    border-radius: var(--previa-raio);
+    color: var(--previa-topo-texto);
+    font-size: var(--fs-md);
+  }
+
+  .previa-aba:hover {
+    color: var(--previa-topo-texto);
+    box-shadow: inset 0 0 0 2px var(--previa-topo-texto);
+  }
+
+  .previa-aba-ativa,
+  .previa-aba-ativa:hover {
+    background: var(--cor-fundo);
+    color: var(--cor-texto);
+    box-shadow: none;
+  }
+
+  .previa-ligar {
+    grid-area: ligar;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--esp-2);
+    align-self: center;
+    min-height: var(--toque-min);
+    margin-right: var(--esp-6);
+    padding: 0 var(--esp-4);
+    border-radius: var(--previa-raio);
+    box-shadow: inset 0 0 0 2px var(--previa-topo-texto);
+    color: var(--previa-topo-texto);
+    font-weight: var(--peso-forte);
+    text-decoration: none;
+  }
+
+  .previa-ligar:hover {
+    background: var(--previa-topo-texto);
+    color: var(--previa-topo);
+  }
+
+  .previa-faixa {
+    padding: var(--esp-3) var(--esp-6) var(--esp-7);
+  }
+
+  .previa-corpo {
+    grid-template-columns: 11fr 10fr;
+    grid-template-rows: auto 1fr;
+    gap: var(--esp-5) var(--esp-7);
+    padding: 0 var(--esp-6) var(--esp-6);
+  }
+
+  .previa-rota {
+    grid-column: 2;
+    grid-row: 1 / -1;
+    padding-top: var(--esp-5); /* o mapa começa abaixo da faixa azul */
+  }
+
+  .previa-destino {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+
+  .previa-destino .previa-botao {
+    width: auto;
   }
 }
 
@@ -1217,12 +1599,13 @@ figure img {
 
 /* Movimento: só quem aceita animação, e nada depende dele para aparecer */
 @media (prefers-reduced-motion: no-preference) {
-  /* O balão chega como uma mensagem: ao abrir a página e ao trocar de nível */
+  /* O alerta chega ao abrir a página, e a tela da prévia ao trocar de nível */
   @keyframes chegar {
     from { opacity: 0; transform: translateY(var(--esp-3)); }
   }
 
-  .balao {
+  .alerta-hero,
+  .previa-estado {
     animation: chegar .35s ease-out;
   }
 
