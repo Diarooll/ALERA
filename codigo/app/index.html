@@ -27,19 +27,45 @@
     <symbol id="i-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="i-seguir" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></symbol>
-    <symbol id="d-mapa" viewBox="0 0 320 200">
+    <!-- Mapa: as ruas são sempre as mesmas; cada abrigo tem o seu caminho e o seu ponto -->
+    <symbol id="d-mapa-base" viewBox="0 0 320 200">
       <line class="mapa__rua" x1="60" y1="0" x2="60" y2="200"/>
       <line class="mapa__rua" x1="0" y1="150" x2="320" y2="150"/>
       <line class="mapa__rua" x1="250" y1="0" x2="250" y2="200"/>
+      <line class="mapa__rua" x1="250" y1="70" x2="320" y2="70"/>
       <line class="mapa__perigo" x1="0" y1="40" x2="320" y2="40"/>
+      <text class="mapa__rotulo" x="96" y="26">Rua Exemplo · alagada</text>
+      <text class="mapa__rotulo" x="118" y="176">Rua da Paz</text>
+      <text class="mapa__rotulo" x="276" y="112" text-anchor="middle" transform="rotate(-90 276 112)">Av. Exemplo</text>
+      <text class="mapa__rotulo" x="76" y="105">Você</text>
+    </symbol>
+    <symbol id="d-rota-1" viewBox="0 0 320 200">
+      <use href="#d-mapa-base"/>
       <path class="mapa__caminho" d="M60 100 V150 H250 V110"/>
       <circle class="mapa__ponto" cx="60" cy="100" r="9"/>
       <path class="mapa__ponto" d="M238 98 L250 86 L262 98 V110 H238 Z"/>
-      <text class="mapa__rotulo" x="96" y="26">Rua Exemplo · alagada</text>
-      <text class="mapa__rotulo" x="118" y="176">Rua da Paz</text>
-      <text class="mapa__rotulo" x="276" y="124" text-anchor="middle" transform="rotate(-90 276 124)">Av. Exemplo</text>
-      <text class="mapa__rotulo" x="76" y="105">Você</text>
       <text class="mapa__rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
+    </symbol>
+    <symbol id="d-rota-2" viewBox="0 0 320 200">
+      <use href="#d-mapa-base"/>
+      <path class="mapa__caminho" d="M60 100 V150 H250 V168"/>
+      <circle class="mapa__ponto" cx="60" cy="100" r="9"/>
+      <path class="mapa__ponto" d="M238 178 L250 166 L262 178 V190 H238 Z"/>
+      <text class="mapa__rotulo" x="230" y="186" text-anchor="end">Abrigo</text>
+    </symbol>
+    <symbol id="d-rota-3" viewBox="0 0 320 200">
+      <use href="#d-mapa-base"/>
+      <path class="mapa__caminho" d="M60 100 V150 H288"/>
+      <circle class="mapa__ponto" cx="60" cy="100" r="9"/>
+      <path class="mapa__ponto" d="M288 150 L300 138 L312 150 V162 H288 Z"/>
+      <text class="mapa__rotulo" x="300" y="178" text-anchor="middle">Abrigo</text>
+    </symbol>
+    <symbol id="d-rota-4" viewBox="0 0 320 200">
+      <use href="#d-mapa-base"/>
+      <path class="mapa__caminho" d="M60 100 V150 H250 V70 H273"/>
+      <circle class="mapa__ponto" cx="60" cy="100" r="9"/>
+      <path class="mapa__ponto" d="M273 68 L285 56 L297 68 V80 H273 Z"/>
+      <text class="mapa__rotulo" x="318" y="98" text-anchor="end">Abrigo</text>
     </symbol>
   </svg>
 
@@ -97,15 +123,34 @@
           <p class="medidor__legenda" aria-hidden="true">Nível 3 de 4</p>
         </div>
 
+        <!-- .por-abrigo--N: só aparece o que for do abrigo salvo em Missões (regra no CSS) -->
         <div class="alerta__rota">
           <div class="mapa-caixa alerta__mapa">
-            <svg class="mapa" viewBox="0 0 320 200" role="img" aria-label="Mapa: saia de casa, vire à direita na Rua da Paz, suba a Av. Exemplo até o abrigo. A Rua Exemplo está alagada."><use href="#d-mapa"/></svg>
+            <svg class="mapa por-abrigo por-abrigo--1" viewBox="0 0 320 200" role="img" aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."><use href="#d-rota-1"/></svg>
+            <svg class="mapa por-abrigo por-abrigo--2" viewBox="0 0 320 200" role="img" aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."><use href="#d-rota-2"/></svg>
+            <svg class="mapa por-abrigo por-abrigo--3" viewBox="0 0 320 200" role="img" aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."><use href="#d-rota-3"/></svg>
+            <svg class="mapa por-abrigo por-abrigo--4" viewBox="0 0 320 200" role="img" aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."><use href="#d-rota-4"/></svg>
           </div>
           <div class="destino">
-            <div>
-              <p class="destino__rotulo">Abrigo mais perto</p>
+            <div class="por-abrigo por-abrigo--1">
+              <p class="destino__rotulo">Seu abrigo</p>
               <p class="destino__nome">Escola Municipal Exemplo</p>
               <p class="destino__info">600 m · 8 min a pé · aberto agora</p>
+            </div>
+            <div class="por-abrigo por-abrigo--2">
+              <p class="destino__rotulo">Seu abrigo</p>
+              <p class="destino__nome">Ginásio Exemplo</p>
+              <p class="destino__info">800 m · 11 min a pé · aberto agora</p>
+            </div>
+            <div class="por-abrigo por-abrigo--3">
+              <p class="destino__rotulo">Seu abrigo</p>
+              <p class="destino__nome">Igreja Exemplo</p>
+              <p class="destino__info">1 km · 14 min a pé · poucas vagas</p>
+            </div>
+            <div class="por-abrigo por-abrigo--4">
+              <p class="destino__rotulo">Seu abrigo</p>
+              <p class="destino__nome">Centro Comunitário Exemplo</p>
+              <p class="destino__info">1,4 km · 19 min a pé · abre só em nível de alerta</p>
             </div>
             <a class="botao" href="#rota">Ver rota segura</a>
           </div>
@@ -159,12 +204,27 @@
             <svg class="icone mapa-tema__sol" aria-hidden="true" focusable="false"><use href="#i-sol"/></svg>
             <span class="visualmente-oculto">Inverter cores do mapa</span>
           </label>
-          <svg class="mapa" viewBox="0 0 320 200" role="img" aria-label="Mapa: saia de casa, vire à direita na Rua da Paz, suba a Av. Exemplo até o abrigo. A Rua Exemplo está alagada."><use href="#d-mapa"/></svg>
+          <svg class="mapa por-abrigo por-abrigo--1" viewBox="0 0 320 200" role="img" aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."><use href="#d-rota-1"/></svg>
+          <svg class="mapa por-abrigo por-abrigo--2" viewBox="0 0 320 200" role="img" aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."><use href="#d-rota-2"/></svg>
+          <svg class="mapa por-abrigo por-abrigo--3" viewBox="0 0 320 200" role="img" aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."><use href="#d-rota-3"/></svg>
+          <svg class="mapa por-abrigo por-abrigo--4" viewBox="0 0 320 200" role="img" aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."><use href="#d-rota-4"/></svg>
         </div>
 
-        <div class="rota__destino">
+        <div class="rota__destino por-abrigo por-abrigo--1">
           <h2 class="rota__nome">Escola Municipal Exemplo</h2>
           <p class="destino__info"><strong class="rota__tempo">8 min a pé</strong> · 600 m · aberto agora</p>
+        </div>
+        <div class="rota__destino por-abrigo por-abrigo--2">
+          <h2 class="rota__nome">Ginásio Exemplo</h2>
+          <p class="destino__info"><strong class="rota__tempo">11 min a pé</strong> · 800 m · aberto agora</p>
+        </div>
+        <div class="rota__destino por-abrigo por-abrigo--3">
+          <h2 class="rota__nome">Igreja Exemplo</h2>
+          <p class="destino__info"><strong class="rota__tempo">14 min a pé</strong> · 1 km · poucas vagas</p>
+        </div>
+        <div class="rota__destino por-abrigo por-abrigo--4">
+          <h2 class="rota__nome">Centro Comunitário Exemplo</h2>
+          <p class="destino__info"><strong class="rota__tempo">19 min a pé</strong> · 1,4 km · abre só em nível de alerta</p>
         </div>
 
         <p class="rota__evitar nivel--alerta">
@@ -172,15 +232,35 @@
           ALERTA · Não passe pela Rua Exemplo: está alagada.
         </p>
 
-        <ol class="rota__passos">
+        <ol class="rota__passos por-abrigo por-abrigo--1">
           <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
           <li>Vire à direita na Rua da Paz e siga 300 m.</li>
           <li>Vire à esquerda na Av. Exemplo e suba 250 m.</li>
           <li>O abrigo fica no fim da quadra, portão azul.</li>
         </ol>
+        <ol class="rota__passos por-abrigo por-abrigo--2">
+          <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+          <li>Vire à direita na Rua da Paz e siga 300 m.</li>
+          <li>Vire à direita na Av. Exemplo e desça 450 m.</li>
+          <li>Entre no ginásio pela lateral.</li>
+        </ol>
+        <ol class="rota__passos por-abrigo por-abrigo--3">
+          <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+          <li>Vire à direita na Rua da Paz e siga 950 m.</li>
+          <li>A igreja fica no fim da rua. Tem poucas vagas: se estiver cheia, siga para o abrigo mais perto.</li>
+        </ol>
+        <ol class="rota__passos por-abrigo por-abrigo--4">
+          <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+          <li>Vire à direita na Rua da Paz e siga 300 m.</li>
+          <li>Vire à esquerda na Av. Exemplo e suba 700 m.</li>
+          <li>Vire à direita na rua lateral, antes da Rua Exemplo, e siga 350 m.</li>
+        </ol>
 
         <div class="rota__acoes">
-          <a class="botao" href="https://www.google.com/maps/dir/?api=1&amp;destination=Escola+Municipal+Exemplo+Juiz+de+Fora&amp;travelmode=walking" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          <a class="botao por-abrigo por-abrigo--1" href="https://www.google.com/maps/dir/?api=1&amp;destination=Escola+Municipal+Exemplo+Juiz+de+Fora&amp;travelmode=walking" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          <a class="botao por-abrigo por-abrigo--2" href="https://www.google.com/maps/dir/?api=1&amp;destination=Ginasio+Exemplo+Juiz+de+Fora&amp;travelmode=walking" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          <a class="botao por-abrigo por-abrigo--3" href="https://www.google.com/maps/dir/?api=1&amp;destination=Igreja+Exemplo+Juiz+de+Fora&amp;travelmode=walking" target="_blank" rel="noopener">Abrir no Google Maps</a>
+          <a class="botao por-abrigo por-abrigo--4" href="https://www.google.com/maps/dir/?api=1&amp;destination=Centro+Comunitario+Exemplo+Juiz+de+Fora&amp;travelmode=walking" target="_blank" rel="noopener">Abrir no Google Maps</a>
           <a class="botao botao--secundario" href="tel:199"><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-telefone"/></svg>Ligar 199 · Defesa Civil</a>
         </div>
       </div>
@@ -304,13 +384,13 @@
               <p class="detalhe__aviso">Prévia · abrigos de exemplo. Toque em um pino ou na lista.</p>
               <div class="mapa-caixa abrigos__mapa">
                 <svg class="mapa" viewBox="0 0 320 200" role="img" aria-label="Mapa de exemplo com sua localização e 4 abrigos por perto, numerados como na lista.">
-                  <line class="mapa__rua" x1="60" y1="0" x2="60" y2="200"/>
-                  <line class="mapa__rua" x1="0" y1="150" x2="320" y2="150"/>
-                  <line class="mapa__rua" x1="250" y1="0" x2="250" y2="200"/>
-                  <line class="mapa__perigo" x1="0" y1="40" x2="320" y2="40"/>
-                  <text class="mapa__rotulo" x="76" y="24">Rua Exemplo · alagada</text>
+                  <use href="#d-mapa-base"/>
+                  <!-- O caminho desenhado é o do abrigo marcado na lista ou no pino -->
+                  <path class="mapa__caminho previa previa--1" d="M60 100 V150 H250 V98"/>
+                  <path class="mapa__caminho previa previa--2" d="M60 100 V150 H250 V178"/>
+                  <path class="mapa__caminho previa previa--3" d="M60 100 V150 H300"/>
+                  <path class="mapa__caminho previa previa--4" d="M60 100 V150 H250 V68 H285"/>
                   <circle class="mapa__ponto" cx="60" cy="100" r="9"/>
-                  <text class="mapa__rotulo" x="76" y="105">Você</text>
                 </svg>
                 <label class="pino pino--1" for="abrigo-1"><span class="pino__numero">1</span><span class="visualmente-oculto">Escola Municipal Exemplo</span></label>
                 <label class="pino pino--2" for="abrigo-2"><span class="pino__numero">2</span><span class="visualmente-oculto">Ginásio Exemplo</span></label>
@@ -338,6 +418,8 @@
                   <label class="abrigos__opcao" for="abrigo-4"><span class="pino__numero">4</span><span class="abrigos__nome">Centro Comunitário Exemplo</span><span class="abrigos__distancia">1,4 km</span></label>
                 </div>
               </fieldset>
+
+              <p class="detalhe__texto">O abrigo salvo é o que aparece no mapa da tela de Alerta e na rota segura.</p>
 
               <div class="abrigo-painel abrigo-painel--1">
                 <h3 class="abrigo-painel__nome">Escola Municipal Exemplo</h3>

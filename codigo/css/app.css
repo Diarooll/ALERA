@@ -363,8 +363,14 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   font-size: var(--fs-sm);
 }
 .alerta__mapa {
-  display: none; /* no celular o mapa fica na tela de rota */
   margin-bottom: var(--esp-4);
+}
+/* O abrigo salvo em Missões manda no Alerta e na Rota: o que é de outro abrigo some */
+body:has(#salvar-1:checked) .por-abrigo:not(.por-abrigo--1),
+body:has(#salvar-2:checked) .por-abrigo:not(.por-abrigo--2),
+body:has(#salvar-3:checked) .por-abrigo:not(.por-abrigo--3),
+body:has(#salvar-4:checked) .por-abrigo:not(.por-abrigo--4) {
+  display: none;
 }
 .destino {
   display: grid;
@@ -836,10 +842,17 @@ body:has(.detalhe:target) {
   transform: translate(-50%, -50%);
   cursor: pointer;
 }
-.pino--1 { left: 78%; top: 50%; }
-.pino--2 { left: 62%; top: 88%; }
-.pino--3 { left: 90%; top: 84%; }
-.pino--4 { left: 90%; top: 14%; }
+.pino--1 { left: 78.1%; top: 49%; }
+.pino--2 { left: 78.1%; top: 89%; }
+.pino--3 { left: 93.7%; top: 75%; }
+.pino--4 { left: 89%;   top: 34%; }
+/* No mapa da janela, só o caminho do abrigo marcado aparece */
+.tipo--abrigo:has(#abrigo-1:checked) .previa:not(.previa--1),
+.tipo--abrigo:has(#abrigo-2:checked) .previa:not(.previa--2),
+.tipo--abrigo:has(#abrigo-3:checked) .previa:not(.previa--3),
+.tipo--abrigo:has(#abrigo-4:checked) .previa:not(.previa--4) {
+  display: none;
+}
 .pino__numero {
   display: grid;
   place-items: center;
@@ -1246,7 +1259,6 @@ input:checked + .salvar .salvar__acao  { display: none; }
   .alerta__principal { grid-area: principal; }
   .alerta__niveis    { grid-area: niveis; }
   .alerta__rota      { grid-area: rota; padding-top: var(--esp-7); }
-  .alerta__mapa      { display: block; }
   .alerta__ligar     { display: none; } /* já está no topo */
   .medidor,
   .medidor__legenda  { display: none; } /* a lista ao lado já mostra o nível atual */
