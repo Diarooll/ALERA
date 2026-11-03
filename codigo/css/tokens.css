@@ -1,6 +1,6 @@
 /* ALERA · tokens.css (v0.1)
    Paleta B · Noite de Chuva · Fontes Plus Jakarta Sans + Source Sans 3 · Escala Expressiva (1,25) · Cantos Suave
-   Arquivo COMPARTILHADO entre index.html (site) e app.html (prévia do app).
+   Arquivo COMPARTILHADO entre ../index.html (site) e app/index.html (prévia do app).
    Linkar ANTES de site.css / app.css. Contraste conferido pela WCAG 2.1. */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Source+Sans+3:wght@400;700&display=swap");
@@ -18,14 +18,14 @@
 
   /* Níveis de risco: iguais no site, no app, no Python e no hardware.
      Cada nível tem a cor de fundo e a cor do texto que vai em cima dela. */
-  --cor-risco-normal:           #34A853; /* verde mais claro */
-  --cor-risco-normal-texto:     #1A1D27; /* 5,50:1 */
-  --cor-risco-atencao:          #F2C200;
-  --cor-risco-atencao-texto:    #1A1D27; /* 9,83:1 */
-  --cor-risco-alerta:           #F07A1A; /* laranja mais vivo */
-  --cor-risco-alerta-texto:     #1A1D27; /* 6,01:1 */
-  --cor-risco-emergencia:       #D7261E; /* vermelho mais forte */
-  --cor-risco-emergencia-texto: #FFFFFF; /* 5,02:1 — o único com texto branco, pra se destacar dos outros */
+  --cor-risco-normal:             #34A853; /* verde mais claro */
+  --cor-risco-normal-texto:       #1A1D27; /* 5,50:1 */
+  --cor-risco-atencao:            #F2C200;
+  --cor-risco-atencao-texto:      #1A1D27; /* 9,83:1 */
+  --cor-risco-alerta:             #F07A1A; /* laranja mais vivo */
+  --cor-risco-alerta-texto:       #1A1D27; /* 6,01:1 */
+  --cor-risco-perigo:             #D7261E; /* vermelho mais forte */
+  --cor-risco-perigo-texto:       #FFFFFF; /* 5,02:1 — o único com texto branco, pra se destacar dos outros */
 
   /* Fontes */
   --fonte-titulo: "Plus Jakarta Sans", system-ui, sans-serif;
@@ -88,4 +88,14 @@ h1, h2, h3, h4 {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
   line-height: var(--altura-titulo);
+}
+
+/* Some da tela, mas o leitor de tela lê (usado no site e no app) */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
