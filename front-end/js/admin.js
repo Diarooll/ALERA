@@ -148,6 +148,15 @@ confirmacao.addEventListener('close', () => {
 
 abrigos.forEach((abrigo) => abrigo.addEventListener('change', contarAbrigosAbertos))
 
+document.querySelector('#sair').addEventListener('click', () => {
+  sessionStorage.removeItem('papel')
+})
+
+// O botão Voltar do navegador pode reabrir o painel da memória, sem rodar a checagem do <head>
+window.addEventListener('pageshow', () => {
+  if (sessionStorage.getItem('papel') !== 'admin') location.replace('login.html')
+})
+
 preencherOrientacao()
 atualizarPrevia()
 contarAbrigosAbertos()

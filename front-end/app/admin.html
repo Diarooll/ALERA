@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#1E2A5A" />
     <title>ALERA · Administração</title>
+    <!-- Aqui em cima para o painel nem aparecer a quem não é administrador. Na prévia isto só
+         organiza a demonstração: a proteção de verdade precisa ficar no servidor. -->
+    <script>
+      if (sessionStorage.getItem('papel') !== 'admin') location.replace('login.html')
+    </script>
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />
     <link rel="stylesheet" href="../css/app.css" />
@@ -94,7 +99,7 @@
 
         <div class="topo__acoes">
           <a class="topo__ligar" href="app.html">Ver app</a>
-          <a class="topo__ligar topo__ligar--sempre" href="login.html">Sair</a>
+          <a class="topo__ligar topo__ligar--sempre" id="sair" href="login.html">Sair</a>
           <input class="visualmente-oculto" type="checkbox" id="tema" role="switch" />
           <label class="tema" for="tema">
             <svg class="icone tema__lua" aria-hidden="true" focusable="false">

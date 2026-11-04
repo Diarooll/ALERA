@@ -1,8 +1,9 @@
-const ADMIN_URL = 'admin.html'
-const USUARIO_EXEMPLO = {
-  email: 'adminalera@alera.com.br',
-  senha: 'adminAlera',
-}
+// Contas de exemplo da prévia: a senha fica à vista aqui, então nada disto é segurança de verdade
+const USUARIOS_EXEMPLO = [
+  { email: 'adminalera@alera.com.br', senha: 'adminAlera', papel: 'admin' },
+  { email: 'morador@alera.com.br', senha: 'moradorAlera', papel: 'morador' },
+]
+const DESTINOS = { admin: 'admin.html', morador: 'app.html' }
 
 const REGEX_EMAIL = /^\S+@\S+\.\S+$/
 // DDD + número fixo (8 dígitos) ou celular (9 + 8 dígitos)
@@ -183,13 +184,14 @@ configurarFormulario(
     [loginSenha, validarSenhaLogin],
   ],
   () => {
-    const correto =
-      loginEmail.value.trim().toLowerCase() === USUARIO_EXEMPLO.email &&
-      loginSenha.value === USUARIO_EXEMPLO.senha
+    const usuario = USUARIOS_EXEMPLO.find(
+      ({ email, senha }) =>
+        email === loginEmail.value.trim().toLowerCase() && senha === loginSenha.value,
+    )
 
-    if (correto) {
-      sessionStorage.setItem('logado', 'true')
-      window.location.href = ADMIN_URL
+    if (usuario) {
+      sessionStorage.setItem('papel', usuario.papel)
+      window.location.href = DESTINOS[usuario.papel]
       return true
     }
 

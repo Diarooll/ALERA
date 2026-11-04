@@ -31,9 +31,9 @@ Começa sem instalar nada, só com o celular:
 
 | Nível | O que significa |
 | --- | --- |
-| Normal | Sem risco na sua rua. Siga sua rotina. |
+| Normal | Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu rachaduras, ligue 199. |
 | Atenção | Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro. |
-| Alerta | Chuva forte em até 2 horas. Evite a rua e deixe documentos à mão. |
+| Alerta | Chuva forte prevista em até 24 horas. Evite a rua e deixe documentos à mão. |
 | Perigo | Risco agora. Saia de casa e vá para o abrigo. |
 
 O app também tem missões que valem pontos, como plantar uma muda na encosta e salvar o abrigo mais próximo, e um ranking por rua. Os valores que aparecem no protótipo são simulados.
@@ -52,10 +52,12 @@ Não precisa instalar nada. Abra no navegador:
 - `front-end/index.html`: site do projeto
 - `front-end/app/login.html`: login do app
 
-Como ainda não há back-end, criar uma conta não salva nada. Para entrar no app, use o usuário de demonstração:
+Como ainda não há back-end, criar uma conta não salva nada. Para entrar, use uma das contas de demonstração:
 
-- **E-mail:** `adminalera@alera.com.br`
-- **Senha:** `adminAlera`
+| Conta | E-mail | Senha | Abre |
+| --- | --- | --- | --- |
+| Morador | `morador@alera.com.br` | `moradorAlera` | App |
+| Administrador | `adminalera@alera.com.br` | `adminAlera` | Painel de administrador |
 
 
 
