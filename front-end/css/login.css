@@ -260,6 +260,36 @@ a:hover {
   color: var(--suave);
 }
 
+/* consentimento: a caixa inteira é clicável */
+.field .consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px;
+  font: 400 15px/1.4 var(--corpo);
+  background: var(--superficie);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: border-color var(--t);
+}
+
+.consent:hover {
+  border-color: var(--primaria);
+}
+
+.consent:has(input[aria-invalid='true']) {
+  border-color: var(--erro);
+}
+
+.consent input {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  accent-color: var(--primaria);
+  cursor: pointer;
+}
+
 /* botão de mostrar senha */
 .toggle {
   position: absolute;

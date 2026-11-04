@@ -1,0 +1,387 @@
+/* ALERA · admin.css (página do administrador)
+   Linkar depois de app.css: reaproveita o topo, as abas, os botões, os campos e os temas de lá.
+   Aqui ficam só as telas da administração. */
+
+/* ---------- Telas e abas: sem nenhuma aberta, vale o Painel ---------- */
+body:not(:has(.tela:target)) #painel {
+  display: block;
+}
+body:not(:has(.tela:target)) .menu__link[href="#painel"],
+body:has(#painel:target)  .menu__link[href="#painel"],
+body:has(#alertas:target) .menu__link[href="#alertas"],
+body:has(#abrigos:target) .menu__link[href="#abrigos"],
+body:has(#bueiros:target) .menu__link[href="#bueiros"] {
+  color: var(--app-azul);
+  font-weight: var(--peso-forte);
+  box-shadow: inset 0 3px 0 var(--app-azul);
+}
+
+/* ---------- Topo ---------- */
+.topo__papel {
+  display: none; /* no celular não cabe: o título da tela já diz onde a pessoa está */
+  padding: 2px var(--esp-2);
+  border-radius: var(--raio-campo);
+  box-shadow: inset 0 0 0 2px var(--app-topo-suave);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.topo__faixa {
+  gap: var(--esp-3);
+}
+.topo__ligar--sempre {
+  display: inline-flex;
+  padding: 0 var(--esp-3);
+}
+
+/* ---------- Estrutura comum ---------- */
+.gestao {
+  display: grid;
+  gap: var(--esp-5);
+}
+.gestao > * {
+  min-width: 0;
+}
+.gestao__aviso {
+  justify-self: start;
+  margin: 0;
+  padding: 2px var(--esp-3);
+  border-radius: var(--raio-botao);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+  color: var(--app-azul);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.gestao__cabecalho {
+  display: grid;
+  gap: var(--esp-3);
+  margin-bottom: calc(-1 * var(--esp-2));
+}
+.gestao__titulo {
+  margin: 0;
+}
+
+/* ---------- Painel: números do momento ---------- */
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.numero {
+  display: grid;
+  align-content: start;
+  gap: var(--esp-1);
+  padding: var(--esp-4);
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+}
+.numero__valor {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  line-height: var(--altura-titulo);
+}
+.numero__rotulo {
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  line-height: 1.3;
+}
+
+/* ---------- Painel: tabela das ruas ---------- */
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+  overflow: hidden;
+}
+.tabela th,
+.tabela td {
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--app-linha);
+  text-align: left;
+}
+.tabela tbody tr:last-child > * {
+  border-bottom: none;
+}
+.tabela thead th {
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.tabela tbody th {
+  font-weight: var(--peso-forte);
+}
+.tabela .tabela__numero {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* O nível vem sempre escrito: a cor nunca fica sozinha */
+.etiqueta {
+  display: inline-block;
+  padding: 2px var(--esp-2);
+  border-radius: 4px;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 12px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+
+/* ---------- Alertas: formulário e prévia ---------- */
+.envio,
+.envio__campos,
+.envio__revisao {
+  display: grid;
+  align-content: start;
+  gap: var(--esp-4);
+  min-width: 0;
+}
+.envio__revisao .subtitulo {
+  margin: 0;
+}
+.envio__mensagem {
+  min-height: 96px;
+  padding-block: var(--esp-3);
+  resize: vertical;
+}
+.envio__alcance,
+.envio__retorno {
+  margin: 0;
+}
+.envio__alcance {
+  color: var(--app-texto-suave);
+}
+.envio__retorno {
+  font-weight: var(--peso-forte);
+}
+.envio__retorno:empty {
+  display: none;
+}
+.escolha {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+.escolha legend {
+  padding: 0;
+  margin-bottom: var(--esp-1);
+}
+.escolha__grade {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--esp-2);
+}
+.escolha__item {
+  position: relative;
+}
+.escolha__opcao {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 52px;
+  padding: 0 var(--esp-3);
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+  letter-spacing: .04em;
+  cursor: pointer;
+}
+.escolha__opcao:hover {
+  box-shadow: inset 0 0 0 2px var(--app-borda);
+}
+input:checked + .escolha__opcao {
+  background: var(--app-azul-claro);
+  box-shadow: inset 0 0 0 3px var(--app-azul);
+}
+input:focus-visible + .escolha__opcao {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+.previa-alerta {
+  display: grid;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+}
+.previa-alerta__rua,
+.previa-alerta__ordem {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+}
+.previa-alerta__rua {
+  font-size: var(--fs-lg);
+}
+.previa-alerta__ordem {
+  overflow-wrap: anywhere;
+  line-height: 1.3;
+}
+
+/* ---------- Alertas: histórico ---------- */
+.historico {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.historico__item {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  align-items: start;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--app-linha);
+}
+.historico__item .etiqueta {
+  justify-self: start;
+}
+.historico__texto,
+.historico__meta {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.historico__meta {
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Alertas: confirmação ---------- */
+.confirmacao {
+  width: min(100% - 2 * var(--esp-4), 480px);
+  padding: var(--esp-5);
+  border: none;
+  border-radius: var(--raio-card);
+  background: var(--app-superficie);
+  color: var(--app-texto);
+}
+.confirmacao::backdrop {
+  background: rgb(10 14 30 / .65);
+}
+.confirmacao__titulo {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--fs-lg);
+}
+.confirmacao__texto {
+  margin: 0 0 var(--esp-5);
+  color: var(--app-texto-suave);
+  overflow-wrap: anywhere;
+}
+.confirmacao__acoes {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--esp-3);
+}
+.confirmacao .botao {
+  padding-inline: var(--esp-3);
+}
+
+/* ---------- Abrigos ---------- */
+.lista-abrigos {
+  display: grid;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.lista-abrigos__item {
+  display: grid;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+}
+.lista-abrigos__nome {
+  margin: 0 0 var(--esp-1);
+  font-size: var(--fs-lg);
+}
+.lista-abrigos__info {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+
+/* ---------- Bueiros ---------- */
+.lista-bueiros {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.lista-bueiros__item {
+  display: grid;
+  grid-template-columns: var(--esp-6) 1fr;
+  align-items: center;
+  gap: 0 var(--esp-3);
+  padding: var(--esp-3) 0;
+  border-bottom: 1px solid var(--app-linha);
+}
+.lista-bueiros__item .legenda__marca {
+  grid-row: span 2;
+}
+.lista-bueiros__local {
+  font-weight: var(--peso-forte);
+  line-height: 1.25;
+}
+.lista-bueiros__estado {
+  grid-column: 2;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+.lista-bueiros__estado strong {
+  color: var(--app-texto);
+}
+
+/* ---------- A partir de 600px ---------- */
+@media (min-width: 600px) {
+  .topo__papel {
+    display: inline-block;
+  }
+  .numeros {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  .gestao__cabecalho {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .gestao__acao {
+    width: auto;
+  }
+  .lista-abrigos__item {
+    grid-template-columns: 1fr 240px;
+    align-items: center;
+  }
+  .lista-bueiros__item {
+    grid-template-columns: var(--esp-6) 1fr auto;
+  }
+  .lista-bueiros__item .legenda__marca {
+    grid-row: auto;
+  }
+  .lista-bueiros__estado {
+    grid-column: auto;
+  }
+}
+
+/* ---------- Computador: mesmo destaque de aba do app, e alerta em duas colunas ---------- */
+@media (min-width: 900px) {
+  .topo__faixa {
+    gap: var(--esp-4);
+  }
+  body:not(:has(.tela:target)) .menu__link[href="#painel"],
+  body:has(#painel:target)  .menu__link[href="#painel"],
+  body:has(#alertas:target) .menu__link[href="#alertas"],
+  body:has(#abrigos:target) .menu__link[href="#abrigos"],
+  body:has(#bueiros:target) .menu__link[href="#bueiros"] {
+    background: var(--cor-fundo);
+    color: var(--cor-primaria);
+    box-shadow: none;
+  }
+  .envio {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--esp-7);
+  }
+}
