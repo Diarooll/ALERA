@@ -5,6 +5,8 @@ const USUARIO_EXEMPLO = {
 }
 
 const REGEX_EMAIL = /^\S+@\S+\.\S+$/
+// DDD + número fixo (8 dígitos) ou celular (9 + 8 dígitos)
+const REGEX_TELEFONE = /^[1-9]{2}9?\d{8}$/
 
 const telas = {
   login: document.querySelector('#view-login'),
@@ -70,6 +72,50 @@ function validarSenhaLogin(senha) {
 function validarSenhaCadastro(senha) {
   if (!senha.value) return 'Crie uma senha.'
   if (senha.value.length < 8) return 'A senha precisa ter no mínimo 8 caracteres.'
+  return ''
+}
+
+function formatarTelefone(valor) {
+  const digitos = valor.replace(/^\s*\+55/, '').replace(/\D/g, '').slice(0, 11)
+
+  if (!digitos) return ''
+  if (digitos.length <= 2) return `(${digitos}`
+
+  const ddd = digitos.slice(0, 2)
+  const numero = digitos.slice(2)
+
+  if (numero.length <= 4) return `(${ddd}) ${numero}`
+
+  const corte = numero.length === 9 ? 5 : 4
+  return `(${ddd}) ${numero.slice(0, corte)}-${numero.slice(corte)}`
+}
+
+const campoTelefone = document.querySelector('#cadastro-phone')
+
+campoTelefone.addEventListener('input', () => {
+  // mantém o cursor no mesmo dígito ao editar no meio do número
+  const digitosAntes = campoTelefone.value
+    .slice(0, campoTelefone.selectionStart)
+    .replace(/\D/g, '').length
+
+  campoTelefone.value = formatarTelefone(campoTelefone.value)
+
+  let posicao = 0
+  let vistos = 0
+
+  while (vistos < digitosAntes && posicao < campoTelefone.value.length) {
+    if (/\d/.test(campoTelefone.value[posicao])) vistos++
+    posicao++
+  }
+
+  campoTelefone.setSelectionRange(posicao, posicao)
+})
+
+function validarTelefone(telefone) {
+  const digitos = telefone.value.replace(/\D/g, '')
+
+  if (!digitos) return 'Digite seu telefone com DDD.'
+  if (!REGEX_TELEFONE.test(digitos)) return 'Telefone inválido. Exemplo: (32) 99999-0000'
   return ''
 }
 
@@ -156,6 +202,7 @@ configurarFormulario(
   [
     [document.querySelector('#cadastro-email'), validarEmail],
     [document.querySelector('#cadastro-password'), validarSenhaCadastro],
+    [campoTelefone, validarTelefone],
     [document.querySelector('#cadastro-address'), validarEndereco],
   ],
   () => {
