@@ -61,6 +61,12 @@
         <path d="M8 15l-2 3" />
         <path d="M11 17l-1 2.500" />
       </symbol>
+      <symbol id="i-lixo" viewBox="0 0 24 24">
+        <path d="M3 6h18" />
+        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+        <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" />
+        <path d="M10 11v6M14 11v6" />
+      </symbol>
       <symbol id="i-local" viewBox="0 0 24 24">
         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
         <circle cx="12" cy="10" r="3" />
@@ -200,7 +206,7 @@
               <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg
               >ALERTA
             </p>
-            <p class="alerta__ordem">Chuva forte nas próximas 2&nbsp;horas. Evite a Rua Exemplo.</p>
+            <p class="alerta__ordem">Chuva forte prevista em até 24&nbsp;horas. Evite a Rua Exemplo.</p>
             <div class="medidor" role="img" aria-label="Nível 3 de 4">
               <span class="medidor__parte medidor__parte--cheia"></span>
               <span class="medidor__parte medidor__parte--cheia"></span>
@@ -282,7 +288,10 @@
               <li class="niveis__item">
                 <span class="niveis__cor nivel--normal"></span>
                 <strong class="niveis__nome">NORMAL</strong>
-                <span>Sem risco na sua rua. Siga sua rotina.</span>
+                <span
+                  >Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu
+                  rachaduras, ligue 199.</span
+                >
               </li>
               <li class="niveis__item">
                 <span class="niveis__cor nivel--atencao"></span>
@@ -295,7 +304,9 @@
               <li class="niveis__item niveis__item--agora" aria-current="true">
                 <span class="niveis__cor nivel--alerta"></span>
                 <strong class="niveis__nome">ALERTA</strong>
-                <span>Chuva forte em até 2 horas. Evite a rua e deixe documentos à mão.</span>
+                <span
+                  >Chuva forte prevista em até 24 horas. Evite a rua e deixe documentos à mão.</span
+                >
               </li>
               <li class="niveis__item">
                 <span class="niveis__cor nivel--perigo"></span>
@@ -494,12 +505,34 @@
               ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
             ></a>
           </article>
+          <article class="missao tipo--bueiro">
+            <div class="missao__topo">
+              <svg class="missao__icone" aria-hidden="true" focusable="false">
+                <use href="#i-lixo" />
+              </svg>
+              <span class="missao__pontos">+20 pts</span>
+            </div>
+            <h2 class="missao__titulo" id="missao-lixo">Reporte lixo acumulado</h2>
+            <p class="missao__texto">Avise onde tem lixo acumulado ou bueiro entupido.</p>
+            <progress
+              class="progresso"
+              value="0"
+              max="1"
+              aria-labelledby="missao-lixo"
+              aria-describedby="legenda-lixo"
+            ></progress>
+            <p class="progresso__legenda" id="legenda-lixo">Não iniciada</p>
+            <a class="missao__abrir" href="#detalhe-lixo"
+              >Ver como reportar<span class="visualmente-oculto">: Reporte lixo acumulado</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
           <article class="missao tipo--abrigo">
             <div class="missao__topo">
               <svg class="missao__icone" aria-hidden="true" focusable="false">
                 <use href="#i-local" />
               </svg>
-              <span class="missao__pontos">+30 pts</span>
+              <span class="missao__pontos">+10 pts</span>
             </div>
             <h2 class="missao__titulo" id="missao-abrigo">Salve seu abrigo mais perto</h2>
             <p class="missao__texto">Saiba para onde ir antes da chuva chegar.</p>
@@ -656,6 +689,46 @@
                     O Bueiro ALERA mede a altura do lixo e da água, mostra neste mapa quais bueiros
                     estão cheios e avisa a Secretaria de Obras quando é hora de limpar.
                   </p>
+                </div>
+                <a class="botao botao--tipo" href="#missoes">Entendi</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reportar lixo: só explica a missão; o envio do aviso ainda não existe -->
+        <div
+          class="detalhe tipo--bueiro"
+          id="detalhe-lixo"
+          role="dialog"
+          aria-labelledby="detalhe-lixo-titulo"
+        >
+          <a class="detalhe__fundo" href="#missoes" tabindex="-1" aria-hidden="true"></a>
+          <div class="detalhe__caixa">
+            <header class="detalhe__topo">
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-lixo" /></svg>
+              <h2 class="detalhe__titulo" id="detalhe-lixo-titulo">Reporte lixo acumulado</h2>
+              <a class="detalhe__fechar" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-fechar" /></svg
+                ><span class="visualmente-oculto">Fechar</span></a
+              >
+            </header>
+            <div class="detalhe__corpo">
+              <div class="detalhe__coluna">
+                <p class="detalhe__aviso">Prévia · o envio do aviso ainda não existe</p>
+                <p class="detalhe__destaque">
+                  Avise onde tem lixo acumulado ou bueiro entupido, antes que a chuva chegue.
+                </p>
+              </div>
+              <div class="detalhe__coluna">
+                <div>
+                  <h3 class="detalhe__subtitulo">O que observar</h3>
+                  <ul class="detalhe__lista">
+                    <li>Sacolas e garrafas PET na frente do bueiro.</li>
+                    <li>Entulho ou lixo acumulado na rua.</li>
+                    <li>Com a água subindo, não chegue perto: ligue 199.</li>
+                  </ul>
                 </div>
                 <a class="botao botao--tipo" href="#missoes">Entendi</a>
               </div>

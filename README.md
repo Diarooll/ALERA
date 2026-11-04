@@ -52,7 +52,7 @@ Não precisa instalar nada. Abra no navegador:
 - `front-end/index.html`: site do projeto
 - `front-end/app/login.html`: login do app
 
-Como ainda não há back-end, criar uma conta não salva nada. Para entrar no app, use o usuário de demonstração:
+Como ainda não há back-end, criar uma conta não salva nada. Por enquanto, o login só abre o painel de administração, com o usuário de demonstração:
 
 - **E-mail:** `adminalera@alera.com.br`
 - **Senha:** `adminAlera`
