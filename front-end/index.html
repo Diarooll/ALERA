@@ -4,8 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ALERA · No lugar certo, na hora certa</title>
-    <link rel="stylesheet" href="/codigo/app/css/tokens-app.css" />
-    <link rel="stylesheet" href="/codigo/css/site.css" />
+    <link rel="stylesheet" href="css/tokens.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/site.css" />
   </head>
   <body>
     <!-- Logo ALERA (gota de pixels com "!" vazado + gotas de chuva).
@@ -18,7 +19,7 @@
         />
         <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z" />
       </symbol>
-      <!-- Ícones e mapa da prévia do app na Fase 1: os mesmos de codigo/app/index.html -->
+      <!-- Ícones e mapa da prévia do app na Fase 1: os mesmos de app/app.html -->
       <symbol id="p-normal" viewBox="0 0 24 24">
         <circle cx="12" cy="12" r="10" />
         <path d="m8 12 3 3 5-6" />
@@ -97,7 +98,7 @@
             <li class="nav-item"><a href="#como-funciona">Como funciona</a></li>
             <li class="nav-item"><a href="#gamificacao">Gamificação</a></li>
             <li>
-              <a class="botao botao-principal" href="./codigo/app/page/login.html">Testar o app</a>
+              <a class="botao botao-principal" href="app/login.html">Testar o app</a>
             </li>
           </ul>
         </nav>
@@ -140,14 +141,14 @@
               antes da água subir ou do barranco ceder. ALERA no lugar certo, na hora certa.
             </p>
             <div class="hero-botoes">
-              <a class="botao botao-principal" href="codigo/app/index.html">Testar o app</a>
+              <a class="botao botao-principal" href="app/login.html">Testar o app</a>
               <a class="botao botao-secundario" href="#como-funciona">Como funciona</a>
             </div>
           </div>
           <div class="hero-palco">
             <figure class="hero-imagem">
               <img
-                src="codigo/img/deslizamento.jpg"
+                src="assets/img/deslizamento.jpg"
                 width="1200"
                 height="798"
                 alt="Casas destruídas e escombros depois de um deslizamento de terra em uma encosta."
@@ -273,11 +274,11 @@
             <p class="previa-intro">
               Esta é a tela de alerta do app. Escolha um nível e veja o que muda.
             </p>
-            <!-- Prévia da tela de Alerta do app, com o mesmo desenho de codigo/css/app.css.
+            <!-- Prévia da tela de Alerta do app, com o mesmo desenho de css/app.css.
              Escolher um nível troca a tela sem JavaScript: site.css usa :has() nos botões de opção.
              Os botões e o menu levam para o app de verdade. data-ui marca que isto é um pedaço de interface. -->
             <div class="previa" data-ui>
-              <a class="previa-marca" href="codigo/app/index.html">
+              <a class="previa-marca" href="app/app.html">
                 <svg class="logo-icone" aria-hidden="true" focusable="false">
                   <use href="#logo-gota" />
                 </svg>
@@ -285,22 +286,22 @@
               </a>
 
               <nav class="previa-menu" aria-label="Telas do app">
-                <a class="previa-aba previa-aba-ativa" href="codigo/app/index.html#alerta"
+                <a class="previa-aba previa-aba-ativa" href="app/app.html#alerta"
                   ><svg class="previa-icone" aria-hidden="true" focusable="false">
                     <use href="#p-alerta" /></svg
                   >Alerta</a
                 >
-                <a class="previa-aba" href="codigo/app/index.html#missoes"
+                <a class="previa-aba" href="app/app.html#missoes"
                   ><svg class="previa-icone" aria-hidden="true" focusable="false">
                     <use href="#p-missoes" /></svg
                   >Missões</a
                 >
-                <a class="previa-aba" href="codigo/app/index.html#ranking"
+                <a class="previa-aba" href="app/app.html#ranking"
                   ><svg class="previa-icone" aria-hidden="true" focusable="false">
                     <use href="#p-ranking" /></svg
                   >Ranking</a
                 >
-                <a class="previa-aba" href="codigo/app/index.html#cadastro"
+                <a class="previa-aba" href="app/app.html#cadastro"
                   ><svg class="previa-icone" aria-hidden="true" focusable="false">
                     <use href="#p-dados" /></svg
                   >Meus dados</a
@@ -455,7 +456,7 @@
                       <p class="previa-destino-nome">Escola Municipal Exemplo</p>
                       <p class="previa-destino-rotulo">600 m · 8 min a pé · aberto agora</p>
                     </div>
-                    <a class="previa-botao" href="codigo/app/index.html#rota">Ver rota segura</a>
+                    <a class="previa-botao" href="app/app.html#rota">Ver rota segura</a>
                   </div>
                   <a class="previa-botao previa-botao-texto" href="tel:199"
                     ><svg class="previa-icone" aria-hidden="true" focusable="false">
@@ -511,7 +512,7 @@
             </div>
           </div>
 
-          <a class="link-app" href="codigo/app/index.html">Ver missões no app</a>
+          <a class="link-app" href="app/app.html">Ver missões no app</a>
         </div>
       </section>
 
@@ -650,7 +651,7 @@
         <div class="container">
           <h2>Veja como o alerta chega até você</h2>
           <p>Experimente a prévia do aplicativo ALERA.</p>
-          <a class="botao botao-principal" href="codigo/app/index.html">Testar o app</a>
+          <a class="botao botao-principal" href="app/login.html">Testar o app</a>
         </div>
       </section>
 
@@ -807,5 +808,6 @@
         <p>MonkeyNerds · FIAP · Challenge 2026</p>
       </div>
     </footer>
+    <script src="js/site.js"></script>
   </body>
 </html>
