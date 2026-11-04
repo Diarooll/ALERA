@@ -13,3 +13,10 @@ infra/
 
 # Documentos internos de planejamento: nao vao para o repositorio
 projeto-fluxo/
+
+# Python e Django: arquivos gerados localmente
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
