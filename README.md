@@ -14,16 +14,19 @@ front-end/
 │   ├── base.css    estilos globais
 │   ├── site.css
 │   ├── login.css
-│   └── app.css
+│   ├── app.css
+│   └── admin.css   linkar depois de app.css
 ├── js/
 │   ├── site.js
-│   └── login.js
+│   ├── login.js
+│   └── admin.js
 ├── assets/
 │   ├── img/        fotos, logos e imagens
 │   └── icons/      ícones SVG
 └── app/
     ├── login.html
-    └── app.html
+    ├── app.html
+    └── admin.html  administração (prévia, sem servidor)
 ```
 
 `referencias/` guarda o material de apoio e fica fora do repositório.

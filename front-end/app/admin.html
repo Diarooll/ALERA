@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1E2A5A" />
+    <title>ALERA · Administração</title>
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="../css/admin.css" />
+  </head>
+  <body>
+    <svg class="desenhos" width="0" height="0" aria-hidden="true" focusable="false">
+      <symbol id="i-logo" viewBox="-21 -7 108 102">
+        <path
+          d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"
+        />
+        <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z" />
+      </symbol>
+      <symbol id="i-painel" viewBox="0 0 24 24">
+        <rect x="3" y="3" width="8" height="8" rx="1.500" />
+        <rect x="13" y="3" width="8" height="8" rx="1.500" />
+        <rect x="3" y="13" width="8" height="8" rx="1.500" />
+        <rect x="13" y="13" width="8" height="8" rx="1.500" />
+      </symbol>
+      <symbol id="i-alerta" viewBox="0 0 24 24">
+        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </symbol>
+      <symbol id="i-local" viewBox="0 0 24 24">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </symbol>
+      <symbol id="i-vassoura" viewBox="0 0 24 24">
+        <path d="M21 3l-9 9" />
+        <path d="M9.500 9.500l5 5-2 5.500c-.4 1-1.600 1.300-2.400.5L3.500 14c-.8-.8-.5-2 .5-2.400z" />
+        <path d="M8 15l-2 3" />
+        <path d="M11 17l-1 2.500" />
+      </symbol>
+      <symbol id="i-lua" viewBox="0 0 24 24">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+      </symbol>
+      <symbol id="i-sol" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+        />
+      </symbol>
+    </svg>
+
+    <!-- TOPO: igual ao do app. No celular o menu vira abas embaixo -->
+    <header class="topo">
+      <div class="topo__faixa">
+        <a class="topo__marca" href="#painel">
+          <svg class="topo__logo" aria-hidden="true" focusable="false"><use href="#i-logo" /></svg>
+          A.L.E.R.A
+        </a>
+        <span class="topo__papel">Admin</span>
+
+        <nav class="menu" aria-label="Navegação da administração">
+          <ul class="menu__lista">
+            <li>
+              <a class="menu__link" href="#painel"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-painel" /></svg
+                >Painel</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#alertas"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-alerta" /></svg
+                >Alertas</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#abrigos"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-local" /></svg
+                >Abrigos</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#bueiros"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-vassoura" /></svg
+                >Bueiros</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <div class="topo__acoes">
+          <a class="topo__ligar" href="app.html">Ver app</a>
+          <a class="topo__ligar topo__ligar--sempre" href="login.html">Sair</a>
+          <input class="visualmente-oculto" type="checkbox" id="tema" role="switch" />
+          <label class="tema" for="tema">
+            <svg class="icone tema__lua" aria-hidden="true" focusable="false">
+              <use href="#i-lua" />
+            </svg>
+            <svg class="icone tema__sol" aria-hidden="true" focusable="false">
+              <use href="#i-sol" />
+            </svg>
+            <span class="visualmente-oculto">Tema escuro</span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="telas">
+      <!-- PAINEL: tela inicial. Mostra o que precisa de atenção agora -->
+      <section class="tela" id="painel">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Painel do administrador</h1>
+            <p class="faixa__apoio">Bairro Exemplo · atualizado há 5 min</p>
+          </div>
+        </div>
+
+        <div class="conteudo gestao">
+          <p class="gestao__aviso">Prévia · dados de exemplo</p>
+
+          <ul class="numeros">
+            <li class="numero">
+              <span class="numero__valor"><span id="total-risco">1</span> de 4</span>
+              <span class="numero__rotulo">ruas em alerta ou perigo</span>
+            </li>
+            <li class="numero">
+              <span class="numero__valor">142</span>
+              <span class="numero__rotulo">moradores cadastrados</span>
+            </li>
+            <li class="numero">
+              <span class="numero__valor"><span id="total-abrigos">3</span> de 4</span>
+              <span class="numero__rotulo">abrigos abertos</span>
+            </li>
+            <li class="numero">
+              <span class="numero__valor">3 de 7</span>
+              <span class="numero__rotulo">bueiros para limpar</span>
+            </li>
+          </ul>
+
+          <div class="gestao__cabecalho">
+            <h2 class="subtitulo gestao__titulo" id="titulo-ruas">Situação das ruas</h2>
+            <a class="botao gestao__acao" href="#alertas">Emitir alerta</a>
+          </div>
+          <table class="tabela" aria-labelledby="titulo-ruas">
+            <thead>
+              <tr>
+                <th scope="col">Rua</th>
+                <th scope="col">Nível</th>
+                <th scope="col" class="tabela__numero">Moradores</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-rua="Rua Exemplo" data-moradores="48" data-nivel="alerta">
+                <th scope="row">Rua Exemplo</th>
+                <td><span class="etiqueta nivel--alerta">ALERTA</span></td>
+                <td class="tabela__numero">48</td>
+              </tr>
+              <tr data-rua="Av. Exemplo" data-moradores="27" data-nivel="atencao">
+                <th scope="row">Av. Exemplo</th>
+                <td><span class="etiqueta nivel--atencao">ATENÇÃO</span></td>
+                <td class="tabela__numero">27</td>
+              </tr>
+              <tr data-rua="Rua da Paz" data-moradores="31" data-nivel="normal">
+                <th scope="row">Rua da Paz</th>
+                <td><span class="etiqueta nivel--normal">NORMAL</span></td>
+                <td class="tabela__numero">31</td>
+              </tr>
+              <tr data-rua="Rua das Flores" data-moradores="36" data-nivel="normal">
+                <th scope="row">Rua das Flores</th>
+                <td><span class="etiqueta nivel--normal">NORMAL</span></td>
+                <td class="tabela__numero">36</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ALERTAS: escolher rua e nível, conferir como o morador vê e confirmar -->
+      <section class="tela" id="alertas">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Emitir alerta</h1>
+            <p class="faixa__apoio">O alerta vai pelo WhatsApp para os moradores da rua</p>
+          </div>
+        </div>
+
+        <div class="conteudo gestao">
+          <p class="gestao__aviso">Prévia · nenhuma mensagem é enviada de verdade</p>
+
+          <form class="envio" id="form-alerta">
+            <div class="envio__campos">
+              <div class="campo">
+                <label class="campo__rotulo" for="alerta-rua">Rua</label>
+                <select class="campo__entrada" id="alerta-rua">
+                  <option>Rua Exemplo</option>
+                  <option>Av. Exemplo</option>
+                  <option>Rua da Paz</option>
+                  <option>Rua das Flores</option>
+                </select>
+              </div>
+
+              <fieldset class="escolha">
+                <legend class="campo__rotulo">Nível</legend>
+                <div class="escolha__grade">
+                  <div class="escolha__item">
+                    <input
+                      class="visualmente-oculto"
+                      type="radio"
+                      name="nivel"
+                      id="nivel-normal"
+                      value="normal"
+                    />
+                    <label class="escolha__opcao" for="nivel-normal"
+                      ><span class="niveis__cor nivel--normal"></span>NORMAL</label
+                    >
+                  </div>
+                  <div class="escolha__item">
+                    <input
+                      class="visualmente-oculto"
+                      type="radio"
+                      name="nivel"
+                      id="nivel-atencao"
+                      value="atencao"
+                      checked
+                    />
+                    <label class="escolha__opcao" for="nivel-atencao"
+                      ><span class="niveis__cor nivel--atencao"></span>ATENÇÃO</label
+                    >
+                  </div>
+                  <div class="escolha__item">
+                    <input
+                      class="visualmente-oculto"
+                      type="radio"
+                      name="nivel"
+                      id="nivel-alerta"
+                      value="alerta"
+                    />
+                    <label class="escolha__opcao" for="nivel-alerta"
+                      ><span class="niveis__cor nivel--alerta"></span>ALERTA</label
+                    >
+                  </div>
+                  <div class="escolha__item">
+                    <input
+                      class="visualmente-oculto"
+                      type="radio"
+                      name="nivel"
+                      id="nivel-perigo"
+                      value="perigo"
+                    />
+                    <label class="escolha__opcao" for="nivel-perigo"
+                      ><span class="niveis__cor nivel--perigo"></span>PERIGO</label
+                    >
+                  </div>
+                </div>
+              </fieldset>
+
+              <div class="campo">
+                <label class="campo__rotulo" for="alerta-mensagem">Orientação</label>
+                <textarea
+                  class="campo__entrada envio__mensagem"
+                  id="alerta-mensagem"
+                  rows="3"
+                  maxlength="160"
+                  required
+                  aria-describedby="alerta-mensagem-erro"
+                ></textarea>
+                <span class="campo__erro" id="alerta-mensagem-erro"
+                  >Escreva o que o morador deve fazer.</span
+                >
+              </div>
+            </div>
+
+            <div class="envio__revisao">
+              <h2 class="subtitulo">Como o morador vê</h2>
+              <div class="previa-alerta">
+                <p class="previa-alerta__rua" id="previa-rua"></p>
+                <p class="selo" id="previa-selo">
+                  <svg class="icone" aria-hidden="true" focusable="false">
+                    <use href="#i-alerta" />
+                  </svg>
+                  <span id="previa-nivel"></span>
+                </p>
+                <p class="previa-alerta__ordem" id="previa-mensagem"></p>
+              </div>
+              <p class="envio__alcance" id="previa-alcance"></p>
+              <button class="botao" type="submit">Enviar alerta</button>
+              <p class="envio__retorno" id="alerta-retorno" role="status"></p>
+            </div>
+          </form>
+
+          <div>
+            <h2 class="subtitulo">Últimos alertas</h2>
+            <ul class="historico" id="historico">
+              <li class="historico__item">
+                <span class="etiqueta nivel--alerta">ALERTA</span>
+                <div>
+                  <strong>Rua Exemplo</strong>
+                  <p class="historico__texto">Chuva forte prevista em até 24 horas. Evite a Rua Exemplo.</p>
+                  <p class="historico__meta">há 5 min · 48 moradores</p>
+                </div>
+              </li>
+              <li class="historico__item">
+                <span class="etiqueta nivel--atencao">ATENÇÃO</span>
+                <div>
+                  <strong>Av. Exemplo</strong>
+                  <p class="historico__texto">
+                    Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro.
+                  </p>
+                  <p class="historico__meta">há 3 h · 27 moradores</p>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Confirmação: o foco começa em Cancelar, para ninguém disparar um alerta sem querer -->
+        <dialog class="confirmacao" id="confirmacao" aria-labelledby="confirmacao-titulo">
+          <form method="dialog">
+            <h2 class="confirmacao__titulo" id="confirmacao-titulo"></h2>
+            <p class="confirmacao__texto" id="confirmacao-mensagem"></p>
+            <div class="confirmacao__acoes">
+              <button class="botao botao--secundario" value="cancelar">Cancelar</button>
+              <button class="botao" value="enviar">Enviar alerta</button>
+            </div>
+          </form>
+        </dialog>
+      </section>
+
+      <!-- ABRIGOS: os mesmos do app -->
+      <section class="tela" id="abrigos">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Abrigos</h1>
+            <p class="faixa__apoio">O estado do abrigo aparece no alerta e na rota do morador</p>
+          </div>
+        </div>
+
+        <div class="conteudo gestao">
+          <p class="gestao__aviso">Prévia · a mudança não chega ao app</p>
+          <ul class="lista-abrigos">
+            <li class="lista-abrigos__item">
+              <div>
+                <h2 class="lista-abrigos__nome">Escola Municipal Exemplo</h2>
+                <p class="lista-abrigos__info">Portão azul</p>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-escola">Estado</label>
+                <select class="campo__entrada" id="abrigo-escola" data-abrigo>
+                  <option value="aberto" selected>Aberto</option>
+                  <option value="poucas">Poucas vagas</option>
+                  <option value="so-alerta">Só em nível de alerta</option>
+                  <option value="fechado">Fechado</option>
+                </select>
+              </div>
+            </li>
+            <li class="lista-abrigos__item">
+              <div>
+                <h2 class="lista-abrigos__nome">Ginásio Exemplo</h2>
+                <p class="lista-abrigos__info">Entrada pela lateral</p>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-ginasio">Estado</label>
+                <select class="campo__entrada" id="abrigo-ginasio" data-abrigo>
+                  <option value="aberto" selected>Aberto</option>
+                  <option value="poucas">Poucas vagas</option>
+                  <option value="so-alerta">Só em nível de alerta</option>
+                  <option value="fechado">Fechado</option>
+                </select>
+              </div>
+            </li>
+            <li class="lista-abrigos__item">
+              <div>
+                <h2 class="lista-abrigos__nome">Igreja Exemplo</h2>
+                <p class="lista-abrigos__info">No fim da Rua da Paz</p>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-igreja">Estado</label>
+                <select class="campo__entrada" id="abrigo-igreja" data-abrigo>
+                  <option value="aberto">Aberto</option>
+                  <option value="poucas" selected>Poucas vagas</option>
+                  <option value="so-alerta">Só em nível de alerta</option>
+                  <option value="fechado">Fechado</option>
+                </select>
+              </div>
+            </li>
+            <li class="lista-abrigos__item">
+              <div>
+                <h2 class="lista-abrigos__nome">Centro Comunitário Exemplo</h2>
+                <p class="lista-abrigos__info">Rua lateral da Av. Exemplo</p>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-centro">Estado</label>
+                <select class="campo__entrada" id="abrigo-centro" data-abrigo>
+                  <option value="aberto">Aberto</option>
+                  <option value="poucas">Poucas vagas</option>
+                  <option value="so-alerta" selected>Só em nível de alerta</option>
+                  <option value="fechado">Fechado</option>
+                </select>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- BUEIROS: os mesmos do mapa da missão, do mais urgente para o menos urgente -->
+      <section class="tela" id="bueiros">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Bueiros</h1>
+            <p class="faixa__apoio">Do mais urgente para o menos urgente</p>
+          </div>
+        </div>
+
+        <div class="conteudo gestao">
+          <p class="gestao__aviso">Prévia da Fase 2 · dados de exemplo</p>
+          <ul class="lista-bueiros">
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--perigo">X</span>
+              <span class="lista-bueiros__local">Rua Exemplo, trecho central</span>
+              <span class="lista-bueiros__estado"><strong>Entupido</strong> · a água subiu</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--alerta">!!</span>
+              <span class="lista-bueiros__local">Rua Exemplo, esquina da Av. Exemplo</span>
+              <span class="lista-bueiros__estado"><strong>Limpar</strong> · cesto em 80%</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--alerta">!!</span>
+              <span class="lista-bueiros__local">Rua Exemplo, início da rua</span>
+              <span class="lista-bueiros__estado"><strong>Limpar</strong> · cesto em 75%</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--atencao">!</span>
+              <span class="lista-bueiros__local">Av. Exemplo, meio da quadra</span>
+              <span class="lista-bueiros__estado"><strong>Atenção</strong> · cesto em 60%</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--atencao">!</span>
+              <span class="lista-bueiros__local">Rua da Paz, trecho central</span>
+              <span class="lista-bueiros__estado"><strong>Atenção</strong> · cesto em 55%</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--normal">ok</span>
+              <span class="lista-bueiros__local">Rua da Paz, início da rua</span>
+              <span class="lista-bueiros__estado"><strong>OK</strong> · cesto em 30%</span>
+            </li>
+            <li class="lista-bueiros__item">
+              <span class="legenda__marca nivel--normal">ok</span>
+              <span class="lista-bueiros__local">Rua da Paz, esquina da Av. Exemplo</span>
+              <span class="lista-bueiros__estado"><strong>OK</strong> · cesto em 20%</span>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <p class="rodape__texto">ALERA · Administração · Prévia com dados de exemplo</p>
+      <a class="rodape__link" href="app.html">Ver o app do morador</a>
+    </footer>
+
+    <script src="../js/admin.js"></script>
+  </body>
+</html>

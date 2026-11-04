@@ -1,4 +1,4 @@
-const APP_URL = 'app.html'
+const ADMIN_URL = 'admin.html'
 const USUARIO_EXEMPLO = {
   email: 'adminalera@alera.com.br',
   senha: 'adminAlera',
@@ -127,6 +127,10 @@ function validarEndereco(endereco) {
   return ''
 }
 
+function validarConsentimento(consentimento) {
+  return consentimento.checked ? '' : 'Marque a caixa para concordar e criar sua conta.'
+}
+
 function configurarFormulario(form, regras, aoSucesso) {
   form.addEventListener('submit', (evento) => {
     evento.preventDefault()
@@ -185,7 +189,7 @@ configurarFormulario(
 
     if (correto) {
       sessionStorage.setItem('logado', 'true')
-      window.location.href = APP_URL
+      window.location.href = ADMIN_URL
       return true
     }
 
@@ -204,11 +208,11 @@ configurarFormulario(
     [document.querySelector('#cadastro-password'), validarSenhaCadastro],
     [campoTelefone, validarTelefone],
     [document.querySelector('#cadastro-address'), validarEndereco],
+    [document.querySelector('#cadastro-consent'), validarConsentimento],
   ],
   () => {
-    alert('Conta criada com sucesso!')
+    alert('Prévia: o cadastro ainda não funciona. Nenhuma conta foi criada e nada foi salvo.')
     cadastroForm.reset()
-    location.hash = '#login'
     return false
   },
 )
