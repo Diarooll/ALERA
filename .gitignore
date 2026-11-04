@@ -10,3 +10,6 @@ infra/
 .env
 .env.*
 !.env.example
+
+# Documentos internos de planejamento: nao vao para o repositorio
+projeto-fluxo/
