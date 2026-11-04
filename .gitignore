@@ -3,3 +3,10 @@ referencias/
 
 # Skill de design (ferramenta local): nao vai para o repositorio
 .taste-skill/
+
+infra/
+
+# Variaveis de ambiente e segredos: nao vao para o repositorio
+.env
+.env.*
+!.env.example
