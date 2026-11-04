@@ -7,8 +7,13 @@
     <title>ALERA · Administração</title>
     <!-- Aqui em cima para o painel nem aparecer a quem não é administrador. Na prévia isto só
          organiza a demonstração: a proteção de verdade precisa ficar no servidor. -->
+    <noscript><meta http-equiv="refresh" content="0; url=login.html" /></noscript>
     <script>
-      if (sessionStorage.getItem('papel') !== 'admin') location.replace('login.html')
+      try {
+        if (sessionStorage.getItem('papel') !== 'admin') location.replace('login.html')
+      } catch {
+        location.replace('login.html')
+      }
     </script>
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />

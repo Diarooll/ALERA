@@ -13,3 +13,13 @@ infra/
 
 # Documentos internos de planejamento: nao vao para o repositorio
 projeto-fluxo/
+
+# Guia interno do back-end: fica so com a equipe
+backend/README.md
+
+# Python e Django: arquivos gerados localmente
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
