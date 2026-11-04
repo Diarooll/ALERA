@@ -1,0 +1,26 @@
+/* ALERA · base.css
+   Estilos globais comuns ao site, ao login e ao app. Linkar logo depois de tokens.css. */
+
+body {
+  margin: 0;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  font-family: var(--fonte-texto);
+  font-size: var(--fs-md);
+  line-height: var(--altura-texto);
+}
+h1, h2, h3, h4 {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  line-height: var(--altura-titulo);
+}
+
+/* Some da tela, mas o leitor de tela lê (usado no site e no app) */
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

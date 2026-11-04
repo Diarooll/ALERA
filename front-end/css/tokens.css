@@ -1,7 +1,7 @@
 /* ALERA · tokens.css (v0.1)
    Paleta B · Noite de Chuva · Fontes Plus Jakarta Sans + Source Sans 3 · Escala Expressiva (1,25) · Cantos Suave
-   Arquivo COMPARTILHADO entre ../index.html (site) e app/index.html (prévia do app).
-   Linkar ANTES de site.css / app.css. Contraste conferido pela WCAG 2.1. */
+   Arquivo COMPARTILHADO entre o site (index.html) e as páginas de app/ (login.html e app.html).
+   Linkar ANTES de base.css e de site.css / login.css / app.css. Contraste conferido pela WCAG 2.1. */
 
 @import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Source+Sans+3:wght@400;700&display=swap");
 
@@ -76,27 +76,3 @@
   --cor-escuro-erro:        #F87171; /* --cor-erro não passa no fundo escuro (2,9:1); este dá 5,3:1 */
 }
 
-/* Base comum às duas páginas */
-body {
-  margin: 0;
-  background: var(--cor-fundo);
-  color: var(--cor-texto);
-  font-family: var(--fonte-texto);
-  font-size: var(--fs-md);
-  line-height: var(--altura-texto);
-}
-h1, h2, h3, h4 {
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  line-height: var(--altura-titulo);
-}
-
-/* Some da tela, mas o leitor de tela lê (usado no site e no app) */
-.visualmente-oculto {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
-  white-space: nowrap;
-}
