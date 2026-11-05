@@ -21,3 +21,9 @@ class UsuarioAdmin(UserAdmin):
     add_fieldsets = [
         (None, {'classes': ['wide'], 'fields': ['email', 'usable_password', 'password1', 'password2']}),
     ]
+
+    def save_model(self, request, obj, form, change):
+        # Morador se cadastra pelo app: toda conta criada aqui já nasce como ADMzinho
+        if not change:
+            obj.is_staff = True
+        super().save_model(request, obj, form, change)

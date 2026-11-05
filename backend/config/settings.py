@@ -34,7 +34,7 @@ ALLOWED_HOSTS = lista_do_ambiente('DJANGO_ALLOWED_HOSTS')
 
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    'config.apps.AleraAdminConfig',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
