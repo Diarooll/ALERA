@@ -133,6 +133,13 @@ function pinCasa(item, posicao) {
   L.marker(posicao, { icon: iconePin('🏠', 'pin--voce'), title: 'Sua casa' }).addTo(item.camada)
 }
 
+// Pino com o ícone do tipo (🏫, ⛪...) e o nome ao passar o mouse ou tocar
+function pinAbrigo(item, abrigo, classes) {
+  L.marker(posicaoAbrigo(abrigo), { icon: iconePin(abrigo.tipo?.icone || '📍', classes), title: abrigo.nome })
+    .bindTooltip(abrigo.nome, { direction: 'top', offset: [0, -30] })
+    .addTo(item.camada)
+}
+
 function telaAtual() {
   return location.hash || '#alerta'
 }
@@ -151,8 +158,18 @@ function desenharMapas() {
       pinCasa(item, casa)
       pontos.push(casa)
     }
+    // Na tela de Alerta aparecem todos os abrigos que a Defesa Civil marcou.
+    // Sem abrigo salvo, o mapa enquadra todos; com abrigo salvo, enquadra a casa e ele
+    if (tela === '#alerta') {
+      estado.abrigos
+        .filter((abrigo) => abrigo.id !== salvo?.id && abrigo.latitude != null)
+        .forEach((abrigo) => {
+          pinAbrigo(item, abrigo, abrigo.situacao === 'fechado' ? 'pin--fechado' : '')
+          if (!salvo) pontos.push(posicaoAbrigo(abrigo))
+        })
+    }
     if (salvo) {
-      L.marker(posicaoAbrigo(salvo), { icon: iconePin(salvo.tipo?.icone || '📍', 'pin--salvo'), title: salvo.nome }).addTo(item.camada)
+      pinAbrigo(item, salvo, 'pin--salvo')
       pontos.push(posicaoAbrigo(salvo))
     }
     if (casa && salvo) {
@@ -309,8 +326,10 @@ function desenharDestino() {
   }
 
   $('#ver-rota').hidden = !salvo
-  $('#escolher-abrigo').hidden = !!salvo
-  $('#escolher-abrigo').textContent = estado.abrigos.length ? 'Escolher meu abrigo' : 'Ver abrigos'
+  // Com abrigo salvo o botão continua na tela, para a pessoa poder trocar
+  const escolher = $('#escolher-abrigo')
+  escolher.textContent = salvo ? 'Trocar de abrigo' : estado.abrigos.length ? 'Escolher meu abrigo' : 'Ver abrigos'
+  escolher.classList.toggle('botao--secundario', !!salvo)
 }
 
 function desenharRota() {
