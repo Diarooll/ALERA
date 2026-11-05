@@ -217,6 +217,35 @@ class PerfilTestes(Base):
         self.assertEqual(Usuario.objects.get().latitude, Decimal('-21.750000'))
         self.assertEqual(self.localizar.call_count, 1)  # só a do cadastro
 
+    def test_salvar_o_mesmo_endereco_mantem_o_pin_marcado(self):
+        self.client.patch(ME, {'latitude': -21.75, 'longitude': -43.34}, format='json')
+        self.localizar.return_value = None
+
+        # O formulário "Meus dados" sempre envia o endereço inteiro, mesmo sem mudança
+        resposta = self.client.patch(
+            ME,
+            {
+                'cep': '36010-000',
+                'logradouro': 'Rua Tal',
+                'numero': '10',
+                'bairro': 'Centro',
+                'cidade': 'Juiz de Fora',
+            },
+            format='json',
+        )
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(Usuario.objects.get().latitude, Decimal('-21.750000'))
+        self.assertEqual(self.localizar.call_count, 1)  # só a do cadastro
+
+    def test_mudar_so_a_cidade_localiza_de_novo(self):
+        self.localizar.return_value = (Decimal('-22.000000'), Decimal('-44.000000'))
+
+        resposta = self.client.patch(ME, {'cidade': 'Matias Barbosa'}, format='json')
+
+        self.assertEqual(resposta.status_code, 200)
+        self.assertEqual(Usuario.objects.get().latitude, Decimal('-22.000000'))
+
     def test_latitude_e_longitude_andam_juntas(self):
         resposta = self.client.patch(ME, {'latitude': -21.75}, format='json')
         self.assertEqual(resposta.status_code, 400)

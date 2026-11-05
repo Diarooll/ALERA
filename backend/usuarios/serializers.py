@@ -206,7 +206,8 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
             nome_bairro = nome_bairro or (atual.nome if atual else '')
             cidade = cidade or (atual.cidade if atual else '')
             usuario.bairro = achar_bairro(nome_bairro, cidade)
-            endereco_mudou = True
+            # O formulário sempre envia o bairro: só conta como mudança se for outro
+            endereco_mudou = usuario.bairro != atual
 
         for campo in ('cep', 'logradouro', 'numero'):
             if campo in dados and dados[campo] != getattr(usuario, campo):
