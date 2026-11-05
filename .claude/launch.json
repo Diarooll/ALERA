@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "front-end",
+      "runtimeExecutable": "backend/.venv/Scripts/python.exe",
+      "runtimeArgs": ["-m", "http.server", "5520", "--bind", "127.0.0.1", "--directory", "front-end"],
+      "port": 5520,
+      "autoPort": false
+    }
+  ]
+}
