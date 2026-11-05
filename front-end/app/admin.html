@@ -10,7 +10,7 @@
     <noscript><meta http-equiv="refresh" content="0; url=login.html" /></noscript>
     <script>
       try {
-        if (sessionStorage.getItem('papel') !== 'admin') location.replace('login.html')
+        if (localStorage.getItem('papel') !== 'admin') location.replace('login.html')
       } catch {
         location.replace('login.html')
       }

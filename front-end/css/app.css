@@ -1,7 +1,7 @@
 /* ALERA · app.css (prévia do app)
    Direção "Noite de Chuva": azul-marinho e bege, a mesma paleta do site e das apresentações.
    As cores da marca e de risco vêm do tokens.css; os --app-* só escolhem qual usar em cada tema.
-   Sem JavaScript: cada aba é uma tela aberta por :target. */
+   As abas funcionam sem JavaScript: cada uma é uma tela aberta por :target (o app.js só confere o login). */
 
 *, *::before, *::after {
   box-sizing: border-box;
@@ -137,6 +137,11 @@ body {
 .topo__ligar:hover {
   background: var(--app-topo-texto);
   color: var(--cor-primaria);
+}
+/* Botão que aparece sempre, inclusive no celular (o Sair) */
+.topo__ligar--sempre {
+  display: inline-flex;
+  padding: 0 var(--esp-3);
 }
 
 /* Botão de tema: mostra a lua no claro (pra escurecer) e o sol no escuro (pra clarear) */

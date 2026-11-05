@@ -149,15 +149,15 @@ confirmacao.addEventListener('close', () => {
 abrigos.forEach((abrigo) => abrigo.addEventListener('change', contarAbrigosAbertos))
 
 function encerrarSessao() {
-  sessionStorage.removeItem('token')
-  sessionStorage.removeItem('papel')
+  localStorage.removeItem('token')
+  localStorage.removeItem('papel')
 }
 
 // O servidor decide quem é administrador. Se ele não confirmar, por qualquer motivo, a pessoa sai.
 async function conferirAdministrador() {
   try {
     const resposta = await fetch(`${API_URL}/me/`, {
-      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     })
 
     if (resposta.ok && (await resposta.json()).papel === 'admin') return

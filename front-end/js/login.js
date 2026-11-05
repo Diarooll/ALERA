@@ -198,8 +198,8 @@ configurarFormulario(
       if (resposta.ok) {
         const { token, papel } = await resposta.json()
 
-        sessionStorage.setItem('token', token)
-        sessionStorage.setItem('papel', papel)
+        localStorage.setItem('token', token)
+        localStorage.setItem('papel', papel)
         window.location.href = DESTINOS[papel]
         return true
       }
