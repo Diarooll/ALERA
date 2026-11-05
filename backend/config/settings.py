@@ -126,5 +126,12 @@ SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(hours=2)}
 # Endereços do front-end que podem chamar a API
 CORS_ALLOWED_ORIGINS = lista_do_ambiente('CORS_ALLOWED_ORIGINS')
 if DEBUG and not CORS_ALLOWED_ORIGINS:
-    # "null" é a origem de uma página aberta direto pelo arquivo, como o README orienta
-    CORS_ALLOWED_ORIGINS = ['null', 'http://127.0.0.1:5500', 'http://localhost:5500']
+    # "null" é a origem de uma página aberta direto pelo arquivo, como o README orienta.
+    # 5500 é o Live Server do VS Code; 5520 é o front-end aberto pelo .claude/launch.json
+    CORS_ALLOWED_ORIGINS = [
+        'null',
+        'http://127.0.0.1:5500',
+        'http://localhost:5500',
+        'http://127.0.0.1:5520',
+        'http://localhost:5520',
+    ]
