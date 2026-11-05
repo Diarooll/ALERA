@@ -9,7 +9,7 @@ API em Django e Django REST Framework. Por enquanto só existe a estrutura: não
 | `config/` | Configurações e rotas principais |
 | `usuarios/` | Moradores e login |
 | `locais/` | Ruas, áreas de risco e abrigos |
-| `alertas/` | Previsões, regras de risco e envio no WhatsApp |
+| `alertas/` | Previsões, regras de risco e histórico de níveis |
 | `missoes/` | Missões, pontos e ranking |
 | `sensores/` | Leituras do ESP32 (Fase 2) |
 

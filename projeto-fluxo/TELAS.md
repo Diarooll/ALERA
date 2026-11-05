@@ -27,7 +27,7 @@ Site (index.html)
    ▼          ▼
  Rota      Detalhe da missão
 
-Equipe ──► Django Admin ──► Disparar alerta de demonstração ──► WhatsApp
+Defesa Civil ──► Painel no Django Admin ──► Muda o nível da área ──► Aparece no app
 ```
 
 ## Comportamentos comuns do app
@@ -74,7 +74,7 @@ Mudanças propostas:
 | Ação ou situação | Resultado |
 | --- | --- |
 | Dados corretos de morador | Abre o app na tela de Alerta |
-| Dados corretos da Defesa Civil | Abre o dashboard de administração |
+| Dados corretos da Defesa Civil | Abre o painel da Defesa Civil, no Django Admin |
 | Campo vazio ou inválido | Mostra o erro abaixo do campo e coloca o foco nele |
 | E-mail ou senha incorretos | Mostra "E-mail ou senha incorretos.", sem dizer qual dos dois |
 | Enviando | O botão fica desativado e mostra "Aguarde..." |
@@ -94,14 +94,14 @@ Na demo, o link "Recuperar senha" sai da tela, porque ainda não haverá essa fu
 │ [ voce@exemplo.com         ] │
 │ Senha                        │
 │ [ Mínimo de 8 caracteres   ] │
-│ Telefone (WhatsApp)          │
+│ Telefone                     │
 │ [ (32) 99999-0000          ] │
 │ Sua rua                      │
 │ [ Selecione a rua        ▼ ] │
 │                              │
-│ [ ] Aceito receber alertas   │
-│     no WhatsApp e li como    │
-│     meus dados são usados.   │
+│ [ ] Aceito que meus dados    │
+│     sejam usados para mostrar│
+│     alertas da minha rua.    │
 │                              │
 │ [        Criar conta       ] │
 └──────────────────────────────┘
@@ -109,7 +109,7 @@ Na demo, o link "Recuperar senha" sai da tela, porque ainda não haverá essa fu
 
 - **Campos:** o cadastro pede e-mail, senha, telefone e rua. O endereço completo sai.
 - **Rua em lista:** a pessoa escolhe entre as ruas de demonstração. Assim, o sistema sempre sabe ligar a rua a uma área de risco.
-- **Telefone:** aceita apenas celular com DDD, porque o alerta vai para o WhatsApp.
+- **Telefone:** aceita apenas celular com DDD, já pensando no envio pelo WhatsApp depois da demo.
 - **Sucesso:** a conta é salva de verdade e a pessoa entra direto no app, sem `alert()`.
 - **E-mail já cadastrado:** mostra "Este e-mail já tem conta. Entrar?".
 
@@ -150,7 +150,7 @@ Na demo, o link "Recuperar senha" sai da tela, porque ainda não haverá essa fu
 | Normal | Menos de 30 mm previstos em 24 h | Sem alerta para sua rua agora. Em caso de risco, ligue 199. |
 | Atenção | 30 mm ou mais em 24 h | Chuva prevista. Confira seu abrigo e tire o lixo da frente do bueiro. |
 | Alerta | 50 mm ou mais em 24 h | Chuva forte prevista. Evite a rua e deixe os documentos à mão. |
-| Perigo | Disparado pela equipe no Admin, simulando um alerta oficial | Risco agora. Saia de casa e vá para o abrigo. |
+| Perigo | Definido pela Defesa Civil no painel | Risco agora. Saia de casa e vá para o abrigo. |
 
 ### Estados especiais
 
@@ -221,7 +221,7 @@ Cada detalhe abre por cima da lista. O foco vai para a janela, e `Esc` ou o bot�
 | Missão | O que a tela mostra | Como conclui |
 | --- | --- | --- |
 | Limpe o bueiro | Orientações de segurança e o aviso "Com a água subindo, não chegue perto: ligue 199". O mapa dos bueiros fica como prévia da Fase 2 | "Limpei o bueiro", confirmado pelo próprio morador |
-| Reporte lixo | Campo de local e descrição | Envio do relato, que fica visível no Admin |
+| Reporte lixo | Campo de local e descrição | Envio do relato, que fica visível no painel |
 | Plante uma muda | Áreas de exemplo e orientação para plantar só em local autorizado | "Plantei a muda", confirmado pelo próprio morador |
 | Salve seu abrigo | Abrigos no mapa e em lista | "Salvar este abrigo", via `PUT /api/me/abrigo/`. O abrigo passa a aparecer no Alerta e na Rota, e continua salvo depois de recarregar |
 
@@ -257,12 +257,10 @@ O ranking soma os pontos dos moradores por rua e destaca a rua de quem está log
 ├──────────────────────────────┤
 │ E-mail                       │
 │ [ voce@exemplo.com         ] │
-│ Telefone (WhatsApp)          │
+│ Telefone                     │
 │ [ (32) 99999-0000          ] │
 │ Sua rua                      │
 │ [ Rua Exemplo            ▼ ] │
-│                              │
-│ Alertas no WhatsApp   [ ● ]  │
 │                              │
 │ [     Salvar alterações    ] │
 │ [           Sair           ] │
@@ -270,14 +268,13 @@ O ranking soma os pontos dos moradores por rua e destaca a rua de quem está log
 └──────────────────────────────┘
 ```
 
-- **Salvar:** mostra "Dados salvos." na própria tela. Os alertas seguintes usam os novos dados.
-- **Desligar alertas:** pede confirmação, avisando "Você deixará de receber alertas da sua rua."
+- **Salvar:** mostra "Dados salvos." na própria tela. A tela de Alerta passa a usar a nova rua.
 - **Sair:** apaga a sessão do navegador e volta para o Login.
 - **Excluir conta:** pede confirmação e remove os dados pessoais do morador.
 
-## Mensagem no WhatsApp
+## Mensagem no WhatsApp (depois da demo)
 
-É o principal ponto de contato com o morador, então também conta como tela.
+O WhatsApp não entra na demo. Este é o modelo previsto para quando o envio for implementado:
 
 ```text
 ALERA · Rua Exemplo, Bairro Exemplo
@@ -290,14 +287,13 @@ Abrigo: Escola Municipal Exemplo, 600 m
 Ver no app: <link>
 Emergência: ligue 199
 
-Mensagem de demonstração.
 ```
 
-Na demo, o morador só recebe mensagem quando o nível da rua sobe ou quando chega a Perigo, para não repetir o mesmo aviso. Esse texto precisará virar um modelo aprovado na Meta para uso real.
+A ideia é o morador só receber mensagem quando o nível da rua subir ou chegar a Perigo, para não repetir o mesmo aviso. Esse texto precisará virar um modelo aprovado na Meta para uso real.
 
-## Django Admin (equipe)
+## Painel da Defesa Civil (Django Admin)
 
-**Acesso:** só a equipe. Usa as telas prontas do Django, com estas seções:
+**Acesso:** só a Defesa Civil e a equipe. É o dashboard do projeto, feito com as telas do Django Admin e estas seções:
 
 | Seção | Para que serve |
 | --- | --- |
@@ -305,22 +301,23 @@ Na demo, o morador só recebe mensagem quando o nível da rua sobe ou quando che
 | Abrigos | Cadastrar nome, distância, situação, passos da rota e desenho do mapa |
 | Moradores | Consultar contas e redefinir senhas |
 | Previsões | Ver a última previsão recebida e o nível calculado |
-| Alertas enviados | Ver mensagem, destinatário, horário e resultado do envio |
+| Histórico de níveis | Ver cada mudança de nível, com horário, origem e responsável |
 | Missões e relatos | Editar missões e ler os relatos de lixo |
 
-### Disparar alerta de demonstração
+### Mudar o nível de uma área
 
-Como pode não chover no dia da apresentação, o Admin terá uma ação para escolher uma área e um nível e enviar o alerta pelo mesmo caminho do alerta real. Ela só atinge os números de teste e fica registrada como demonstração.
+A Defesa Civil escolhe uma área e um nível, confirma a mudança, e o novo nível aparece no app dos moradores daquela área. A mudança fica registrada no histórico. Isso também garante a apresentação, porque pode não chover no dia.
+
+O painel deve exibir a etiqueta "Demonstração", para não parecer que a Defesa Civil já usa o sistema ou que o alerta é oficial.
 
 ## Roteiro da demo
 
 1. Abrir o site e mostrar o problema.
 2. Clicar em "Testar o app" e criar uma conta com um e-mail e um celular de teste.
 3. Ver a tela de Alerta no nível Normal e salvar um abrigo.
-4. No Admin, disparar um alerta de demonstração para a rua.
-5. Mostrar a mensagem chegando no WhatsApp.
-6. Atualizar o app, ver o novo nível e abrir a rota até o abrigo.
-7. Concluir uma missão e ver os pontos no ranking.
+4. No painel da Defesa Civil, mudar o nível da área dessa rua.
+5. Atualizar o app, ver o novo nível e abrir a rota até o abrigo.
+6. Concluir uma missão e ver os pontos no ranking.
 
 ## Rotas previstas da API
 
