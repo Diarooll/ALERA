@@ -7,12 +7,12 @@ from .models import Usuario
 @admin.register(Usuario)
 class UsuarioAdmin(UserAdmin):
     ordering = ['email']
-    list_display = ['email', 'telefone', 'is_staff', 'is_active']
+    list_display = ['email', 'telefone', 'rua', 'is_staff', 'is_active']
     search_fields = ['email', 'telefone']
     readonly_fields = ['consentimento_em', 'consentimento_texto', 'last_login', 'date_joined']
     fieldsets = [
         (None, {'fields': ['email', 'password']}),
-        ('Contato', {'fields': ['telefone', 'endereco']}),
+        ('Contato', {'fields': ['telefone', 'endereco', 'rua', 'abrigo', 'alertas_ativos']}),
         ('Consentimento', {'fields': ['consentimento_em', 'consentimento_texto']}),
         ('Permissões', {'fields': ['is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions']}),
         ('Datas', {'fields': ['last_login', 'date_joined']}),

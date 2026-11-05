@@ -1,6 +1,6 @@
 # ALERA: back-end
 
-API em Django e Django REST Framework. Por enquanto só existe a estrutura: não há modelos de negócio nem rotas além da verificação de saúde.
+API em Django e Django REST Framework. Já existem as contas, o login, o cadastro e as tabelas do projeto. As rotas de alerta, missões e ranking ainda não foram feitas.
 
 ## Pastas
 
@@ -50,4 +50,4 @@ python manage.py test
 | `DJANGO_ALLOWED_HOSTS` | Fora do modo de desenvolvimento | Domínios da API, separados por vírgula |
 | `CORS_ALLOWED_ORIGINS` | Quando o front-end chamar a API | Endereços do front-end, separados por vírgula, como `http://127.0.0.1:5500` |
 
-Sem `DATABASE_URL`, o modo de desenvolvimento usa um SQLite local, apenas para começar rápido. O banco oficial do projeto é o PostgreSQL.
+Sem `DATABASE_URL`, o modo de desenvolvimento usa um SQLite local, apenas para começar rápido. O banco oficial do projeto é o PostgreSQL no Supabase. As tabelas são criadas com `python manage.py migrate`, sem SQL à parte: mudanças no banco entram por novas migrações.

@@ -19,7 +19,7 @@ O uso com moradores reais não faz parte desta etapa.
 | Back-end | Python + Django |
 | Painel da Defesa Civil | Página feita no Django Admin |
 | Comunicação | Front-end separado, falando com o back-end por API |
-| Banco de dados | PostgreSQL, com as tabelas criadas pelo Victor, separadamente |
+| Banco de dados | PostgreSQL no Supabase, usado só como banco. As tabelas são criadas pelas migrações do Django |
 | Front-end agora | HTML, CSS e JavaScript puro, com `fetch` |
 | Hospedagem | Serviços gerenciados |
 
@@ -39,7 +39,6 @@ Estes itens ainda não foram decididos pela equipe.
 | Login | Contas do Django + `djangorestframework-simplejwt` | Evita a complicação de cookies entre domínios |
 | Hospedagem do front-end | Netlify | Serve bem um site estático |
 | Hospedagem da API | Render | Serviço gerenciado para Python |
-| Banco gerenciado | Supabase, usado só como PostgreSQL | Oferece PostGIS para o futuro; o login continua no Django |
 | Tarefa de alertas | Comando do Django executado por cron | É simples e suficiente para a demo |
 | Previsão do tempo | Open-Meteo | Facilita os testes; termos e precisão ainda precisam ser conferidos |
 
