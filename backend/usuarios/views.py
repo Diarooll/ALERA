@@ -19,8 +19,9 @@ class LoginView(TokenObtainPairView):
     throttle_scope = 'login'
 
 
-class MeuPerfilView(generics.RetrieveAPIView):
+class MeuPerfilView(generics.RetrieveUpdateAPIView):
     serializer_class = MeuPerfilSerializer
+    http_method_names = ['get', 'patch', 'head', 'options']
 
     def get_object(self):
         return self.request.user

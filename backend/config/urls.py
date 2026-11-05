@@ -7,4 +7,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/saude/', views.saude, name='saude'),
     path('api/', include('usuarios.urls')),
+    path('api/', include('locais.urls')),
 ]

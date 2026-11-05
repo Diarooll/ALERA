@@ -21,7 +21,7 @@ class Usuario(AbstractUser):
     email = models.EmailField('e-mail', unique=True)
     telefone = models.CharField(max_length=11, blank=True)
     endereco = models.CharField('endereço', max_length=255, blank=True)
-    # Ficam vazios em contas da Defesa Civil, que não moram em uma rua do sistema
+    # Antigo: as ruas não são mais cadastradas. O campo fica parado, sem uso nas telas
     rua = models.ForeignKey(
         'locais.Rua', on_delete=models.PROTECT, null=True, blank=True, related_name='moradores'
     )
@@ -33,6 +33,16 @@ class Usuario(AbstractUser):
         related_name='moradores',
         verbose_name='abrigo salvo',
     )
+    # Endereço do morador. O bairro liga a pessoa à área de risco; latitude e longitude
+    # só voltam para o próprio morador (nunca aparecem para outra pessoa nem no painel)
+    cep = models.CharField(max_length=8, blank=True)
+    logradouro = models.CharField(max_length=150, blank=True)
+    numero = models.CharField('número', max_length=10, blank=True)
+    bairro = models.ForeignKey(
+        'locais.Bairro', on_delete=models.SET_NULL, null=True, blank=True, related_name='moradores'
+    )
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True)
     alertas_ativos = models.BooleanField('alertas ligados', default=True)
     # Prova do consentimento: quando foi dado e qual texto a pessoa aceitou
     consentimento_em = models.DateTimeField(null=True, blank=True)
@@ -40,6 +50,17 @@ class Usuario(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+
+    class Meta(AbstractUser.Meta):
+        constraints = [
+            models.CheckConstraint(
+                condition=(
+                    models.Q(latitude__isnull=True, longitude__isnull=True)
+                    | models.Q(latitude__isnull=False, longitude__isnull=False)
+                ),
+                name='usuario_lat_lng_juntas',
+            ),
+        ]
 
     objects = UsuarioManager()
 

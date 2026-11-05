@@ -3,7 +3,7 @@ from django.contrib import admin
 from alertas.models import HistoricoNivel
 from alertas.servicos import mudar_nivel
 
-from .models import Abrigo, AreaRisco, Rua
+from .models import Abrigo, AreaRisco, Bairro, Rua, TipoAbrigo
 
 admin.site.site_header = 'ALERA · Painel da Defesa Civil (Demonstração)'
 admin.site.site_title = 'ALERA · Demonstração'
@@ -41,8 +41,21 @@ class RuaAdmin(admin.ModelAdmin):
     search_fields = ['nome', 'bairro']
 
 
+@admin.register(TipoAbrigo)
+class TipoAbrigoAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'icone']
+    search_fields = ['nome']
+
+
+@admin.register(Bairro)
+class BairroAdmin(admin.ModelAdmin):
+    list_display = ['nome', 'cidade', 'area']
+    list_filter = ['area', 'cidade']
+    search_fields = ['nome']
+
+
 @admin.register(Abrigo)
 class AbrigoAdmin(admin.ModelAdmin):
-    list_display = ['nome', 'area', 'situacao', 'distancia_m', 'tempo_a_pe_min']
-    list_filter = ['area', 'situacao']
+    list_display = ['nome', 'tipo', 'situacao', 'latitude', 'longitude']
+    list_filter = ['tipo', 'situacao']
     search_fields = ['nome']
