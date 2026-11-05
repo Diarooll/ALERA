@@ -1,7 +1,7 @@
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
-from locais.models import TipoAbrigo
+from locais.models import AreaRisco, Nivel, TipoAbrigo
 
 from .models import Usuario
 
@@ -63,6 +63,63 @@ class AdminDoDjangoTestes(TestCase):
             },
         )
         self.assertFalse(Usuario.objects.filter(email='novo@exemplo.com').exists())
+
+    def editar(self, usuario, **campos):
+        return self.client.post(
+            f'/admin/usuarios/usuario/{usuario.pk}/change/',
+            {'email': usuario.email, 'is_active': 'on', **campos},
+        )
+
+    def test_adm_principal_nao_ve_morador(self):
+        self.client.force_login(self.principal)
+        lista = self.client.get('/admin/usuarios/usuario/').content.decode()
+        self.assertIn(self.admzinho.email, lista)
+        self.assertNotIn(self.morador.email, lista)
+
+        rota = f'/admin/usuarios/usuario/{self.morador.pk}/change/'
+        self.assertNotEqual(self.client.get(rota).status_code, 200)
+
+    def test_adm_principal_promove_admzinho_a_adm_principal(self):
+        self.client.force_login(self.principal)
+        self.assertEqual(self.editar(self.admzinho, is_superuser='on').status_code, 302)
+        self.admzinho.refresh_from_db()
+        self.assertTrue(self.admzinho.is_superuser)
+        self.assertTrue(self.admzinho.is_staff)
+
+    def test_adm_nunca_vira_morador_pelo_admin(self):
+        self.client.force_login(self.principal)
+        self.editar(self.admzinho, is_staff='')
+        self.admzinho.refresh_from_db()
+        self.assertTrue(self.admzinho.is_staff)
+
+    def test_menu_do_adm_principal(self):
+        self.client.force_login(self.principal)
+        liberado = ['locais/arearisco', 'locais/tipoabrigo', 'alertas/previsao', 'alertas/historiconivel']
+        for modelo in liberado:
+            self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 200, modelo)
+
+        fora = [
+            'locais/abrigo',
+            'locais/bairro',
+            'locais/rua',
+            'missoes/missao',
+            'missoes/missaoconcluida',
+            'missoes/relatolixo',
+        ]
+        for modelo in fora:
+            self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 404, modelo)
+
+    def test_adm_principal_cria_area_e_tipo_de_abrigo(self):
+        self.client.force_login(self.principal)
+        self.client.post(f'{ADMIN}locais/arearisco/add/', {'nome': 'Zona Norte'})
+        self.client.post(f'{ADMIN}locais/tipoabrigo/add/', {'nome': 'Ginásio', 'icone': '🏟'})
+        self.assertTrue(AreaRisco.objects.filter(nome='Zona Norte', nivel=Nivel.NORMAL).exists())
+        self.assertTrue(TipoAbrigo.objects.filter(nome='Ginásio').exists())
+
+    def test_previsoes_e_historico_sao_so_leitura(self):
+        self.client.force_login(self.principal)
+        for modelo in ['alertas/previsao', 'alertas/historiconivel']:
+            self.assertEqual(self.client.get(f'{ADMIN}{modelo}/add/').status_code, 403, modelo)
 
 
 class PainelProprioTestes(APITestCase):

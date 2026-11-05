@@ -65,7 +65,7 @@ class RegrasDoBancoTestes(Base):
             )
 
 
-class PainelTestes(Base):
+class AdminDoDjangoTestes(Base):
     def setUp(self):
         super().setUp()
         self.client.force_login(self.agente)
@@ -74,18 +74,17 @@ class PainelTestes(Base):
     def salvar(self, nivel):
         return self.client.post(self.url, {'nome': self.area.nome, 'nivel': nivel})
 
-    def test_mudar_nivel_no_painel_grava_o_agente(self):
+    def test_adm_principal_nao_muda_o_nivel(self):
         self.assertEqual(self.salvar('perigo').status_code, 302)
 
         self.area.refresh_from_db()
-        historico = HistoricoNivel.objects.get()
-        self.assertEqual(self.area.nivel, Nivel.PERIGO)
-        self.assertEqual(historico.origem, DEFESA_CIVIL)
-        self.assertEqual(historico.responsavel, self.agente)
-
-    def test_salvar_sem_mudar_nivel_nao_gera_historico(self):
-        self.assertEqual(self.salvar('normal').status_code, 302)
+        self.assertEqual(self.area.nivel, Nivel.NORMAL)
         self.assertFalse(HistoricoNivel.objects.exists())
+
+    def test_adm_principal_muda_o_nome_da_area(self):
+        self.client.post(self.url, {'nome': 'Área Nova'})
+        self.area.refresh_from_db()
+        self.assertEqual(self.area.nome, 'Área Nova')
 
     def test_morador_nao_entra_no_painel(self):
         self.client.force_login(Usuario.objects.create_user('morador@exemplo.com', 'senha-do-app-1'))
