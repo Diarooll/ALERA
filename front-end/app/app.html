@@ -1,0 +1,1072 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#1E2A5A" />
+    <title>ALERA · App</title>
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/app.css" />
+  </head>
+  <body>
+    <svg class="desenhos" width="0" height="0" aria-hidden="true" focusable="false">
+      <symbol id="i-logo" viewBox="-21 -7 108 102">
+        <path
+          d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"
+        />
+        <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z" />
+      </symbol>
+      <symbol id="i-alerta" viewBox="0 0 24 24">
+        <path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+        <path d="M12 9v4" />
+        <path d="M12 17h.01" />
+      </symbol>
+      <symbol id="i-missoes" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" />
+        <circle cx="12" cy="12" r="6" />
+        <circle cx="12" cy="12" r="2" />
+      </symbol>
+      <symbol id="i-ranking" viewBox="0 0 24 24">
+        <path d="M8 21h8" />
+        <path d="M12 17v4" />
+        <path d="M7 4h10v5a5 5 0 0 1-10 0z" />
+        <path d="M17 5h3v2a3 3 0 0 1-3 3" />
+        <path d="M7 5H4v2a3 3 0 0 0 3 3" />
+      </symbol>
+      <symbol id="i-dados" viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21a8 8 0 0 1 16 0" />
+      </symbol>
+      <symbol id="i-lua" viewBox="0 0 24 24">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+      </symbol>
+      <symbol id="i-sol" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path
+          d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"
+        />
+      </symbol>
+      <symbol id="i-telefone" viewBox="0 0 24 24">
+        <path
+          d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"
+        />
+      </symbol>
+      <symbol id="i-voltar" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6" /></symbol>
+      <symbol id="i-vassoura" viewBox="0 0 24 24">
+        <path d="M21 3l-9 9" />
+        <path
+          d="M9.500 9.500l5 5-2 5.500c-.4 1-1.600 1.300-2.400.5L3.500 14c-.8-.8-.5-2 .5-2.400z"
+        />
+        <path d="M8 15l-2 3" />
+        <path d="M11 17l-1 2.500" />
+      </symbol>
+      <symbol id="i-lixo" viewBox="0 0 24 24">
+        <path d="M3 6h18" />
+        <path d="M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2" />
+        <path d="M19 6l-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6" />
+        <path d="M10 11v6M14 11v6" />
+      </symbol>
+      <symbol id="i-local" viewBox="0 0 24 24">
+        <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
+        <circle cx="12" cy="10" r="3" />
+      </symbol>
+      <symbol id="i-muda" viewBox="0 0 24 24">
+        <path d="M12 22V11" />
+        <path d="M12 15C12 11 9 8.500 3 8.500 3 13 6 15 12 15z" />
+        <path d="M12 11c0-4.500 3-8 9-8 0 5-3 8-9 8z" />
+      </symbol>
+      <symbol id="i-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></symbol>
+      <symbol id="i-seguir" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></symbol>
+      <!-- Mapa: as ruas são sempre as mesmas; cada abrigo tem o seu caminho e o seu ponto -->
+      <symbol id="d-mapa-base" viewBox="0 0 320 200">
+        <line class="mapa__rua" x1="60" y1="0" x2="60" y2="200" />
+        <line class="mapa__rua" x1="0" y1="150" x2="320" y2="150" />
+        <line class="mapa__rua" x1="250" y1="0" x2="250" y2="200" />
+        <line class="mapa__rua" x1="250" y1="70" x2="320" y2="70" />
+        <line class="mapa__perigo" x1="0" y1="40" x2="320" y2="40" />
+        <text class="mapa__rotulo" x="96" y="26">Rua Exemplo · alagada</text>
+        <text class="mapa__rotulo" x="118" y="176">Rua da Paz</text>
+        <text
+          class="mapa__rotulo"
+          x="276"
+          y="112"
+          text-anchor="middle"
+          transform="rotate(-90 276 112)"
+        >
+          Av. Exemplo
+        </text>
+        <text class="mapa__rotulo" x="76" y="105">Você</text>
+      </symbol>
+      <symbol id="d-rota-1" viewBox="0 0 320 200">
+        <use href="#d-mapa-base" />
+        <path class="mapa__caminho" d="M60 100 V150 H250 V110" />
+        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
+        <path class="mapa__ponto" d="M238 98 L250 86 L262 98 V110 H238 Z" />
+        <text class="mapa__rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
+      </symbol>
+      <symbol id="d-rota-2" viewBox="0 0 320 200">
+        <use href="#d-mapa-base" />
+        <path class="mapa__caminho" d="M60 100 V150 H250 V168" />
+        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
+        <path class="mapa__ponto" d="M238 178 L250 166 L262 178 V190 H238 Z" />
+        <text class="mapa__rotulo" x="230" y="186" text-anchor="end">Abrigo</text>
+      </symbol>
+      <symbol id="d-rota-3" viewBox="0 0 320 200">
+        <use href="#d-mapa-base" />
+        <path class="mapa__caminho" d="M60 100 V150 H288" />
+        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
+        <path class="mapa__ponto" d="M288 150 L300 138 L312 150 V162 H288 Z" />
+        <text class="mapa__rotulo" x="300" y="178" text-anchor="middle">Abrigo</text>
+      </symbol>
+      <symbol id="d-rota-4" viewBox="0 0 320 200">
+        <use href="#d-mapa-base" />
+        <path class="mapa__caminho" d="M60 100 V150 H250 V70 H273" />
+        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
+        <path class="mapa__ponto" d="M273 68 L285 56 L297 68 V80 H273 Z" />
+        <text class="mapa__rotulo" x="318" y="98" text-anchor="end">Abrigo</text>
+      </symbol>
+    </svg>
+
+    <!-- TOPO: no computador leva o menu e o Ligar 199; no celular o menu vira abas embaixo -->
+    <header class="topo">
+      <div class="topo__faixa">
+        <a class="topo__marca" href="#alerta">
+          <svg class="topo__logo" aria-hidden="true" focusable="false"><use href="#i-logo" /></svg>
+          A.L.E.R.A
+        </a>
+
+        <nav class="menu" aria-label="Navegação do app">
+          <ul class="menu__lista">
+            <li>
+              <a class="menu__link" href="#alerta"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-alerta" /></svg
+                >Alerta</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-missoes" /></svg
+                >Missões</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#ranking"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-ranking" /></svg
+                >Ranking</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#cadastro"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-dados" /></svg
+                >Meus dados</a
+              >
+            </li>
+          </ul>
+        </nav>
+
+        <div class="topo__acoes">
+          <a class="topo__ligar" href="tel:199"
+            ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-telefone" /></svg
+            >Ligar 199</a
+          >
+          <!-- Tema claro/escuro só com CSS: o checkbox liga o tema escuro, o label é o botão -->
+          <input class="visualmente-oculto" type="checkbox" id="tema" role="switch" />
+          <label class="tema" for="tema">
+            <svg class="icone tema__lua" aria-hidden="true" focusable="false">
+              <use href="#i-lua" />
+            </svg>
+            <svg class="icone tema__sol" aria-hidden="true" focusable="false">
+              <use href="#i-sol" />
+            </svg>
+            <span class="visualmente-oculto">Tema escuro</span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="telas">
+      <!-- ALERTA: tela inicial. A rua é o título porque é o que a ALERA tem de diferente -->
+      <section class="tela" id="alerta">
+        <div class="faixa faixa--selo">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Rua Exemplo</h1>
+            <p class="faixa__apoio">Bairro Exemplo · atualizado há 5 min</p>
+          </div>
+        </div>
+
+        <div class="conteudo alerta">
+          <div class="alerta__principal">
+            <p class="selo nivel--alerta">
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg
+              >ALERTA
+            </p>
+            <p class="alerta__ordem">Chuva forte prevista em até 24&nbsp;horas. Evite a Rua Exemplo.</p>
+            <div class="medidor" role="img" aria-label="Nível 3 de 4">
+              <span class="medidor__parte medidor__parte--cheia"></span>
+              <span class="medidor__parte medidor__parte--cheia"></span>
+              <span class="medidor__parte medidor__parte--cheia"></span>
+              <span class="medidor__parte"></span>
+            </div>
+            <p class="medidor__legenda" aria-hidden="true">Nível 3 de 4</p>
+          </div>
+
+          <!-- .por-abrigo--N: só aparece o que for do abrigo salvo em Missões (regra no CSS) -->
+          <div class="alerta__rota">
+            <div class="mapa-caixa alerta__mapa">
+              <svg
+                class="mapa por-abrigo por-abrigo--1"
+                viewBox="0 0 320 200"
+                role="img"
+                aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."
+              >
+                <use href="#d-rota-1" />
+              </svg>
+              <svg
+                class="mapa por-abrigo por-abrigo--2"
+                viewBox="0 0 320 200"
+                role="img"
+                aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."
+              >
+                <use href="#d-rota-2" />
+              </svg>
+              <svg
+                class="mapa por-abrigo por-abrigo--3"
+                viewBox="0 0 320 200"
+                role="img"
+                aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."
+              >
+                <use href="#d-rota-3" />
+              </svg>
+              <svg
+                class="mapa por-abrigo por-abrigo--4"
+                viewBox="0 0 320 200"
+                role="img"
+                aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."
+              >
+                <use href="#d-rota-4" />
+              </svg>
+            </div>
+            <div class="destino">
+              <div class="por-abrigo por-abrigo--1">
+                <p class="destino__rotulo">Seu abrigo</p>
+                <p class="destino__nome">Escola Municipal Exemplo</p>
+                <p class="destino__info">600 m · 8 min a pé · aberto agora</p>
+              </div>
+              <div class="por-abrigo por-abrigo--2">
+                <p class="destino__rotulo">Seu abrigo</p>
+                <p class="destino__nome">Ginásio Exemplo</p>
+                <p class="destino__info">800 m · 11 min a pé · aberto agora</p>
+              </div>
+              <div class="por-abrigo por-abrigo--3">
+                <p class="destino__rotulo">Seu abrigo</p>
+                <p class="destino__nome">Igreja Exemplo</p>
+                <p class="destino__info">1 km · 14 min a pé · poucas vagas</p>
+              </div>
+              <div class="por-abrigo por-abrigo--4">
+                <p class="destino__rotulo">Seu abrigo</p>
+                <p class="destino__nome">Centro Comunitário Exemplo</p>
+                <p class="destino__info">1,4 km · 19 min a pé · abre só em nível de alerta</p>
+              </div>
+              <a class="botao" href="#rota">Ver rota segura</a>
+            </div>
+            <a class="botao botao--texto alerta__ligar" href="tel:199"
+              ><svg class="icone" aria-hidden="true" focusable="false">
+                <use href="#i-telefone" /></svg
+              >Ligar 199 · Defesa Civil</a
+            >
+          </div>
+
+          <div class="alerta__niveis">
+            <h2 class="subtitulo">O que fazer em cada nível</h2>
+            <ul class="niveis">
+              <li class="niveis__item">
+                <span class="niveis__cor nivel--normal"></span>
+                <strong class="niveis__nome">NORMAL</strong>
+                <span
+                  >Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu
+                  rachaduras, ligue 199.</span
+                >
+              </li>
+              <li class="niveis__item">
+                <span class="niveis__cor nivel--atencao"></span>
+                <strong class="niveis__nome">ATENÇÃO</strong>
+                <span
+                  >Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do
+                  bueiro.</span
+                >
+              </li>
+              <li class="niveis__item niveis__item--agora" aria-current="true">
+                <span class="niveis__cor nivel--alerta"></span>
+                <strong class="niveis__nome">ALERTA</strong>
+                <span
+                  >Chuva forte prevista em até 24 horas. Evite a rua e deixe documentos à mão.</span
+                >
+              </li>
+              <li class="niveis__item">
+                <span class="niveis__cor nivel--perigo"></span>
+                <strong class="niveis__nome">PERIGO</strong>
+                <span>Risco agora. Saia de casa e vá para o abrigo.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ROTA SEGURA: abre pelo botão do alerta -->
+      <section class="tela" id="rota">
+        <div class="faixa">
+          <div class="conteudo">
+            <a class="faixa__voltar" href="#alerta"
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-voltar" /></svg
+              >Voltar</a
+            >
+            <h1 class="faixa__titulo">Rota segura</h1>
+            <p class="faixa__apoio">Saindo da Rua Exemplo até o abrigo</p>
+          </div>
+        </div>
+
+        <div class="conteudo rota">
+          <!-- Tema só do mapa: o checkbox #mapa-tema inverte o mapa em relação ao tema do app -->
+          <div class="mapa-caixa rota__mapa">
+            <input class="visualmente-oculto" type="checkbox" id="mapa-tema" role="switch" />
+            <label class="mapa-tema" for="mapa-tema">
+              <svg class="icone mapa-tema__lua" aria-hidden="true" focusable="false">
+                <use href="#i-lua" />
+              </svg>
+              <svg class="icone mapa-tema__sol" aria-hidden="true" focusable="false">
+                <use href="#i-sol" />
+              </svg>
+              <span class="visualmente-oculto">Inverter cores do mapa</span>
+            </label>
+            <svg
+              class="mapa por-abrigo por-abrigo--1"
+              viewBox="0 0 320 200"
+              role="img"
+              aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."
+            >
+              <use href="#d-rota-1" />
+            </svg>
+            <svg
+              class="mapa por-abrigo por-abrigo--2"
+              viewBox="0 0 320 200"
+              role="img"
+              aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."
+            >
+              <use href="#d-rota-2" />
+            </svg>
+            <svg
+              class="mapa por-abrigo por-abrigo--3"
+              viewBox="0 0 320 200"
+              role="img"
+              aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."
+            >
+              <use href="#d-rota-3" />
+            </svg>
+            <svg
+              class="mapa por-abrigo por-abrigo--4"
+              viewBox="0 0 320 200"
+              role="img"
+              aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."
+            >
+              <use href="#d-rota-4" />
+            </svg>
+          </div>
+
+          <div class="rota__destino por-abrigo por-abrigo--1">
+            <h2 class="rota__nome">Escola Municipal Exemplo</h2>
+            <p class="destino__info">
+              <strong class="rota__tempo">8 min a pé</strong> · 600 m · aberto agora
+            </p>
+          </div>
+          <div class="rota__destino por-abrigo por-abrigo--2">
+            <h2 class="rota__nome">Ginásio Exemplo</h2>
+            <p class="destino__info">
+              <strong class="rota__tempo">11 min a pé</strong> · 800 m · aberto agora
+            </p>
+          </div>
+          <div class="rota__destino por-abrigo por-abrigo--3">
+            <h2 class="rota__nome">Igreja Exemplo</h2>
+            <p class="destino__info">
+              <strong class="rota__tempo">14 min a pé</strong> · 1 km · poucas vagas
+            </p>
+          </div>
+          <div class="rota__destino por-abrigo por-abrigo--4">
+            <h2 class="rota__nome">Centro Comunitário Exemplo</h2>
+            <p class="destino__info">
+              <strong class="rota__tempo">19 min a pé</strong> · 1,4 km · abre só em nível de alerta
+            </p>
+          </div>
+
+          <p class="rota__evitar nivel--alerta">
+            <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg>
+            ALERTA · Não passe pela Rua Exemplo: está alagada.
+          </p>
+
+          <ol class="rota__passos por-abrigo por-abrigo--1">
+            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
+            <li>Vire à esquerda na Av. Exemplo e suba 250 m.</li>
+            <li>O abrigo fica no fim da quadra, portão azul.</li>
+          </ol>
+          <ol class="rota__passos por-abrigo por-abrigo--2">
+            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
+            <li>Vire à direita na Av. Exemplo e desça 450 m.</li>
+            <li>Entre no ginásio pela lateral.</li>
+          </ol>
+          <ol class="rota__passos por-abrigo por-abrigo--3">
+            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+            <li>Vire à direita na Rua da Paz e siga 950 m.</li>
+            <li>
+              A igreja fica no fim da rua. Tem poucas vagas: se estiver cheia, siga para o abrigo
+              mais perto.
+            </li>
+          </ol>
+          <ol class="rota__passos por-abrigo por-abrigo--4">
+            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
+            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
+            <li>Vire à esquerda na Av. Exemplo e suba 700 m.</li>
+            <li>Vire à direita na rua lateral, antes da Rua Exemplo, e siga 350 m.</li>
+          </ol>
+
+          <div class="rota__acoes">
+            <a
+              class="botao por-abrigo por-abrigo--1"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=Escola+Municipal+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
+              target="_blank"
+              rel="noopener"
+              >Abrir no Google Maps</a
+            >
+            <a
+              class="botao por-abrigo por-abrigo--2"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=Ginasio+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
+              target="_blank"
+              rel="noopener"
+              >Abrir no Google Maps</a
+            >
+            <a
+              class="botao por-abrigo por-abrigo--3"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=Igreja+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
+              target="_blank"
+              rel="noopener"
+              >Abrir no Google Maps</a
+            >
+            <a
+              class="botao por-abrigo por-abrigo--4"
+              href="https://www.google.com/maps/dir/?api=1&amp;destination=Centro+Comunitario+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
+              target="_blank"
+              rel="noopener"
+              >Abrir no Google Maps</a
+            >
+            <a class="botao botao--secundario" href="tel:199"
+              ><svg class="icone" aria-hidden="true" focusable="false">
+                <use href="#i-telefone" /></svg
+              >Ligar 199 · Defesa Civil</a
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- MISSÕES -->
+      <section class="tela" id="missoes">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Suas missões</h1>
+            <p class="faixa__apoio">Pequenas ações que deixam sua rua mais segura</p>
+          </div>
+        </div>
+
+        <div class="conteudo missoes">
+          <article class="missao tipo--bueiro">
+            <div class="missao__topo">
+              <svg class="missao__icone" aria-hidden="true" focusable="false">
+                <use href="#i-vassoura" />
+              </svg>
+              <span class="missao__pontos">+50 pts</span>
+            </div>
+            <h2 class="missao__titulo" id="missao-bueiro">Limpe o bueiro da sua rua</h2>
+            <p class="missao__texto">Lixo entope o bueiro e piora o alagamento.</p>
+            <progress
+              class="progresso"
+              value="3"
+              max="5"
+              aria-labelledby="missao-bueiro"
+              aria-describedby="legenda-bueiro"
+            ></progress>
+            <p class="progresso__legenda" id="legenda-bueiro">3 de 5 vizinhos ajudaram</p>
+            <a class="missao__abrir" href="#detalhe-bueiro"
+              >Ver bueiros no mapa<span class="visualmente-oculto">: Limpe o bueiro da sua rua</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+          <article class="missao tipo--bueiro">
+            <div class="missao__topo">
+              <svg class="missao__icone" aria-hidden="true" focusable="false">
+                <use href="#i-lixo" />
+              </svg>
+              <span class="missao__pontos">+20 pts</span>
+            </div>
+            <h2 class="missao__titulo" id="missao-lixo">Reporte lixo acumulado</h2>
+            <p class="missao__texto">Avise onde tem lixo acumulado ou bueiro entupido.</p>
+            <progress
+              class="progresso"
+              value="0"
+              max="1"
+              aria-labelledby="missao-lixo"
+              aria-describedby="legenda-lixo"
+            ></progress>
+            <p class="progresso__legenda" id="legenda-lixo">Não iniciada</p>
+            <a class="missao__abrir" href="#detalhe-lixo"
+              >Ver como reportar<span class="visualmente-oculto">: Reporte lixo acumulado</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+          <article class="missao tipo--abrigo">
+            <div class="missao__topo">
+              <svg class="missao__icone" aria-hidden="true" focusable="false">
+                <use href="#i-local" />
+              </svg>
+              <span class="missao__pontos">+10 pts</span>
+            </div>
+            <h2 class="missao__titulo" id="missao-abrigo">Salve seu abrigo mais perto</h2>
+            <p class="missao__texto">Saiba para onde ir antes da chuva chegar.</p>
+            <progress
+              class="progresso"
+              value="1"
+              max="1"
+              aria-labelledby="missao-abrigo"
+              aria-describedby="legenda-abrigo"
+            ></progress>
+            <p class="progresso__legenda" id="legenda-abrigo">Concluída</p>
+            <a class="missao__abrir" href="#detalhe-abrigo"
+              >Escolher abrigo<span class="visualmente-oculto">: Salve seu abrigo mais perto</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+          <article class="missao tipo--muda">
+            <div class="missao__topo">
+              <svg class="missao__icone" aria-hidden="true" focusable="false">
+                <use href="#i-muda" />
+              </svg>
+              <span class="missao__pontos">+80 pts</span>
+            </div>
+            <h2 class="missao__titulo" id="missao-muda">Plante uma muda na encosta</h2>
+            <p class="missao__texto">Raiz segura o solo e reduz deslizamento.</p>
+            <progress
+              class="progresso"
+              value="0"
+              max="1"
+              aria-labelledby="missao-muda"
+              aria-describedby="legenda-muda"
+            ></progress>
+            <p class="progresso__legenda" id="legenda-muda">Não iniciada</p>
+            <a class="missao__abrir" href="#detalhe-muda"
+              >Ver áreas para plantar<span class="visualmente-oculto"
+                >: Plante uma muda na encosta</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+        </div>
+
+        <!-- DETALHES DAS MISSÕES: abrem por cima da tela (:target, sem JavaScript). Tudo aqui é exemplo. -->
+
+        <!-- Bueiro: prévia informativa da Fase 2 -->
+        <div
+          class="detalhe tipo--bueiro"
+          id="detalhe-bueiro"
+          role="dialog"
+          aria-labelledby="detalhe-bueiro-titulo"
+        >
+          <a class="detalhe__fundo" href="#missoes" tabindex="-1" aria-hidden="true"></a>
+          <div class="detalhe__caixa">
+            <header class="detalhe__topo">
+              <svg class="icone" aria-hidden="true" focusable="false">
+                <use href="#i-vassoura" />
+              </svg>
+              <h2 class="detalhe__titulo" id="detalhe-bueiro-titulo">Limpe o bueiro da sua rua</h2>
+              <a class="detalhe__fechar" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-fechar" /></svg
+                ><span class="visualmente-oculto">Fechar</span></a
+              >
+            </header>
+            <div class="detalhe__corpo">
+              <div class="detalhe__coluna">
+                <p class="detalhe__aviso">Prévia da Fase 2 · dados de exemplo</p>
+                <div class="mapa-caixa">
+                  <svg
+                    class="mapa"
+                    viewBox="0 0 320 200"
+                    role="img"
+                    aria-label="Mapa de exemplo com 7 bueiros: 1 entupido e 2 para limpar na Rua Exemplo, 2 em atenção e 2 sem problema nas outras ruas."
+                  >
+                    <line class="mapa__rua" x1="60" y1="0" x2="60" y2="200" />
+                    <line class="mapa__rua" x1="0" y1="150" x2="320" y2="150" />
+                    <line class="mapa__rua" x1="250" y1="0" x2="250" y2="200" />
+                    <line class="mapa__rua" x1="0" y1="40" x2="320" y2="40" />
+                    <text class="mapa__rotulo" x="76" y="24">Rua Exemplo</text>
+                    <text class="mapa__rotulo" x="118" y="178">Rua da Paz</text>
+                    <text
+                      class="mapa__rotulo"
+                      x="276"
+                      y="100"
+                      text-anchor="middle"
+                      transform="rotate(-90 276 100)"
+                    >
+                      Av. Exemplo
+                    </text>
+                    <g class="bueiro bueiro--limpar" transform="translate(60 40)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">!!</text>
+                    </g>
+                    <g class="bueiro bueiro--entupido" transform="translate(180 40)">
+                      <rect x="-13" y="-13" width="26" height="26" rx="4" />
+                      <text y="5" text-anchor="middle">X</text>
+                    </g>
+                    <g class="bueiro bueiro--limpar" transform="translate(250 40)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">!!</text>
+                    </g>
+                    <g class="bueiro bueiro--atencao" transform="translate(250 95)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">!</text>
+                    </g>
+                    <g class="bueiro bueiro--atencao" transform="translate(150 150)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">!</text>
+                    </g>
+                    <g class="bueiro bueiro--ok" transform="translate(60 150)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">ok</text>
+                    </g>
+                    <g class="bueiro bueiro--ok" transform="translate(250 150)">
+                      <rect x="-11" y="-11" width="22" height="22" rx="4" />
+                      <text y="5" text-anchor="middle">ok</text>
+                    </g>
+                  </svg>
+                </div>
+                <ul class="legenda">
+                  <li>
+                    <span class="legenda__marca nivel--normal">ok</span
+                    ><span><strong>OK:</strong> cesto abaixo de 50%</span>
+                  </li>
+                  <li>
+                    <span class="legenda__marca nivel--atencao">!</span
+                    ><span><strong>Atenção:</strong> 50% ou mais, agendar limpeza</span>
+                  </li>
+                  <li>
+                    <span class="legenda__marca nivel--alerta">!!</span
+                    ><span><strong>Limpar:</strong> 75% ou mais, limpar antes da chuva</span>
+                  </li>
+                  <li>
+                    <span class="legenda__marca nivel--perigo">X</span
+                    ><span><strong>Entupido:</strong> a água subiu, aviso urgente</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="detalhe__coluna">
+                <p class="detalhe__destaque">
+                  Lixo entope o bueiro e piora o alagamento. Sacolas e garrafas PET são o que mais
+                  entope.
+                </p>
+                <div>
+                  <h3 class="detalhe__subtitulo">Como ajudar agora</h3>
+                  <ul class="detalhe__lista">
+                    <li>Tire o lixo da frente do bueiro da sua rua.</li>
+                    <li>Com a chuva chegando, faça isso antes de ela começar.</li>
+                    <li>Com a água subindo, não chegue perto: ligue 199.</li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 class="detalhe__subtitulo">O que chega na Fase 2</h3>
+                  <p class="detalhe__texto">
+                    O Bueiro ALERA mede a altura do lixo e da água, mostra neste mapa quais bueiros
+                    estão cheios e avisa a Secretaria de Obras quando é hora de limpar.
+                  </p>
+                </div>
+                <a class="botao botao--tipo" href="#missoes">Entendi</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Reportar lixo: só explica a missão; o envio do aviso ainda não existe -->
+        <div
+          class="detalhe tipo--bueiro"
+          id="detalhe-lixo"
+          role="dialog"
+          aria-labelledby="detalhe-lixo-titulo"
+        >
+          <a class="detalhe__fundo" href="#missoes" tabindex="-1" aria-hidden="true"></a>
+          <div class="detalhe__caixa">
+            <header class="detalhe__topo">
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-lixo" /></svg>
+              <h2 class="detalhe__titulo" id="detalhe-lixo-titulo">Reporte lixo acumulado</h2>
+              <a class="detalhe__fechar" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-fechar" /></svg
+                ><span class="visualmente-oculto">Fechar</span></a
+              >
+            </header>
+            <div class="detalhe__corpo">
+              <div class="detalhe__coluna">
+                <p class="detalhe__aviso">Prévia · o envio do aviso ainda não existe</p>
+                <p class="detalhe__destaque">
+                  Avise onde tem lixo acumulado ou bueiro entupido, antes que a chuva chegue.
+                </p>
+              </div>
+              <div class="detalhe__coluna">
+                <div>
+                  <h3 class="detalhe__subtitulo">O que observar</h3>
+                  <ul class="detalhe__lista">
+                    <li>Sacolas e garrafas PET na frente do bueiro.</li>
+                    <li>Entulho ou lixo acumulado na rua.</li>
+                    <li>Com a água subindo, não chegue perto: ligue 199.</li>
+                  </ul>
+                </div>
+                <a class="botao botao--tipo" href="#missoes">Entendi</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Abrigo: pinos e lista marcam o mesmo rádio; o painel mostra o abrigo marcado -->
+        <div
+          class="detalhe tipo--abrigo"
+          id="detalhe-abrigo"
+          role="dialog"
+          aria-labelledby="detalhe-abrigo-titulo"
+        >
+          <a class="detalhe__fundo" href="#missoes" tabindex="-1" aria-hidden="true"></a>
+          <div class="detalhe__caixa">
+            <header class="detalhe__topo">
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-local" /></svg>
+              <h2 class="detalhe__titulo" id="detalhe-abrigo-titulo">
+                Salve seu abrigo mais perto
+              </h2>
+              <a class="detalhe__fechar" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-fechar" /></svg
+                ><span class="visualmente-oculto">Fechar</span></a
+              >
+            </header>
+            <div class="detalhe__corpo">
+              <div class="detalhe__coluna">
+                <p class="detalhe__aviso">
+                  Prévia · abrigos de exemplo. Toque em um pino ou na lista.
+                </p>
+                <div class="mapa-caixa abrigos__mapa">
+                  <svg
+                    class="mapa"
+                    viewBox="0 0 320 200"
+                    role="img"
+                    aria-label="Mapa de exemplo com sua localização e 4 abrigos por perto, numerados como na lista."
+                  >
+                    <use href="#d-mapa-base" />
+                    <!-- O caminho desenhado é o do abrigo marcado na lista ou no pino -->
+                    <path class="mapa__caminho previa previa--1" d="M60 100 V150 H250 V98" />
+                    <path class="mapa__caminho previa previa--2" d="M60 100 V150 H250 V178" />
+                    <path class="mapa__caminho previa previa--3" d="M60 100 V150 H300" />
+                    <path class="mapa__caminho previa previa--4" d="M60 100 V150 H250 V68 H285" />
+                    <circle class="mapa__ponto" cx="60" cy="100" r="9" />
+                  </svg>
+                  <label class="pino pino--1" for="abrigo-1"
+                    ><span class="pino__numero">1</span
+                    ><span class="visualmente-oculto">Escola Municipal Exemplo</span></label
+                  >
+                  <label class="pino pino--2" for="abrigo-2"
+                    ><span class="pino__numero">2</span
+                    ><span class="visualmente-oculto">Ginásio Exemplo</span></label
+                  >
+                  <label class="pino pino--3" for="abrigo-3"
+                    ><span class="pino__numero">3</span
+                    ><span class="visualmente-oculto">Igreja Exemplo</span></label
+                  >
+                  <label class="pino pino--4" for="abrigo-4"
+                    ><span class="pino__numero">4</span
+                    ><span class="visualmente-oculto">Centro Comunitário Exemplo</span></label
+                  >
+                </div>
+              </div>
+              <div class="detalhe__coluna">
+                <fieldset class="abrigos">
+                  <legend class="detalhe__subtitulo">Abrigos por perto</legend>
+                  <div class="abrigos__item">
+                    <input
+                      class="visualmente-oculto"
+                      type="radio"
+                      name="abrigo"
+                      id="abrigo-1"
+                      checked
+                    />
+                    <label class="abrigos__opcao" for="abrigo-1"
+                      ><span class="pino__numero">1</span
+                      ><span class="abrigos__nome">Escola Municipal Exemplo</span
+                      ><span class="abrigos__distancia">600 m</span></label
+                    >
+                  </div>
+                  <div class="abrigos__item">
+                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-2" />
+                    <label class="abrigos__opcao" for="abrigo-2"
+                      ><span class="pino__numero">2</span
+                      ><span class="abrigos__nome">Ginásio Exemplo</span
+                      ><span class="abrigos__distancia">800 m</span></label
+                    >
+                  </div>
+                  <div class="abrigos__item">
+                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-3" />
+                    <label class="abrigos__opcao" for="abrigo-3"
+                      ><span class="pino__numero">3</span
+                      ><span class="abrigos__nome">Igreja Exemplo</span
+                      ><span class="abrigos__distancia">1 km</span></label
+                    >
+                  </div>
+                  <div class="abrigos__item">
+                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-4" />
+                    <label class="abrigos__opcao" for="abrigo-4"
+                      ><span class="pino__numero">4</span
+                      ><span class="abrigos__nome">Centro Comunitário Exemplo</span
+                      ><span class="abrigos__distancia">1,4 km</span></label
+                    >
+                  </div>
+                </fieldset>
+
+                <p class="detalhe__texto">
+                  O abrigo salvo é o que aparece no mapa da tela de Alerta e na rota segura.
+                </p>
+
+                <div class="abrigo-painel abrigo-painel--1">
+                  <h3 class="abrigo-painel__nome">Escola Municipal Exemplo</h3>
+                  <p class="detalhe__texto">8 min a pé · aberto agora · portão azul</p>
+                  <input
+                    class="visualmente-oculto"
+                    type="radio"
+                    name="abrigo-salvo"
+                    id="salvar-1"
+                    checked
+                  />
+                  <label class="salvar" for="salvar-1"
+                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
+                      <use href="#i-check" /></svg
+                    ><span class="salvar__acao">Salvar este abrigo</span
+                    ><span class="salvar__feito">Abrigo salvo</span></label
+                  >
+                </div>
+                <div class="abrigo-painel abrigo-painel--2">
+                  <h3 class="abrigo-painel__nome">Ginásio Exemplo</h3>
+                  <p class="detalhe__texto">11 min a pé · aberto agora · entrada pela lateral</p>
+                  <input
+                    class="visualmente-oculto"
+                    type="radio"
+                    name="abrigo-salvo"
+                    id="salvar-2"
+                  />
+                  <label class="salvar" for="salvar-2"
+                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
+                      <use href="#i-check" /></svg
+                    ><span class="salvar__acao">Salvar este abrigo</span
+                    ><span class="salvar__feito">Abrigo salvo</span></label
+                  >
+                </div>
+                <div class="abrigo-painel abrigo-painel--3">
+                  <h3 class="abrigo-painel__nome">Igreja Exemplo</h3>
+                  <p class="detalhe__texto">14 min a pé · aberto agora · poucas vagas</p>
+                  <input
+                    class="visualmente-oculto"
+                    type="radio"
+                    name="abrigo-salvo"
+                    id="salvar-3"
+                  />
+                  <label class="salvar" for="salvar-3"
+                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
+                      <use href="#i-check" /></svg
+                    ><span class="salvar__acao">Salvar este abrigo</span
+                    ><span class="salvar__feito">Abrigo salvo</span></label
+                  >
+                </div>
+                <div class="abrigo-painel abrigo-painel--4">
+                  <h3 class="abrigo-painel__nome">Centro Comunitário Exemplo</h3>
+                  <p class="detalhe__texto">19 min a pé · abre só em nível de alerta</p>
+                  <input
+                    class="visualmente-oculto"
+                    type="radio"
+                    name="abrigo-salvo"
+                    id="salvar-4"
+                  />
+                  <label class="salvar" for="salvar-4"
+                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
+                      <use href="#i-check" /></svg
+                    ><span class="salvar__acao">Salvar este abrigo</span
+                    ><span class="salvar__feito">Abrigo salvo</span></label
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Muda: mapa de terreno com áreas de exemplo -->
+        <div
+          class="detalhe tipo--muda"
+          id="detalhe-muda"
+          role="dialog"
+          aria-labelledby="detalhe-muda-titulo"
+        >
+          <a class="detalhe__fundo" href="#missoes" tabindex="-1" aria-hidden="true"></a>
+          <div class="detalhe__caixa">
+            <header class="detalhe__topo">
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-muda" /></svg>
+              <h2 class="detalhe__titulo" id="detalhe-muda-titulo">Plante uma muda na encosta</h2>
+              <a class="detalhe__fechar" href="#missoes"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-fechar" /></svg
+                ><span class="visualmente-oculto">Fechar</span></a
+              >
+            </header>
+            <div class="detalhe__corpo">
+              <div class="detalhe__coluna">
+                <p class="detalhe__aviso">Prévia · áreas de exemplo</p>
+                <div class="mapa-caixa">
+                  <svg
+                    class="mapa"
+                    viewBox="0 0 320 200"
+                    role="img"
+                    aria-label="Mapa de exemplo da encosta com 3 áreas de terra: A e B livres para plantio, C já plantada."
+                  >
+                    <path class="mapa__curva" d="M0 22 C80 6 210 44 320 14" />
+                    <path class="mapa__curva" d="M0 62 C90 44 200 84 320 52" />
+                    <path class="mapa__curva" d="M0 104 C90 86 210 124 320 94" />
+                    <path class="mapa__curva" d="M0 146 C90 130 210 164 320 136" />
+                    <line class="mapa__rua" x1="0" y1="186" x2="320" y2="186" />
+                    <path class="area" d="M34 34 L112 26 L128 84 L52 94 Z" />
+                    <path class="area" d="M178 42 L262 36 L278 104 L196 112 Z" />
+                    <path class="area area--plantada" d="M84 118 L164 112 L174 168 L96 174 Z" />
+                    <text class="mapa__rotulo" x="81" y="66" text-anchor="middle">A</text>
+                    <text class="mapa__rotulo" x="228" y="80" text-anchor="middle">B</text>
+                    <text class="mapa__rotulo" x="129" y="148" text-anchor="middle">C</text>
+                    <text class="mapa__rotulo" x="226" y="172">Rua da Paz</text>
+                  </svg>
+                </div>
+              </div>
+              <div class="detalhe__coluna">
+                <p class="detalhe__destaque">Raiz segura o solo e reduz deslizamento.</p>
+                <div>
+                  <h3 class="detalhe__subtitulo">Áreas perto de você</h3>
+                  <ul class="areas">
+                    <li class="areas__item">
+                      <span class="areas__letra">A</span
+                      ><span class="areas__nome">Encosta da Rua da Paz<small>120 m²</small></span
+                      ><span class="areas__estado">Livre</span>
+                    </li>
+                    <li class="areas__item">
+                      <span class="areas__letra">B</span
+                      ><span class="areas__nome">Terreno atrás da escola<small>80 m²</small></span
+                      ><span class="areas__estado">Livre</span>
+                    </li>
+                    <li class="areas__item areas__item--plantada">
+                      <span class="areas__letra">C</span
+                      ><span class="areas__nome">Barranco da Av. Exemplo<small>60 m²</small></span
+                      ><span class="areas__estado">Já plantada</span>
+                    </li>
+                  </ul>
+                </div>
+                <a class="botao botao--tipo" href="#missoes">Entendi</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RANKING -->
+      <section class="tela" id="ranking">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Ranking das ruas</h1>
+            <p class="faixa__apoio">Bairro Exemplo</p>
+          </div>
+        </div>
+
+        <div class="conteudo">
+          <ol class="ranking">
+            <li class="ranking__item">
+              <span class="ranking__posicao">1</span
+              ><span class="ranking__nome">Rua das Flores</span
+              ><span class="ranking__pontos">1.240 pts</span>
+            </li>
+            <li class="ranking__item ranking__item--voce" aria-current="true">
+              <span class="ranking__posicao">2</span
+              ><span class="ranking__nome"
+                >Rua Exemplo <span class="ranking__sua">sua rua</span></span
+              ><span class="ranking__pontos">980 pts</span>
+            </li>
+            <li class="ranking__item">
+              <span class="ranking__posicao">3</span><span class="ranking__nome">Rua da Paz</span
+              ><span class="ranking__pontos">760 pts</span>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- MEUS DADOS: cadastro (coração da Fase 1) -->
+      <section class="tela" id="cadastro">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Meus dados</h1>
+            <p class="faixa__apoio">Telefone e rua para receber os alertas</p>
+          </div>
+        </div>
+
+        <div class="conteudo">
+          <form class="cadastro" action="#cadastro">
+            <h2 class="cadastro__titulo">Receba alertas de chuva e risco no seu WhatsApp</h2>
+            <p class="cadastro__texto">
+              Avisamos quando sua rua estiver em risco e dizemos para onde ir.
+            </p>
+            <!-- Validação nativa do HTML: o erro aparece depois que a pessoa sai do campo -->
+            <div class="campo">
+              <label class="campo__rotulo" for="tel">Telefone (WhatsApp)</label>
+              <input
+                class="campo__entrada"
+                id="tel"
+                type="tel"
+                required
+                pattern="\(?\d{2}\)?\s?9?\d{4}-?\d{4}"
+                autocomplete="tel"
+                placeholder="(32) 99999-0000"
+                aria-describedby="tel-erro"
+              />
+              <span class="campo__erro" id="tel-erro">Digite o telefone com DDD.</span>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="rua">Sua rua</label>
+              <input
+                class="campo__entrada"
+                id="rua"
+                required
+                pattern="\S+(\s+\S+)+"
+                autocomplete="street-address"
+                placeholder="Ex.: Rua Halfeld"
+                aria-describedby="rua-erro"
+              />
+              <span class="campo__erro" id="rua-erro">Digite o nome completo da rua.</span>
+            </div>
+            <button class="botao" type="submit">Receber alertas no WhatsApp</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <p class="rodape__texto">
+        ALERA · No lugar certo, na hora certa · MonkeyNerds · Front-End Design · Sprint 1
+      </p>
+      <a class="rodape__link" href="../index.html">Conheça o projeto ALERA</a>
+    </footer>
+  </body>
+</html>

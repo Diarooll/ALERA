@@ -1,0 +1,25 @@
+# Material de apoio (PowerPoint e fotos originais pesadas): nao vai para o repositorio
+referencias/
+
+# Skill de design (ferramenta local): nao vai para o repositorio
+.taste-skill/
+
+infra/
+
+# Variaveis de ambiente e segredos: nao vao para o repositorio
+.env
+.env.*
+!.env.example
+
+# Python e Django: arquivos gerados localmente
+.venv/
+__pycache__/
+*.py[cod]
+db.sqlite3
+staticfiles/
+
+# Graphify: arquivos locais de cada computador
+graphify-out/cache/
+graphify-out/.graphify_python
+graphify-out/.graphify_root
+graphify-out/.graphify_labels.json
