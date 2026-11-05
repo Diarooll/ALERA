@@ -280,3 +280,20 @@ configurarFormulario(
     return false
   },
 )
+
+// Modo teste: só aparece neste computador (ver api.js) e não fala com o servidor
+const blocoTeste = document.querySelector('#modo-teste')
+
+if (MODO_TESTE_DISPONIVEL && blocoTeste) {
+  blocoTeste.hidden = false
+
+  blocoTeste.querySelectorAll('[data-teste]').forEach((botao) => {
+    botao.addEventListener('click', () => {
+      const papel = botao.dataset.teste
+      localStorage.setItem('token', 'modo-teste')
+      localStorage.setItem('papel', papel)
+      localStorage.setItem('modoTeste', '1')
+      window.location.href = DESTINOS[papel]
+    })
+  })
+}

@@ -3,10 +3,13 @@
 function encerrarSessao() {
   localStorage.removeItem('token')
   localStorage.removeItem('papel')
+  localStorage.removeItem('modoTeste')
 }
 
 // Se o servidor não confirmar o login, por qualquer motivo, a pessoa volta para o login.
 async function conferirLogin() {
+  if (modoTesteAtivo()) return
+
   try {
     const resposta = await fetch(`${API_URL}/me/`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },

@@ -138,6 +138,15 @@
 
             <p class="forgot">Esqueceu sua senha? <a href="#">Recuperar</a></p>
           </form>
+
+          <!-- Só aparece quando a página roda neste computador (js/api.js) -->
+          <div class="modo-teste" id="modo-teste" hidden>
+            <p>Modo teste · sem servidor, só para ver as telas</p>
+            <div class="modo-teste__botoes">
+              <button type="button" data-teste="morador">Entrar como morador</button>
+              <button type="button" data-teste="admin">Entrar como admin</button>
+            </div>
+          </div>
         </div>
 
         <!-- CADASTRO -->

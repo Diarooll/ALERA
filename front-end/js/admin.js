@@ -151,10 +151,13 @@ abrigos.forEach((abrigo) => abrigo.addEventListener('change', contarAbrigosAbert
 function encerrarSessao() {
   localStorage.removeItem('token')
   localStorage.removeItem('papel')
+  localStorage.removeItem('modoTeste')
 }
 
 // O servidor decide quem é administrador. Se ele não confirmar, por qualquer motivo, a pessoa sai.
 async function conferirAdministrador() {
+  if (modoTesteAtivo() && localStorage.getItem('papel') === 'admin') return
+
   try {
     const resposta = await fetch(`${API_URL}/me/`, {
       headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
