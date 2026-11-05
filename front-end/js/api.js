@@ -14,3 +14,15 @@ function modoTesteAtivo() {
     return false
   }
 }
+
+// Chamada à API já com o token de quem está logado. Quem chama trata o 401 (sessão vencida).
+function chamarApi(rota, { metodo = 'GET', corpo } = {}) {
+  const cabecalhos = { Authorization: `Bearer ${localStorage.getItem('token')}` }
+  if (corpo !== undefined) cabecalhos['Content-Type'] = 'application/json'
+
+  return fetch(`${API_URL}${rota}`, {
+    method: metodo,
+    headers: cabecalhos,
+    body: corpo === undefined ? undefined : JSON.stringify(corpo),
+  })
+}

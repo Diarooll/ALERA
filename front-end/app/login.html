@@ -217,18 +217,85 @@
             </div>
 
             <div class="field">
-              <label for="cadastro-address">Endereço</label>
+              <label for="cadastro-cep">CEP</label>
               <div class="control">
                 <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
                 <input
                   type="text"
-                  id="cadastro-address"
-                  placeholder="Rua, número, bairro e cidade"
-                  autocomplete="street-address"
-                  aria-describedby="cadastro-address-error"
+                  id="cadastro-cep"
+                  placeholder="36010-000"
+                  autocomplete="postal-code"
+                  inputmode="numeric"
+                  aria-describedby="cadastro-cep-error"
                 />
               </div>
-              <p class="error" id="cadastro-address-error" hidden></p>
+              <p class="error" id="cadastro-cep-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="cadastro-street">Rua</label>
+              <div class="control">
+                <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                <input
+                  type="text"
+                  id="cadastro-street"
+                  placeholder="Preenchida pelo CEP"
+                  autocomplete="address-line1"
+                  aria-describedby="cadastro-street-error"
+                />
+              </div>
+              <p class="error" id="cadastro-street-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="cadastro-number">Número</label>
+              <div class="control">
+                <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                <input
+                  type="text"
+                  id="cadastro-number"
+                  placeholder="Ex.: 120"
+                  autocomplete="off"
+                  maxlength="10"
+                  aria-describedby="cadastro-number-error"
+                />
+              </div>
+              <p class="error" id="cadastro-number-error" hidden></p>
+              <label class="consent" for="cadastro-nonumber">
+                <input type="checkbox" id="cadastro-nonumber" aria-describedby="cadastro-nonumber-error" />
+                <span>Minha casa não tem número</span>
+              </label>
+              <p class="error" id="cadastro-nonumber-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="cadastro-neighborhood">Bairro</label>
+              <div class="control">
+                <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                <input
+                  type="text"
+                  id="cadastro-neighborhood"
+                  placeholder="Preenchido pelo CEP"
+                  autocomplete="address-level3"
+                  aria-describedby="cadastro-neighborhood-error"
+                />
+              </div>
+              <p class="error" id="cadastro-neighborhood-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="cadastro-city">Cidade</label>
+              <div class="control">
+                <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                <input
+                  type="text"
+                  id="cadastro-city"
+                  placeholder="Preenchida pelo CEP"
+                  autocomplete="address-level2"
+                  aria-describedby="cadastro-city-error"
+                />
+              </div>
+              <p class="error" id="cadastro-city-error" hidden></p>
             </div>
 
             <div class="field">
@@ -253,6 +320,7 @@
     </main>
 
     <script src="../js/api.js"></script>
+    <script src="../js/endereco.js"></script>
     <script src="../js/login.js"></script>
   </body>
 </html>

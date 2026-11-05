@@ -1,0 +1,139 @@
+/* ALERA · mapa.css: mapa Leaflet e lista de abrigos (app e painel).
+   Usa os tokens de tokens.css e as variáveis --app-* de app.css. */
+
+.mapa-leaflet {
+  position: relative;
+  z-index: 0; /* o Leaflet usa z-index alto: aqui ele não passa por cima do menu */
+  width: 100%;
+  height: 320px;
+  border-radius: var(--app-raio, 10px);
+  background: var(--cor-linha);
+}
+.mapa-leaflet--alto {
+  height: 420px;
+}
+.mapa-leaflet:focus-visible {
+  outline: 3px solid var(--app-foco, var(--cor-primaria));
+  outline-offset: 2px;
+}
+
+/* Tema escuro do app: escurece só os mapas, não os pinos */
+:root:has(#tema:checked) .mapa-leaflet .leaflet-tile-pane {
+  filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
+}
+
+/* ---------- pinos ---------- */
+.pin-caixa {
+  background: none;
+  border: 0;
+}
+.pin {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 3px solid #fff;
+  border-radius: 50% 50% 50% 4px;
+  transform: rotate(-45deg);
+  background: var(--cor-primaria);
+  color: #fff;
+  font: var(--peso-forte, 700) 14px/1 var(--fonte-titulo);
+  box-shadow: var(--sombra-card);
+}
+.pin > * {
+  transform: rotate(45deg);
+}
+.pin--voce {
+  background: var(--cor-destaque);
+  border-radius: 50%;
+  transform: none;
+}
+.pin--salvo {
+  background: var(--cor-destaque);
+}
+.pin--fechado {
+  background: #6b7280;
+}
+.pin--novo {
+  background: var(--cor-risco-alerta);
+  color: var(--cor-risco-alerta-texto);
+}
+
+/* ---------- lista de abrigos (também serve a quem usa teclado ou leitor de tela) ---------- */
+.lista-abrigos-app {
+  display: grid;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.abrigo-cartao {
+  display: grid;
+  gap: var(--esp-2);
+  padding: var(--esp-3) var(--esp-4);
+  border: 2px solid var(--app-linha, var(--cor-linha));
+  border-radius: var(--app-raio, 10px);
+  background: var(--app-superficie, var(--cor-superficie));
+  color: var(--app-texto, var(--cor-texto));
+}
+.abrigo-cartao--ativo {
+  border-color: var(--app-azul, var(--cor-primaria));
+}
+.abrigo-cartao--fechado {
+  opacity: 0.65;
+}
+.abrigo-cartao__nome {
+  margin: 0;
+  font-size: var(--fs-md);
+}
+.abrigo-cartao__info,
+.mapa-aviso {
+  margin: 0;
+  color: var(--app-texto-suave, var(--cor-texto-suave));
+  font-size: var(--fs-sm);
+}
+.abrigo-cartao__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+.mapa-aviso--erro {
+  color: var(--app-erro, var(--cor-erro));
+  font-weight: var(--peso-forte, 700);
+}
+
+/* Elementos escondidos ficam escondidos mesmo quando a classe define "display" */
+[hidden] {
+  display: none !important;
+}
+
+/* ---------- painel: mapa e formulário do abrigo ---------- */
+.abrigos-admin {
+  display: grid;
+  gap: var(--esp-4);
+}
+@media (min-width: 900px) {
+  /* Com o formulário escondido, o mapa ocupa a largura toda */
+  .abrigos-admin:has(.form-abrigo:not([hidden])) {
+    grid-template-columns: 3fr 2fr;
+    align-items: start;
+  }
+}
+.form-abrigo {
+  display: grid;
+  gap: var(--esp-3);
+  padding: var(--esp-4);
+  border: 2px solid var(--app-linha, var(--cor-linha));
+  border-radius: var(--app-raio, 10px);
+  background: var(--app-superficie, var(--cor-superficie));
+}
+.form-abrigo__novo-tipo {
+  display: grid;
+  gap: var(--esp-2);
+  margin-top: var(--esp-2);
+}
+.form-abrigo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}

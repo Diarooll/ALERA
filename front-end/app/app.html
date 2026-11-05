@@ -17,7 +17,14 @@
     </script>
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+      integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="../css/mapa.css" />
   </head>
   <body>
     <svg class="desenhos" width="0" height="0" aria-hidden="true" focusable="false">
@@ -89,54 +96,6 @@
       <symbol id="i-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></symbol>
       <symbol id="i-seguir" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></symbol>
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></symbol>
-      <!-- Mapa: as ruas são sempre as mesmas; cada abrigo tem o seu caminho e o seu ponto -->
-      <symbol id="d-mapa-base" viewBox="0 0 320 200">
-        <line class="mapa__rua" x1="60" y1="0" x2="60" y2="200" />
-        <line class="mapa__rua" x1="0" y1="150" x2="320" y2="150" />
-        <line class="mapa__rua" x1="250" y1="0" x2="250" y2="200" />
-        <line class="mapa__rua" x1="250" y1="70" x2="320" y2="70" />
-        <line class="mapa__perigo" x1="0" y1="40" x2="320" y2="40" />
-        <text class="mapa__rotulo" x="96" y="26">Rua Exemplo · alagada</text>
-        <text class="mapa__rotulo" x="118" y="176">Rua da Paz</text>
-        <text
-          class="mapa__rotulo"
-          x="276"
-          y="112"
-          text-anchor="middle"
-          transform="rotate(-90 276 112)"
-        >
-          Av. Exemplo
-        </text>
-        <text class="mapa__rotulo" x="76" y="105">Você</text>
-      </symbol>
-      <symbol id="d-rota-1" viewBox="0 0 320 200">
-        <use href="#d-mapa-base" />
-        <path class="mapa__caminho" d="M60 100 V150 H250 V110" />
-        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
-        <path class="mapa__ponto" d="M238 98 L250 86 L262 98 V110 H238 Z" />
-        <text class="mapa__rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
-      </symbol>
-      <symbol id="d-rota-2" viewBox="0 0 320 200">
-        <use href="#d-mapa-base" />
-        <path class="mapa__caminho" d="M60 100 V150 H250 V168" />
-        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
-        <path class="mapa__ponto" d="M238 178 L250 166 L262 178 V190 H238 Z" />
-        <text class="mapa__rotulo" x="230" y="186" text-anchor="end">Abrigo</text>
-      </symbol>
-      <symbol id="d-rota-3" viewBox="0 0 320 200">
-        <use href="#d-mapa-base" />
-        <path class="mapa__caminho" d="M60 100 V150 H288" />
-        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
-        <path class="mapa__ponto" d="M288 150 L300 138 L312 150 V162 H288 Z" />
-        <text class="mapa__rotulo" x="300" y="178" text-anchor="middle">Abrigo</text>
-      </symbol>
-      <symbol id="d-rota-4" viewBox="0 0 320 200">
-        <use href="#d-mapa-base" />
-        <path class="mapa__caminho" d="M60 100 V150 H250 V70 H273" />
-        <circle class="mapa__ponto" cx="60" cy="100" r="9" />
-        <path class="mapa__ponto" d="M273 68 L285 56 L297 68 V80 H273 Z" />
-        <text class="mapa__rotulo" x="318" y="98" text-anchor="end">Abrigo</text>
-      </symbol>
     </svg>
 
     <!-- TOPO: no computador leva o menu e o Ligar 199; no celular o menu vira abas embaixo -->
@@ -206,85 +165,41 @@
       <section class="tela" id="alerta">
         <div class="faixa faixa--selo">
           <div class="conteudo">
-            <h1 class="faixa__titulo">Rua Exemplo</h1>
-            <p class="faixa__apoio">Bairro Exemplo · atualizado há 5 min</p>
+            <h1 class="faixa__titulo" id="alerta-bairro">Sua região</h1>
+            <p class="faixa__apoio" id="alerta-apoio">Carregando…</p>
           </div>
         </div>
 
         <div class="conteudo alerta">
           <div class="alerta__principal">
-            <p class="selo nivel--alerta">
+            <p class="selo" id="alerta-selo">
               <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg
-              >ALERTA
+              ><span id="alerta-selo-texto">…</span>
             </p>
-            <p class="alerta__ordem">Chuva forte prevista em até 24&nbsp;horas. Evite a Rua Exemplo.</p>
-            <div class="medidor" role="img" aria-label="Nível 3 de 4">
-              <span class="medidor__parte medidor__parte--cheia"></span>
-              <span class="medidor__parte medidor__parte--cheia"></span>
-              <span class="medidor__parte medidor__parte--cheia"></span>
+            <p class="alerta__ordem" id="alerta-ordem">Buscando o nível de risco da sua região…</p>
+            <div class="medidor" role="img" id="alerta-medidor" aria-label="Nível indisponível">
+              <span class="medidor__parte"></span>
+              <span class="medidor__parte"></span>
+              <span class="medidor__parte"></span>
               <span class="medidor__parte"></span>
             </div>
-            <p class="medidor__legenda" aria-hidden="true">Nível 3 de 4</p>
+            <p class="medidor__legenda" aria-hidden="true" id="alerta-medidor-legenda"></p>
+            <p class="mapa-aviso" id="alerta-aviso" role="status" hidden></p>
           </div>
 
-          <!-- .por-abrigo--N: só aparece o que for do abrigo salvo em Missões (regra no CSS) -->
           <div class="alerta__rota">
             <div class="mapa-caixa alerta__mapa">
-              <svg
-                class="mapa por-abrigo por-abrigo--1"
-                viewBox="0 0 320 200"
-                role="img"
-                aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."
-              >
-                <use href="#d-rota-1" />
-              </svg>
-              <svg
-                class="mapa por-abrigo por-abrigo--2"
-                viewBox="0 0 320 200"
-                role="img"
-                aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."
-              >
-                <use href="#d-rota-2" />
-              </svg>
-              <svg
-                class="mapa por-abrigo por-abrigo--3"
-                viewBox="0 0 320 200"
-                role="img"
-                aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."
-              >
-                <use href="#d-rota-3" />
-              </svg>
-              <svg
-                class="mapa por-abrigo por-abrigo--4"
-                viewBox="0 0 320 200"
-                role="img"
-                aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."
-              >
-                <use href="#d-rota-4" />
-              </svg>
+              <div
+                class="mapa-leaflet"
+                id="mapa-alerta"
+                role="application"
+                aria-label="Mapa com a sua casa e o seu abrigo salvo"
+              ></div>
             </div>
             <div class="destino">
-              <div class="por-abrigo por-abrigo--1">
-                <p class="destino__rotulo">Seu abrigo</p>
-                <p class="destino__nome">Escola Municipal Exemplo</p>
-                <p class="destino__info">600 m · 8 min a pé · aberto agora</p>
-              </div>
-              <div class="por-abrigo por-abrigo--2">
-                <p class="destino__rotulo">Seu abrigo</p>
-                <p class="destino__nome">Ginásio Exemplo</p>
-                <p class="destino__info">800 m · 11 min a pé · aberto agora</p>
-              </div>
-              <div class="por-abrigo por-abrigo--3">
-                <p class="destino__rotulo">Seu abrigo</p>
-                <p class="destino__nome">Igreja Exemplo</p>
-                <p class="destino__info">1 km · 14 min a pé · poucas vagas</p>
-              </div>
-              <div class="por-abrigo por-abrigo--4">
-                <p class="destino__rotulo">Seu abrigo</p>
-                <p class="destino__nome">Centro Comunitário Exemplo</p>
-                <p class="destino__info">1,4 km · 19 min a pé · abre só em nível de alerta</p>
-              </div>
-              <a class="botao" href="#rota">Ver rota segura</a>
+              <div id="destino-abrigo"></div>
+              <a class="botao" href="#rota" id="ver-rota" hidden>Ver rota segura</a>
+              <a class="botao" href="#detalhe-abrigo" id="escolher-abrigo">Escolher meu abrigo</a>
             </div>
             <a class="botao botao--texto alerta__ligar" href="tel:199"
               ><svg class="icone" aria-hidden="true" focusable="false">
@@ -296,7 +211,7 @@
           <div class="alerta__niveis">
             <h2 class="subtitulo">O que fazer em cada nível</h2>
             <ul class="niveis">
-              <li class="niveis__item">
+              <li class="niveis__item" data-nivel="normal">
                 <span class="niveis__cor nivel--normal"></span>
                 <strong class="niveis__nome">NORMAL</strong>
                 <span
@@ -304,7 +219,7 @@
                   rachaduras, ligue 199.</span
                 >
               </li>
-              <li class="niveis__item">
+              <li class="niveis__item" data-nivel="atencao">
                 <span class="niveis__cor nivel--atencao"></span>
                 <strong class="niveis__nome">ATENÇÃO</strong>
                 <span
@@ -312,14 +227,14 @@
                   bueiro.</span
                 >
               </li>
-              <li class="niveis__item niveis__item--agora" aria-current="true">
+              <li class="niveis__item" data-nivel="alerta">
                 <span class="niveis__cor nivel--alerta"></span>
                 <strong class="niveis__nome">ALERTA</strong>
                 <span
                   >Chuva forte prevista em até 24 horas. Evite a rua e deixe documentos à mão.</span
                 >
               </li>
-              <li class="niveis__item">
+              <li class="niveis__item" data-nivel="perigo">
                 <span class="niveis__cor nivel--perigo"></span>
                 <strong class="niveis__nome">PERIGO</strong>
                 <span>Risco agora. Saia de casa e vá para o abrigo.</span>
@@ -338,141 +253,32 @@
               >Voltar</a
             >
             <h1 class="faixa__titulo">Rota segura</h1>
-            <p class="faixa__apoio">Saindo da Rua Exemplo até o abrigo</p>
+            <p class="faixa__apoio">Da sua casa até o abrigo salvo</p>
           </div>
         </div>
 
         <div class="conteudo rota">
-          <!-- Tema só do mapa: o checkbox #mapa-tema inverte o mapa em relação ao tema do app -->
           <div class="mapa-caixa rota__mapa">
-            <input class="visualmente-oculto" type="checkbox" id="mapa-tema" role="switch" />
-            <label class="mapa-tema" for="mapa-tema">
-              <svg class="icone mapa-tema__lua" aria-hidden="true" focusable="false">
-                <use href="#i-lua" />
-              </svg>
-              <svg class="icone mapa-tema__sol" aria-hidden="true" focusable="false">
-                <use href="#i-sol" />
-              </svg>
-              <span class="visualmente-oculto">Inverter cores do mapa</span>
-            </label>
-            <svg
-              class="mapa por-abrigo por-abrigo--1"
-              viewBox="0 0 320 200"
-              role="img"
-              aria-label="Mapa até a Escola Municipal Exemplo: desça até a Rua da Paz, vire à direita e suba a Av. Exemplo. A Rua Exemplo está alagada."
-            >
-              <use href="#d-rota-1" />
-            </svg>
-            <svg
-              class="mapa por-abrigo por-abrigo--2"
-              viewBox="0 0 320 200"
-              role="img"
-              aria-label="Mapa até o Ginásio Exemplo: desça até a Rua da Paz, vire à direita e desça a Av. Exemplo. A Rua Exemplo está alagada."
-            >
-              <use href="#d-rota-2" />
-            </svg>
-            <svg
-              class="mapa por-abrigo por-abrigo--3"
-              viewBox="0 0 320 200"
-              role="img"
-              aria-label="Mapa até a Igreja Exemplo: desça até a Rua da Paz, vire à direita e siga até o fim. A Rua Exemplo está alagada."
-            >
-              <use href="#d-rota-3" />
-            </svg>
-            <svg
-              class="mapa por-abrigo por-abrigo--4"
-              viewBox="0 0 320 200"
-              role="img"
-              aria-label="Mapa até o Centro Comunitário Exemplo: desça até a Rua da Paz, suba a Av. Exemplo e vire na rua lateral antes da Rua Exemplo, que está alagada."
-            >
-              <use href="#d-rota-4" />
-            </svg>
+            <div
+              class="mapa-leaflet mapa-leaflet--alto"
+              id="mapa-rota"
+              role="application"
+              aria-label="Mapa com a sua casa e o abrigo salvo"
+            ></div>
           </div>
-
-          <div class="rota__destino por-abrigo por-abrigo--1">
-            <h2 class="rota__nome">Escola Municipal Exemplo</h2>
-            <p class="destino__info">
-              <strong class="rota__tempo">8 min a pé</strong> · 600 m · aberto agora
-            </p>
-          </div>
-          <div class="rota__destino por-abrigo por-abrigo--2">
-            <h2 class="rota__nome">Ginásio Exemplo</h2>
-            <p class="destino__info">
-              <strong class="rota__tempo">11 min a pé</strong> · 800 m · aberto agora
-            </p>
-          </div>
-          <div class="rota__destino por-abrigo por-abrigo--3">
-            <h2 class="rota__nome">Igreja Exemplo</h2>
-            <p class="destino__info">
-              <strong class="rota__tempo">14 min a pé</strong> · 1 km · poucas vagas
-            </p>
-          </div>
-          <div class="rota__destino por-abrigo por-abrigo--4">
-            <h2 class="rota__nome">Centro Comunitário Exemplo</h2>
-            <p class="destino__info">
-              <strong class="rota__tempo">19 min a pé</strong> · 1,4 km · abre só em nível de alerta
-            </p>
-          </div>
-
-          <p class="rota__evitar nivel--alerta">
-            <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg>
-            ALERTA · Não passe pela Rua Exemplo: está alagada.
+          <p class="mapa-aviso">
+            A linha no mapa é reta, não segue as ruas. Para o caminho a pé, abra no Google Maps.
           </p>
 
-          <ol class="rota__passos por-abrigo por-abrigo--1">
-            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
-            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
-            <li>Vire à esquerda na Av. Exemplo e suba 250 m.</li>
-            <li>O abrigo fica no fim da quadra, portão azul.</li>
-          </ol>
-          <ol class="rota__passos por-abrigo por-abrigo--2">
-            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
-            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
-            <li>Vire à direita na Av. Exemplo e desça 450 m.</li>
-            <li>Entre no ginásio pela lateral.</li>
-          </ol>
-          <ol class="rota__passos por-abrigo por-abrigo--3">
-            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
-            <li>Vire à direita na Rua da Paz e siga 950 m.</li>
-            <li>
-              A igreja fica no fim da rua. Tem poucas vagas: se estiver cheia, siga para o abrigo
-              mais perto.
-            </li>
-          </ol>
-          <ol class="rota__passos por-abrigo por-abrigo--4">
-            <li>Saia de casa e desça 50 m até a Rua da Paz.</li>
-            <li>Vire à direita na Rua da Paz e siga 300 m.</li>
-            <li>Vire à esquerda na Av. Exemplo e suba 700 m.</li>
-            <li>Vire à direita na rua lateral, antes da Rua Exemplo, e siga 350 m.</li>
-          </ol>
+          <div class="rota__destino" id="rota-destino"></div>
+
+          <p class="rota__evitar" id="rota-evitar" hidden>
+            <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg>
+            <span id="rota-evitar-texto"></span>
+          </p>
 
           <div class="rota__acoes">
-            <a
-              class="botao por-abrigo por-abrigo--1"
-              href="https://www.google.com/maps/dir/?api=1&amp;destination=Escola+Municipal+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
-              target="_blank"
-              rel="noopener"
-              >Abrir no Google Maps</a
-            >
-            <a
-              class="botao por-abrigo por-abrigo--2"
-              href="https://www.google.com/maps/dir/?api=1&amp;destination=Ginasio+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
-              target="_blank"
-              rel="noopener"
-              >Abrir no Google Maps</a
-            >
-            <a
-              class="botao por-abrigo por-abrigo--3"
-              href="https://www.google.com/maps/dir/?api=1&amp;destination=Igreja+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
-              target="_blank"
-              rel="noopener"
-              >Abrir no Google Maps</a
-            >
-            <a
-              class="botao por-abrigo por-abrigo--4"
-              href="https://www.google.com/maps/dir/?api=1&amp;destination=Centro+Comunitario+Exemplo+Juiz+de+Fora&amp;travelmode=walking"
-              target="_blank"
-              rel="noopener"
+            <a class="botao" id="rota-google" href="#rota" target="_blank" rel="noopener" hidden
               >Abrir no Google Maps</a
             >
             <a class="botao botao--secundario" href="tel:199"
@@ -769,154 +575,22 @@
             </header>
             <div class="detalhe__corpo">
               <div class="detalhe__coluna">
-                <p class="detalhe__aviso">
-                  Prévia · abrigos de exemplo. Toque em um pino ou na lista.
-                </p>
+                <p class="detalhe__aviso" id="abrigos-aviso" role="status">Carregando abrigos…</p>
                 <div class="mapa-caixa abrigos__mapa">
-                  <svg
-                    class="mapa"
-                    viewBox="0 0 320 200"
-                    role="img"
-                    aria-label="Mapa de exemplo com sua localização e 4 abrigos por perto, numerados como na lista."
-                  >
-                    <use href="#d-mapa-base" />
-                    <!-- O caminho desenhado é o do abrigo marcado na lista ou no pino -->
-                    <path class="mapa__caminho previa previa--1" d="M60 100 V150 H250 V98" />
-                    <path class="mapa__caminho previa previa--2" d="M60 100 V150 H250 V178" />
-                    <path class="mapa__caminho previa previa--3" d="M60 100 V150 H300" />
-                    <path class="mapa__caminho previa previa--4" d="M60 100 V150 H250 V68 H285" />
-                    <circle class="mapa__ponto" cx="60" cy="100" r="9" />
-                  </svg>
-                  <label class="pino pino--1" for="abrigo-1"
-                    ><span class="pino__numero">1</span
-                    ><span class="visualmente-oculto">Escola Municipal Exemplo</span></label
-                  >
-                  <label class="pino pino--2" for="abrigo-2"
-                    ><span class="pino__numero">2</span
-                    ><span class="visualmente-oculto">Ginásio Exemplo</span></label
-                  >
-                  <label class="pino pino--3" for="abrigo-3"
-                    ><span class="pino__numero">3</span
-                    ><span class="visualmente-oculto">Igreja Exemplo</span></label
-                  >
-                  <label class="pino pino--4" for="abrigo-4"
-                    ><span class="pino__numero">4</span
-                    ><span class="visualmente-oculto">Centro Comunitário Exemplo</span></label
-                  >
+                  <div
+                    class="mapa-leaflet mapa-leaflet--alto"
+                    id="mapa-abrigos"
+                    role="application"
+                    aria-label="Mapa dos abrigos. A lista ao lado tem as mesmas informações."
+                  ></div>
                 </div>
               </div>
               <div class="detalhe__coluna">
-                <fieldset class="abrigos">
-                  <legend class="detalhe__subtitulo">Abrigos por perto</legend>
-                  <div class="abrigos__item">
-                    <input
-                      class="visualmente-oculto"
-                      type="radio"
-                      name="abrigo"
-                      id="abrigo-1"
-                      checked
-                    />
-                    <label class="abrigos__opcao" for="abrigo-1"
-                      ><span class="pino__numero">1</span
-                      ><span class="abrigos__nome">Escola Municipal Exemplo</span
-                      ><span class="abrigos__distancia">600 m</span></label
-                    >
-                  </div>
-                  <div class="abrigos__item">
-                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-2" />
-                    <label class="abrigos__opcao" for="abrigo-2"
-                      ><span class="pino__numero">2</span
-                      ><span class="abrigos__nome">Ginásio Exemplo</span
-                      ><span class="abrigos__distancia">800 m</span></label
-                    >
-                  </div>
-                  <div class="abrigos__item">
-                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-3" />
-                    <label class="abrigos__opcao" for="abrigo-3"
-                      ><span class="pino__numero">3</span
-                      ><span class="abrigos__nome">Igreja Exemplo</span
-                      ><span class="abrigos__distancia">1 km</span></label
-                    >
-                  </div>
-                  <div class="abrigos__item">
-                    <input class="visualmente-oculto" type="radio" name="abrigo" id="abrigo-4" />
-                    <label class="abrigos__opcao" for="abrigo-4"
-                      ><span class="pino__numero">4</span
-                      ><span class="abrigos__nome">Centro Comunitário Exemplo</span
-                      ><span class="abrigos__distancia">1,4 km</span></label
-                    >
-                  </div>
-                </fieldset>
-
-                <p class="detalhe__texto">
-                  O abrigo salvo é o que aparece no mapa da tela de Alerta e na rota segura.
-                </p>
-
-                <div class="abrigo-painel abrigo-painel--1">
-                  <h3 class="abrigo-painel__nome">Escola Municipal Exemplo</h3>
-                  <p class="detalhe__texto">8 min a pé · aberto agora · portão azul</p>
-                  <input
-                    class="visualmente-oculto"
-                    type="radio"
-                    name="abrigo-salvo"
-                    id="salvar-1"
-                    checked
-                  />
-                  <label class="salvar" for="salvar-1"
-                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
-                      <use href="#i-check" /></svg
-                    ><span class="salvar__acao">Salvar este abrigo</span
-                    ><span class="salvar__feito">Abrigo salvo</span></label
-                  >
-                </div>
-                <div class="abrigo-painel abrigo-painel--2">
-                  <h3 class="abrigo-painel__nome">Ginásio Exemplo</h3>
-                  <p class="detalhe__texto">11 min a pé · aberto agora · entrada pela lateral</p>
-                  <input
-                    class="visualmente-oculto"
-                    type="radio"
-                    name="abrigo-salvo"
-                    id="salvar-2"
-                  />
-                  <label class="salvar" for="salvar-2"
-                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
-                      <use href="#i-check" /></svg
-                    ><span class="salvar__acao">Salvar este abrigo</span
-                    ><span class="salvar__feito">Abrigo salvo</span></label
-                  >
-                </div>
-                <div class="abrigo-painel abrigo-painel--3">
-                  <h3 class="abrigo-painel__nome">Igreja Exemplo</h3>
-                  <p class="detalhe__texto">14 min a pé · aberto agora · poucas vagas</p>
-                  <input
-                    class="visualmente-oculto"
-                    type="radio"
-                    name="abrigo-salvo"
-                    id="salvar-3"
-                  />
-                  <label class="salvar" for="salvar-3"
-                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
-                      <use href="#i-check" /></svg
-                    ><span class="salvar__acao">Salvar este abrigo</span
-                    ><span class="salvar__feito">Abrigo salvo</span></label
-                  >
-                </div>
-                <div class="abrigo-painel abrigo-painel--4">
-                  <h3 class="abrigo-painel__nome">Centro Comunitário Exemplo</h3>
-                  <p class="detalhe__texto">19 min a pé · abre só em nível de alerta</p>
-                  <input
-                    class="visualmente-oculto"
-                    type="radio"
-                    name="abrigo-salvo"
-                    id="salvar-4"
-                  />
-                  <label class="salvar" for="salvar-4"
-                    ><svg class="icone salvar__check" aria-hidden="true" focusable="false">
-                      <use href="#i-check" /></svg
-                    ><span class="salvar__acao">Salvar este abrigo</span
-                    ><span class="salvar__feito">Abrigo salvo</span></label
-                  >
-                </div>
+                <h3 class="detalhe__subtitulo">Abrigos, do mais perto ao mais longe</h3>
+                <ul class="lista-abrigos-app" id="abrigos-lista"></ul>
+                <button class="botao botao--texto" type="button" id="abrigos-atualizar">
+                  Atualizar lista
+                </button>
               </div>
             </div>
           </div>
@@ -998,8 +672,8 @@
       <section class="tela" id="ranking">
         <div class="faixa">
           <div class="conteudo">
-            <h1 class="faixa__titulo">Ranking das ruas</h1>
-            <p class="faixa__apoio">Bairro Exemplo</p>
+            <h1 class="faixa__titulo">Ranking dos bairros</h1>
+            <p class="faixa__apoio">Prévia · pontos de exemplo</p>
           </div>
         </div>
 
@@ -1007,17 +681,18 @@
           <ol class="ranking">
             <li class="ranking__item">
               <span class="ranking__posicao">1</span
-              ><span class="ranking__nome">Rua das Flores</span
+              ><span class="ranking__nome">Bairro das Flores</span
               ><span class="ranking__pontos">1.240 pts</span>
             </li>
             <li class="ranking__item ranking__item--voce" aria-current="true">
               <span class="ranking__posicao">2</span
               ><span class="ranking__nome"
-                >Rua Exemplo <span class="ranking__sua">sua rua</span></span
+                ><span id="ranking-bairro">Seu bairro</span>
+                <span class="ranking__sua">seu bairro</span></span
               ><span class="ranking__pontos">980 pts</span>
             </li>
             <li class="ranking__item">
-              <span class="ranking__posicao">3</span><span class="ranking__nome">Rua da Paz</span
+              <span class="ranking__posicao">3</span><span class="ranking__nome">Bairro da Paz</span
               ><span class="ranking__pontos">760 pts</span>
             </li>
           </ol>
@@ -1029,46 +704,69 @@
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Meus dados</h1>
-            <p class="faixa__apoio">Telefone e rua para receber os alertas</p>
+            <p class="faixa__apoio">Endereço e ponto da casa, para achar o abrigo mais perto</p>
           </div>
         </div>
 
         <div class="conteudo">
-          <form class="cadastro" action="#cadastro">
-            <h2 class="cadastro__titulo">Receba alertas de chuva e risco no seu WhatsApp</h2>
-            <p class="cadastro__texto">
-              Avisamos quando sua rua estiver em risco e dizemos para onde ir.
-            </p>
+          <form class="cadastro" id="form-endereco">
+            <h2 class="cadastro__titulo">Onde você mora</h2>
+            <p class="cadastro__texto" id="dados-contato"></p>
             <!-- Validação nativa do HTML: o erro aparece depois que a pessoa sai do campo -->
             <div class="campo">
-              <label class="campo__rotulo" for="tel">Telefone (WhatsApp)</label>
-              <input
-                class="campo__entrada"
-                id="tel"
-                type="tel"
-                required
-                pattern="\(?\d{2}\)?\s?9?\d{4}-?\d{4}"
-                autocomplete="tel"
-                placeholder="(32) 99999-0000"
-                aria-describedby="tel-erro"
-              />
-              <span class="campo__erro" id="tel-erro">Digite o telefone com DDD.</span>
+              <label class="campo__rotulo" for="dados-cep">CEP</label>
+              <input class="campo__entrada" id="dados-cep" required inputmode="numeric"
+                pattern="\d{5}-?\d{3}" autocomplete="postal-code" placeholder="36010-000"
+                aria-describedby="dados-cep-erro" />
+              <span class="campo__erro" id="dados-cep-erro">Digite o CEP com 8 números.</span>
             </div>
             <div class="campo">
-              <label class="campo__rotulo" for="rua">Sua rua</label>
-              <input
-                class="campo__entrada"
-                id="rua"
-                required
-                pattern="\S+(\s+\S+)+"
-                autocomplete="street-address"
-                placeholder="Ex.: Rua Halfeld"
-                aria-describedby="rua-erro"
-              />
-              <span class="campo__erro" id="rua-erro">Digite o nome completo da rua.</span>
+              <label class="campo__rotulo" for="dados-rua">Rua</label>
+              <input class="campo__entrada" id="dados-rua" required autocomplete="address-line1"
+                aria-describedby="dados-rua-erro" />
+              <span class="campo__erro" id="dados-rua-erro">Informe a rua.</span>
             </div>
-            <button class="botao" type="submit">Receber alertas no WhatsApp</button>
+            <div class="campo">
+              <label class="campo__rotulo" for="dados-numero">Número</label>
+              <input class="campo__entrada" id="dados-numero" maxlength="10" autocomplete="off"
+                aria-describedby="dados-numero-erro" />
+              <span class="campo__erro" id="dados-numero-erro">Digite o número ou marque que não tem.</span>
+              <label class="cadastro__texto" for="dados-sem-numero">
+                <input type="checkbox" id="dados-sem-numero" /> Minha casa não tem número
+              </label>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="dados-bairro">Bairro</label>
+              <input class="campo__entrada" id="dados-bairro" required autocomplete="address-level3"
+                aria-describedby="dados-bairro-erro" />
+              <span class="campo__erro" id="dados-bairro-erro">Informe o bairro.</span>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="dados-cidade">Cidade</label>
+              <input class="campo__entrada" id="dados-cidade" required autocomplete="address-level2"
+                aria-describedby="dados-cidade-erro" />
+              <span class="campo__erro" id="dados-cidade-erro">Informe a cidade.</span>
+            </div>
+            <button class="botao" type="submit">Salvar endereço</button>
+            <p class="mapa-aviso" id="dados-retorno" role="status" hidden></p>
           </form>
+
+          <div class="cadastro">
+            <h2 class="cadastro__titulo">Sua casa no mapa</h2>
+            <p class="cadastro__texto">
+              Toque no mapa para ajustar o ponto da sua casa. A distância até os abrigos usa esse
+              ponto, e só você o vê.
+            </p>
+            <div class="mapa-caixa">
+              <div
+                class="mapa-leaflet mapa-leaflet--alto"
+                id="mapa-casa"
+                role="application"
+                aria-label="Mapa para marcar a sua casa. Você também pode corrigir o endereço no formulário acima."
+              ></div>
+            </div>
+            <p class="mapa-aviso" id="casa-retorno" role="status" hidden></p>
+          </div>
         </div>
       </section>
     </main>
@@ -1079,7 +777,14 @@
       </p>
       <a class="rodape__link" href="../index.html">Conheça o projeto ALERA</a>
     </footer>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+      integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
+      crossorigin="anonymous"
+    ></script>
     <script src="../js/api.js"></script>
+    <script src="../js/endereco.js"></script>
+    <script src="../js/mapa.js"></script>
     <script src="../js/app.js"></script>
   </body>
 </html>

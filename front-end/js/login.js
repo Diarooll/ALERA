@@ -125,12 +125,23 @@ function validarTelefone(telefone) {
   return ''
 }
 
-function validarEndereco(endereco) {
-  const valor = endereco.value.trim()
+const REGEX_CEP = /^\d{5}-?\d{3}$/
 
-  if (!valor) return 'Digite seu endereço.'
-  if (valor.length < 8) return 'Informe rua, número, bairro e cidade.'
+function validarCep(cep) {
+  const valor = cep.value.trim()
+
+  if (!valor) return 'Digite seu CEP.'
+  if (!REGEX_CEP.test(valor)) return 'CEP inválido. Exemplo: 36010-000'
   return ''
+}
+
+function validarTexto(nome) {
+  return (campo) => (campo.value.trim() ? '' : `Informe ${nome}.`)
+}
+
+function validarNumero(numero) {
+  if (document.querySelector('#cadastro-nonumber').checked) return ''
+  return numero.value.trim() ? '' : 'Digite o número ou marque "Minha casa não tem número".'
 }
 
 function validarConsentimento(consentimento) {
@@ -219,16 +230,54 @@ configurarFormulario(
 const cadastroForm = document.querySelector('[data-form="cadastro"]')
 const cadastroEmail = document.querySelector('#cadastro-email')
 const cadastroSenha = document.querySelector('#cadastro-password')
-const cadastroEndereco = document.querySelector('#cadastro-address')
+const cadastroCep = document.querySelector('#cadastro-cep')
+const cadastroRua = document.querySelector('#cadastro-street')
+const cadastroNumero = document.querySelector('#cadastro-number')
+const cadastroSemNumero = document.querySelector('#cadastro-nonumber')
+const cadastroBairro = document.querySelector('#cadastro-neighborhood')
+const cadastroCidade = document.querySelector('#cadastro-city')
 const cadastroConsentimento = document.querySelector('#cadastro-consent')
 // Nome de cada campo na resposta da API
 const CAMPOS_CADASTRO = {
   email: cadastroEmail,
   senha: cadastroSenha,
   telefone: campoTelefone,
-  endereco: cadastroEndereco,
+  cep: cadastroCep,
+  logradouro: cadastroRua,
+  numero: cadastroNumero,
+  bairro: cadastroBairro,
+  cidade: cadastroCidade,
   consentimento: cadastroConsentimento,
 }
+
+// CEP: máscara e, com os 8 dígitos, preenche rua, bairro e cidade (dá para corrigir à mão)
+cadastroCep.addEventListener('input', async () => {
+  cadastroCep.value = formatarCep(cadastroCep.value)
+  if (cadastroCep.value.length !== 9) return
+
+  const cep = cadastroCep.value
+  const achado = await buscarCep(cep)
+  if (cadastroCep.value !== cep) return // a pessoa já mudou o CEP enquanto buscava
+
+  if (!achado) {
+    mostrarErro(cadastroCep, 'Não achamos esse CEP. Confira ou preencha o endereço abaixo.')
+    return
+  }
+
+  cadastroRua.value = achado.logradouro
+  cadastroBairro.value = achado.bairro
+  cadastroCidade.value = achado.cidade
+  ;[cadastroRua, cadastroBairro, cadastroCidade].forEach(limparErro)
+  cadastroNumero.focus()
+})
+
+cadastroSemNumero.addEventListener('change', () => {
+  cadastroNumero.disabled = cadastroSemNumero.checked
+  if (cadastroSemNumero.checked) {
+    cadastroNumero.value = ''
+    limparErro(cadastroNumero)
+  }
+})
 
 configurarFormulario(
   cadastroForm,
@@ -236,7 +285,11 @@ configurarFormulario(
     [cadastroEmail, validarEmail],
     [cadastroSenha, validarSenhaCadastro],
     [campoTelefone, validarTelefone],
-    [cadastroEndereco, validarEndereco],
+    [cadastroCep, validarCep],
+    [cadastroRua, validarTexto('a rua')],
+    [cadastroNumero, validarNumero],
+    [cadastroBairro, validarTexto('o bairro')],
+    [cadastroCidade, validarTexto('a cidade')],
     [cadastroConsentimento, validarConsentimento],
   ],
   async () => {
@@ -247,13 +300,23 @@ configurarFormulario(
         email: cadastroEmail.value.trim(),
         senha: cadastroSenha.value,
         telefone: campoTelefone.value,
-        endereco: cadastroEndereco.value.trim(),
+        cep: cadastroCep.value.replace(/\D/g, ''),
+        logradouro: cadastroRua.value.trim(),
+        numero: cadastroSemNumero.checked ? 'S/N' : cadastroNumero.value.trim(),
+        bairro: cadastroBairro.value.trim(),
+        cidade: cadastroCidade.value.trim(),
         consentimento: cadastroConsentimento.checked,
       })
 
       if (resposta.ok) {
-        alert('Conta criada! Agora é só entrar com seu e-mail e sua senha.')
+        const { localizado } = await resposta.json()
+        alert(
+          localizado
+            ? 'Conta criada! Agora é só entrar com seu e-mail e sua senha.'
+            : 'Conta criada! Não achamos sua casa no mapa: depois de entrar, marque o ponto em "Meus dados". Agora é só entrar com seu e-mail e sua senha.',
+        )
         cadastroForm.reset()
+        cadastroNumero.disabled = false
         location.hash = '#login'
         return false
       }

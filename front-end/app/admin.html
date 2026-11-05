@@ -18,7 +18,14 @@
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />
     <link rel="stylesheet" href="../css/app.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+      integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="../css/admin.css" />
+    <link rel="stylesheet" href="../css/mapa.css" />
   </head>
   <body>
     <svg class="desenhos" width="0" height="0" aria-hidden="true" focusable="false">
@@ -125,24 +132,24 @@
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Painel do administrador</h1>
-            <p class="faixa__apoio">Bairro Exemplo · atualizado há 5 min</p>
+            <p class="faixa__apoio" id="painel-apoio">Defesa Civil · carregando…</p>
           </div>
         </div>
 
         <div class="conteudo gestao">
-          <p class="gestao__aviso">Prévia · dados de exemplo</p>
+          <p class="gestao__aviso" id="painel-aviso" role="status">Moradores e bueiros ainda são dados de exemplo.</p>
 
           <ul class="numeros">
             <li class="numero">
-              <span class="numero__valor"><span id="total-risco">1</span> de 4</span>
-              <span class="numero__rotulo">ruas em alerta ou perigo</span>
+              <span class="numero__valor"><span id="total-risco">–</span> de <span id="total-areas">–</span></span>
+              <span class="numero__rotulo">áreas em alerta ou perigo</span>
             </li>
             <li class="numero">
               <span class="numero__valor">142</span>
               <span class="numero__rotulo">moradores cadastrados</span>
             </li>
             <li class="numero">
-              <span class="numero__valor"><span id="total-abrigos">3</span> de 4</span>
+              <span class="numero__valor"><span id="total-abrigos">–</span> de <span id="total-abrigos-todos">–</span></span>
               <span class="numero__rotulo">abrigos abertos</span>
             </li>
             <li class="numero">
@@ -152,65 +159,41 @@
           </ul>
 
           <div class="gestao__cabecalho">
-            <h2 class="subtitulo gestao__titulo" id="titulo-ruas">Situação das ruas</h2>
+            <h2 class="subtitulo gestao__titulo" id="titulo-areas">Situação das áreas de risco</h2>
             <a class="botao gestao__acao" href="#alertas">Emitir alerta</a>
           </div>
-          <table class="tabela" aria-labelledby="titulo-ruas">
+          <table class="tabela" aria-labelledby="titulo-areas">
             <thead>
               <tr>
-                <th scope="col">Rua</th>
+                <th scope="col">Área</th>
                 <th scope="col">Nível</th>
-                <th scope="col" class="tabela__numero">Moradores</th>
               </tr>
             </thead>
-            <tbody>
-              <tr data-rua="Rua Exemplo" data-moradores="48" data-nivel="alerta">
-                <th scope="row">Rua Exemplo</th>
-                <td><span class="etiqueta nivel--alerta">ALERTA</span></td>
-                <td class="tabela__numero">48</td>
-              </tr>
-              <tr data-rua="Av. Exemplo" data-moradores="27" data-nivel="atencao">
-                <th scope="row">Av. Exemplo</th>
-                <td><span class="etiqueta nivel--atencao">ATENÇÃO</span></td>
-                <td class="tabela__numero">27</td>
-              </tr>
-              <tr data-rua="Rua da Paz" data-moradores="31" data-nivel="normal">
-                <th scope="row">Rua da Paz</th>
-                <td><span class="etiqueta nivel--normal">NORMAL</span></td>
-                <td class="tabela__numero">31</td>
-              </tr>
-              <tr data-rua="Rua das Flores" data-moradores="36" data-nivel="normal">
-                <th scope="row">Rua das Flores</th>
-                <td><span class="etiqueta nivel--normal">NORMAL</span></td>
-                <td class="tabela__numero">36</td>
-              </tr>
-            </tbody>
+            <tbody id="tabela-areas"></tbody>
           </table>
+          <p class="gestao__aviso">
+            Áreas de risco e bairros são cadastrados no painel do Django (/admin/).
+          </p>
         </div>
       </section>
 
-      <!-- ALERTAS: escolher rua e nível, conferir como o morador vê e confirmar -->
+      <!-- ALERTAS: escolher área e nível, conferir como o morador vê e confirmar -->
       <section class="tela" id="alertas">
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Emitir alerta</h1>
-            <p class="faixa__apoio">O alerta vai pelo WhatsApp para os moradores da rua</p>
+            <p class="faixa__apoio">O alerta vai pelo WhatsApp para os moradores da área</p>
           </div>
         </div>
 
         <div class="conteudo gestao">
-          <p class="gestao__aviso">Prévia · nenhuma mensagem é enviada de verdade</p>
+          <p class="gestao__aviso">Simulação · nenhuma mensagem é enviada de verdade</p>
 
           <form class="envio" id="form-alerta">
             <div class="envio__campos">
               <div class="campo">
-                <label class="campo__rotulo" for="alerta-rua">Rua</label>
-                <select class="campo__entrada" id="alerta-rua">
-                  <option>Rua Exemplo</option>
-                  <option>Av. Exemplo</option>
-                  <option>Rua da Paz</option>
-                  <option>Rua das Flores</option>
-                </select>
+                <label class="campo__rotulo" for="alerta-rua">Área de risco</label>
+                <select class="campo__entrada" id="alerta-rua" required></select>
               </div>
 
               <fieldset class="escolha">
@@ -304,26 +287,7 @@
 
           <div>
             <h2 class="subtitulo">Últimos alertas</h2>
-            <ul class="historico" id="historico">
-              <li class="historico__item">
-                <span class="etiqueta nivel--alerta">ALERTA</span>
-                <div>
-                  <strong>Rua Exemplo</strong>
-                  <p class="historico__texto">Chuva forte prevista em até 24 horas. Evite a Rua Exemplo.</p>
-                  <p class="historico__meta">há 5 min · 48 moradores</p>
-                </div>
-              </li>
-              <li class="historico__item">
-                <span class="etiqueta nivel--atencao">ATENÇÃO</span>
-                <div>
-                  <strong>Av. Exemplo</strong>
-                  <p class="historico__texto">
-                    Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro.
-                  </p>
-                  <p class="historico__meta">há 3 h · 27 moradores</p>
-                </div>
-              </li>
-            </ul>
+            <ul class="historico" id="historico"></ul>
           </div>
         </div>
 
@@ -340,79 +304,79 @@
         </dialog>
       </section>
 
-      <!-- ABRIGOS: os mesmos do app -->
+      <!-- ABRIGOS: marcados no mapa; aparecem no app dos moradores -->
       <section class="tela" id="abrigos">
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Abrigos</h1>
-            <p class="faixa__apoio">O estado do abrigo aparece no alerta e na rota do morador</p>
+            <p class="faixa__apoio">Toque no mapa para marcar um abrigo. Ele aparece no app dos moradores</p>
           </div>
         </div>
 
         <div class="conteudo gestao">
-          <p class="gestao__aviso">Prévia · a mudança não chega ao app</p>
-          <ul class="lista-abrigos">
-            <li class="lista-abrigos__item">
-              <div>
-                <h2 class="lista-abrigos__nome">Escola Municipal Exemplo</h2>
-                <p class="lista-abrigos__info">Portão azul</p>
+          <p class="gestao__aviso" id="abrigos-status" role="status">Carregando abrigos…</p>
+
+          <div class="abrigos-admin">
+            <div class="mapa-caixa">
+              <div
+                class="mapa-leaflet mapa-leaflet--alto"
+                id="mapa-admin"
+                role="application"
+                aria-label="Mapa para marcar abrigos. A lista abaixo tem os mesmos abrigos."
+              ></div>
+            </div>
+
+            <form class="form-abrigo" id="form-abrigo" hidden>
+              <h2 class="subtitulo" id="abrigo-form-titulo">Novo abrigo</h2>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-nome">Nome do abrigo</label>
+                <input class="campo__entrada" id="abrigo-nome" required maxlength="150"
+                  placeholder="Ex.: Escola Municipal Santos Dumont" />
               </div>
               <div class="campo">
-                <label class="campo__rotulo" for="abrigo-escola">Estado</label>
-                <select class="campo__entrada" id="abrigo-escola" data-abrigo>
-                  <option value="aberto" selected>Aberto</option>
-                  <option value="poucas">Poucas vagas</option>
-                  <option value="so-alerta">Só em nível de alerta</option>
-                  <option value="fechado">Fechado</option>
-                </select>
-              </div>
-            </li>
-            <li class="lista-abrigos__item">
-              <div>
-                <h2 class="lista-abrigos__nome">Ginásio Exemplo</h2>
-                <p class="lista-abrigos__info">Entrada pela lateral</p>
-              </div>
-              <div class="campo">
-                <label class="campo__rotulo" for="abrigo-ginasio">Estado</label>
-                <select class="campo__entrada" id="abrigo-ginasio" data-abrigo>
-                  <option value="aberto" selected>Aberto</option>
-                  <option value="poucas">Poucas vagas</option>
-                  <option value="so-alerta">Só em nível de alerta</option>
-                  <option value="fechado">Fechado</option>
-                </select>
-              </div>
-            </li>
-            <li class="lista-abrigos__item">
-              <div>
-                <h2 class="lista-abrigos__nome">Igreja Exemplo</h2>
-                <p class="lista-abrigos__info">No fim da Rua da Paz</p>
+                <label class="campo__rotulo" for="abrigo-tipo">O que é</label>
+                <select class="campo__entrada" id="abrigo-tipo" required></select>
+                <button class="botao botao--texto" type="button" id="abrigo-tipo-novo">
+                  + Criar outro tipo
+                </button>
+                <div class="form-abrigo__novo-tipo" id="bloco-tipo-novo" hidden>
+                  <input class="campo__entrada" id="tipo-novo-nome" maxlength="60"
+                    placeholder="Nome do tipo (ex.: Praça)" aria-label="Nome do novo tipo" />
+                  <input class="campo__entrada" id="tipo-novo-icone" maxlength="8"
+                    placeholder="Emoji" aria-label="Emoji do novo tipo" />
+                  <button class="botao" type="button" id="tipo-novo-criar">Criar tipo</button>
+                </div>
               </div>
               <div class="campo">
-                <label class="campo__rotulo" for="abrigo-igreja">Estado</label>
-                <select class="campo__entrada" id="abrigo-igreja" data-abrigo>
-                  <option value="aberto">Aberto</option>
-                  <option value="poucas" selected>Poucas vagas</option>
-                  <option value="so-alerta">Só em nível de alerta</option>
-                  <option value="fechado">Fechado</option>
-                </select>
-              </div>
-            </li>
-            <li class="lista-abrigos__item">
-              <div>
-                <h2 class="lista-abrigos__nome">Centro Comunitário Exemplo</h2>
-                <p class="lista-abrigos__info">Rua lateral da Av. Exemplo</p>
-              </div>
-              <div class="campo">
-                <label class="campo__rotulo" for="abrigo-centro">Estado</label>
-                <select class="campo__entrada" id="abrigo-centro" data-abrigo>
+                <label class="campo__rotulo" for="abrigo-situacao">Estado</label>
+                <select class="campo__entrada" id="abrigo-situacao">
                   <option value="aberto">Aberto</option>
                   <option value="poucas">Poucas vagas</option>
-                  <option value="so-alerta" selected>Só em nível de alerta</option>
+                  <option value="so-alerta">Só em nível de alerta</option>
                   <option value="fechado">Fechado</option>
                 </select>
               </div>
-            </li>
-          </ul>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-referencia">Endereço ou referência</label>
+                <input class="campo__entrada" id="abrigo-referencia" maxlength="150"
+                  placeholder="Ex.: Rua das Flores, portão azul" />
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="abrigo-capacidade">Vagas (opcional)</label>
+                <input class="campo__entrada" id="abrigo-capacidade" type="number" min="0" max="100000" inputmode="numeric" />
+              </div>
+              <p class="mapa-aviso" id="abrigo-posicao"></p>
+              <div class="form-abrigo__acoes">
+                <button class="botao" type="submit" id="abrigo-salvar">Salvar abrigo</button>
+                <button class="botao botao--secundario" type="button" id="abrigo-cancelar">Cancelar</button>
+                <button class="botao botao--secundario" type="button" id="abrigo-excluir" hidden>Excluir</button>
+              </div>
+              <p class="envio__retorno" id="abrigo-retorno" role="status"></p>
+            </form>
+          </div>
+
+          <h2 class="subtitulo">Abrigos cadastrados</h2>
+          <ul class="lista-abrigos" id="admin-abrigos-lista"></ul>
         </div>
       </section>
 
@@ -473,7 +437,13 @@
       <a class="rodape__link" href="app.html">Ver o app do morador</a>
     </footer>
 
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+      integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
+      crossorigin="anonymous"
+    ></script>
     <script src="../js/api.js"></script>
+    <script src="../js/mapa.js"></script>
     <script src="../js/admin.js"></script>
   </body>
 </html>
