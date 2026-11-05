@@ -14,18 +14,18 @@ function irParaLogin() {
   location.replace('login.html')
 }
 
-// Se o servidor não confirmar o login, por qualquer motivo, a pessoa volta para o login.
+// Só volta para o login quando o servidor diz que a sessão não vale (401).
+// Sem internet ou com o servidor fora do ar, a pessoa fica no app e vê o aviso de erro:
+// numa emergência, perder a sessão por uma queda de rede é pior que esperar.
 async function conferirLogin() {
   if (modoTesteAtivo()) return
 
   try {
     const resposta = await chamarApi('/me/')
-    if (resposta.ok) return
+    if (resposta.status === 401) irParaLogin()
   } catch {
-    // sem resposta do servidor: trata como não confirmado
+    // sem resposta do servidor: carregarTudo() mostra o aviso
   }
-
-  irParaLogin()
 }
 
 $('#sair').addEventListener('click', encerrarSessao)

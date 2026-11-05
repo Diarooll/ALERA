@@ -36,19 +36,20 @@ function irParaLogin() {
   location.replace('login.html')
 }
 
-// O servidor decide quem é administrador. Se ele não confirmar, por qualquer motivo, a pessoa sai.
+// O servidor decide quem é administrador. A pessoa sai quando ele diz que a sessão não vale
+// ou que a conta não é de administrador. Sem resposta, ela fica e vê o aviso de erro;
+// os dados do painel continuam protegidos, porque o servidor só os entrega a administradores.
 async function conferirAdministrador() {
   if (modoTesteAtivo() && localStorage.getItem('papel') === 'admin') return
 
   try {
     const resposta = await chamarApi('/me/')
 
-    if (resposta.ok && (await resposta.json()).papel === 'admin') return
+    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.ok && (await resposta.json()).papel !== 'admin') irParaLogin()
   } catch {
-    // sem resposta do servidor: trata como não confirmado
+    // sem resposta do servidor: carregarTudo() mostra o aviso
   }
-
-  irParaLogin()
 }
 
 $('#sair').addEventListener('click', encerrarSessao)
