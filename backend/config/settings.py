@@ -5,6 +5,7 @@ de `backend/.env` no desenvolvimento. As variáveis estão listadas em `backend/
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 
 import dj_database_url
@@ -111,8 +112,19 @@ STATIC_URL = 'static/'
 
 # API: toda rota exige login, a menos que libere explicitamente
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
+    'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
+    # Limita quem tenta adivinhar senhas ou criar contas em massa
+    'DEFAULT_THROTTLE_RATES': {'login': '10/min', 'cadastro': '20/hour'},
 }
+
+SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(hours=2)}
 
 # Endereços do front-end que podem chamar a API
 CORS_ALLOWED_ORIGINS = lista_do_ambiente('CORS_ALLOWED_ORIGINS')
+if DEBUG and not CORS_ALLOWED_ORIGINS:
+    # "null" é a origem de uma página aberta direto pelo arquivo, como o README orienta
+    CORS_ALLOWED_ORIGINS = ['null', 'http://127.0.0.1:5500', 'http://localhost:5500']

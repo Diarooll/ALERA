@@ -1,8 +1,4 @@
 // Prévia: nada é enviado nem salvo. Ao recarregar, a página volta aos dados de exemplo.
-document.querySelector('[data-sair]').addEventListener('click', () => {
-  sessionStorage.removeItem('logado')
-})
-
 const NIVEIS = {
   normal: {
     nome: 'NORMAL',
@@ -151,6 +147,32 @@ confirmacao.addEventListener('close', () => {
 })
 
 abrigos.forEach((abrigo) => abrigo.addEventListener('change', contarAbrigosAbertos))
+
+function encerrarSessao() {
+  sessionStorage.removeItem('token')
+  sessionStorage.removeItem('papel')
+}
+
+// O servidor decide quem é administrador. Se ele não confirmar, por qualquer motivo, a pessoa sai.
+async function conferirAdministrador() {
+  try {
+    const resposta = await fetch(`${API_URL}/me/`, {
+      headers: { Authorization: `Bearer ${sessionStorage.getItem('token')}` },
+    })
+
+    if (resposta.ok && (await resposta.json()).papel === 'admin') return
+  } catch {
+    // sem resposta do servidor: trata como não confirmado
+  }
+
+  encerrarSessao()
+  location.replace('login.html')
+}
+
+document.querySelector('#sair').addEventListener('click', encerrarSessao)
+
+// pageshow também cobre o botão Voltar, que pode reabrir o painel da memória sem rodar o <head>
+window.addEventListener('pageshow', conferirAdministrador)
 
 preencherOrientacao()
 atualizarPrevia()
