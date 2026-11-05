@@ -4,7 +4,7 @@
 
 O ALERA é um projeto de alerta de chuva com o nome da sua rua, entregue no WhatsApp. Ele cruza a previsão do tempo com as áreas de risco de Juiz de Fora (MG) e avisa o morador antes da água subir ou do barranco ceder.
 
-> **Status:** protótipo de front-end. Este repositório tem o site e uma prévia navegável do app. O cadastro, o envio de alertas e os gadgets ainda não funcionam de verdade: o back-end e o banco de dados são os próximos passos.
+> **Status:** protótipo. Este repositório tem o site, uma prévia navegável do app e o começo do back-end, com contas, cadastro e login em banco de dados. O envio de alertas e os gadgets ainda não funcionam de verdade, e as telas do app e do painel ainda usam dados de exemplo.
 
 ## O problema
 
@@ -52,12 +52,33 @@ Não precisa instalar nada. Abra no navegador:
 - `front-end/index.html`: site do projeto
 - `front-end/app/login.html`: login do app
 
-Como ainda não há back-end, criar uma conta não salva nada. Para entrar, use uma das contas de demonstração:
+O login e o cadastro precisam do back-end rodando.
 
-| Conta | E-mail | Senha | Abre |
-| --- | --- | --- | --- |
-| Morador | `morador@alera.com.br` | `moradorAlera` | App |
-| Administrador | `adminalera@alera.com.br` | `adminAlera` | Painel de administrador |
+## Back-end
+
+Fica em `backend/` (Django + Django REST Framework). Na primeira vez, dentro dessa pasta:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\python.exe -m pip install -r requirements.txt
+Set-Content .env 'DJANGO_DEBUG=true'
+.venv\Scripts\python.exe manage.py migrate
+.venv\Scripts\python.exe manage.py createsuperuser
+```
+
+O `createsuperuser` cria a conta de administrador: você escolhe o e-mail e a senha na hora, e eles não ficam no código. Contas de morador nascem na tela de cadastro.
+
+Para rodar a API em `http://127.0.0.1:8000`:
+
+```powershell
+.venv\Scripts\python.exe manage.py runserver
+```
+
+Cada conta tem a própria senha, guardada só como hash. Depois do login, a conta de administrador abre o painel e a de morador abre o app.
+
+Sem configuração, os dados ficam em um arquivo SQLite local. Para usar PostgreSQL, defina a variável de ambiente `DATABASE_URL`. Em produção, deixe `DJANGO_DEBUG` desligado e defina `DATABASE_URL`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS`.
+
+Para rodar os testes: `.venv\Scripts\python.exe manage.py test`.
 
 
 

@@ -1,9 +1,14 @@
-// Contas de exemplo da prévia: a senha fica à vista aqui, então nada disto é segurança de verdade
-const USUARIOS_EXEMPLO = [
-  { email: 'adminalera@alera.com.br', senha: 'adminAlera', papel: 'admin' },
-  { email: 'morador@alera.com.br', senha: 'moradorAlera', papel: 'morador' },
-]
 const DESTINOS = { admin: 'admin.html', morador: 'app.html' }
+const ERRO_CONEXAO = 'Não foi possível conectar ao servidor. Tente de novo em instantes.'
+const ERRO_TENTATIVAS = 'Muitas tentativas. Aguarde um minuto e tente de novo.'
+
+function enviar(rota, dados) {
+  return fetch(`${API_URL}${rota}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dados),
+  })
+}
 
 const REGEX_EMAIL = /^\S+@\S+\.\S+$/
 // DDD + número fixo (8 dígitos) ou celular (9 + 8 dígitos)
@@ -133,7 +138,7 @@ function validarConsentimento(consentimento) {
 }
 
 function configurarFormulario(form, regras, aoSucesso) {
-  form.addEventListener('submit', (evento) => {
+  form.addEventListener('submit', async (evento) => {
     evento.preventDefault()
 
     let primeiroInvalido = null
@@ -162,15 +167,13 @@ function configurarFormulario(form, regras, aoSucesso) {
     botao.classList.add('carregando')
     texto.textContent = 'Aguarde...'
 
-    setTimeout(() => {
-      const saindo = aoSucesso()
+    const saindo = await aoSucesso()
 
-      if (!saindo) {
-        botao.disabled = false
-        botao.classList.remove('carregando')
-        texto.textContent = original
-      }
-    }, 800)
+    if (!saindo) {
+      botao.disabled = false
+      botao.classList.remove('carregando')
+      texto.textContent = original
+    }
   })
 }
 
@@ -183,38 +186,97 @@ configurarFormulario(
     [loginEmail, validarEmail],
     [loginSenha, validarSenhaLogin],
   ],
-  () => {
-    const usuario = USUARIOS_EXEMPLO.find(
-      ({ email, senha }) =>
-        email === loginEmail.value.trim().toLowerCase() && senha === loginSenha.value,
-    )
+  async () => {
+    let mensagem = ERRO_CONEXAO
 
-    if (usuario) {
-      sessionStorage.setItem('papel', usuario.papel)
-      window.location.href = DESTINOS[usuario.papel]
-      return true
+    try {
+      const resposta = await enviar('/auth/login/', {
+        email: loginEmail.value.trim().toLowerCase(),
+        password: loginSenha.value,
+      })
+
+      if (resposta.ok) {
+        const { token, papel } = await resposta.json()
+
+        sessionStorage.setItem('token', token)
+        sessionStorage.setItem('papel', papel)
+        window.location.href = DESTINOS[papel]
+        return true
+      }
+
+      if (resposta.status === 401) mensagem = 'E-mail ou senha incorretos.'
+      if (resposta.status === 429) mensagem = ERRO_TENTATIVAS
+    } catch {
+      // sem resposta do servidor: fica o ERRO_CONEXAO
     }
 
-    mostrarErro(loginSenha, 'E-mail ou senha incorretos.')
+    mostrarErro(loginSenha, mensagem)
     loginSenha.focus()
     return false
   },
 )
 
 const cadastroForm = document.querySelector('[data-form="cadastro"]')
+const cadastroEmail = document.querySelector('#cadastro-email')
+const cadastroSenha = document.querySelector('#cadastro-password')
+const cadastroEndereco = document.querySelector('#cadastro-address')
+const cadastroConsentimento = document.querySelector('#cadastro-consent')
+// Nome de cada campo na resposta da API
+const CAMPOS_CADASTRO = {
+  email: cadastroEmail,
+  senha: cadastroSenha,
+  telefone: campoTelefone,
+  endereco: cadastroEndereco,
+  consentimento: cadastroConsentimento,
+}
 
 configurarFormulario(
   cadastroForm,
   [
-    [document.querySelector('#cadastro-email'), validarEmail],
-    [document.querySelector('#cadastro-password'), validarSenhaCadastro],
+    [cadastroEmail, validarEmail],
+    [cadastroSenha, validarSenhaCadastro],
     [campoTelefone, validarTelefone],
-    [document.querySelector('#cadastro-address'), validarEndereco],
-    [document.querySelector('#cadastro-consent'), validarConsentimento],
+    [cadastroEndereco, validarEndereco],
+    [cadastroConsentimento, validarConsentimento],
   ],
-  () => {
-    alert('Prévia: o cadastro ainda não funciona. Nenhuma conta foi criada e nada foi salvo.')
-    cadastroForm.reset()
+  async () => {
+    let mensagem = ERRO_CONEXAO
+
+    try {
+      const resposta = await enviar('/auth/cadastro/', {
+        email: cadastroEmail.value.trim(),
+        senha: cadastroSenha.value,
+        telefone: campoTelefone.value,
+        endereco: cadastroEndereco.value.trim(),
+        consentimento: cadastroConsentimento.checked,
+      })
+
+      if (resposta.ok) {
+        alert('Conta criada! Agora é só entrar com seu e-mail e sua senha.')
+        cadastroForm.reset()
+        location.hash = '#login'
+        return false
+      }
+
+      if (resposta.status === 400) {
+        const erros = await resposta.json()
+        const campos = Object.keys(CAMPOS_CADASTRO).filter((nome) => erros[nome])
+
+        campos.forEach((nome) => mostrarErro(CAMPOS_CADASTRO[nome], erros[nome][0]))
+
+        if (campos.length) {
+          CAMPOS_CADASTRO[campos[0]].focus()
+          return false
+        }
+      }
+
+      if (resposta.status === 429) mensagem = ERRO_TENTATIVAS
+    } catch {
+      // sem resposta do servidor: fica o ERRO_CONEXAO
+    }
+
+    // Erro que não é de um campo: aparece logo acima do botão
+    mostrarErro(cadastroConsentimento, mensagem)
     return false
   },
 )
