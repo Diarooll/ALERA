@@ -8,7 +8,7 @@ from .models import Usuario
 SENHA = 'chuva-forte-2026'
 ADMIN = '/admin/'
 LOGIN_ADMIN = '/admin/login/'
-NOVA_CONTA = '/admin/usuarios/usuario/add/'
+NOVA_CONTA = '/admin/usuarios/staff/add/'
 
 
 def criar_contas():
@@ -66,18 +66,52 @@ class AdminDoDjangoTestes(TestCase):
 
     def editar(self, usuario, **campos):
         return self.client.post(
-            f'/admin/usuarios/usuario/{usuario.pk}/change/',
+            f'/admin/usuarios/staff/{usuario.pk}/change/',
             {'email': usuario.email, 'is_active': 'on', **campos},
         )
 
     def test_adm_principal_nao_ve_morador(self):
         self.client.force_login(self.principal)
-        lista = self.client.get('/admin/usuarios/usuario/').content.decode()
+        lista = self.client.get('/admin/usuarios/staff/').content.decode()
         self.assertIn(self.admzinho.email, lista)
         self.assertNotIn(self.morador.email, lista)
 
-        rota = f'/admin/usuarios/usuario/{self.morador.pk}/change/'
+        rota = f'/admin/usuarios/staff/{self.morador.pk}/change/'
         self.assertNotEqual(self.client.get(rota).status_code, 200)
+
+    def test_moradores_aparecem_so_com_telefone(self):
+        self.morador.telefone = '32999990000'
+        self.morador.endereco = 'Rua Secreta, 10'
+        self.morador.save()
+        self.client.force_login(self.principal)
+
+        paginas = [
+            '/admin/usuarios/morador/',
+            f'/admin/usuarios/morador/{self.morador.pk}/change/',
+            '/admin/usuarios/morador/?q=(32)%2099999-0000',
+        ]
+        for pagina in paginas:
+            resposta = self.client.get(pagina)
+            self.assertEqual(resposta.status_code, 200, pagina)
+            html = resposta.content.decode()
+            self.assertIn('(32) 99999-0000', html, pagina)
+            self.assertIn(f'Morador nº {self.morador.pk}', html, pagina)
+            self.assertNotIn(self.morador.email, html, pagina)
+            self.assertNotIn('Rua Secreta', html, pagina)
+            self.assertNotIn(self.morador.password, html, pagina)
+
+        # Conta de ADM não entra na lista de moradores
+        self.assertNotIn(self.admzinho.email, self.client.get('/admin/usuarios/morador/').content.decode())
+
+    def test_morador_no_admin_e_so_leitura(self):
+        self.client.force_login(self.principal)
+        rota = f'/admin/usuarios/morador/{self.morador.pk}/'
+        self.assertEqual(self.client.get('/admin/usuarios/morador/add/').status_code, 403)
+        self.assertEqual(self.client.post(f'{rota}delete/').status_code, 403)
+
+        self.client.post(f'{rota}change/', {'telefone': '11999990000'})
+        self.morador.refresh_from_db()
+        self.assertEqual(self.morador.telefone, '')
 
     def test_adm_principal_promove_admzinho_a_adm_principal(self):
         self.client.force_login(self.principal)
@@ -94,11 +128,22 @@ class AdminDoDjangoTestes(TestCase):
 
     def test_menu_do_adm_principal(self):
         self.client.force_login(self.principal)
-        liberado = ['locais/tipoabrigo', 'alertas/previsao', 'alertas/historiconivel']
+        liberado = [
+            'usuarios/staff',
+            'usuarios/morador',
+            'locais/tipoabrigo',
+            'alertas/previsao',
+            'alertas/historiconivel',
+        ]
         for modelo in liberado:
             self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 200, modelo)
 
+        inicio = self.client.get(ADMIN).content.decode()
+        self.assertIn('Staffs', inicio)
+        self.assertIn('Usuários', inicio)
+
         fora = [
+            'usuarios/usuario',
             'auth/group',
             'locais/arearisco',
             'locais/circulorisco',
