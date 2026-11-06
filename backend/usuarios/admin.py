@@ -1,7 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import Group
 
 from .models import Usuario
+
+# Grupos de permissão não são usados: o acesso vem de is_superuser (ADMzão) e is_staff (ADMzinho)
+admin.site.unregister(Group)
 
 
 @admin.register(Usuario)

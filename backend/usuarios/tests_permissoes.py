@@ -99,6 +99,7 @@ class AdminDoDjangoTestes(TestCase):
             self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 200, modelo)
 
         fora = [
+            'auth/group',
             'locais/abrigo',
             'locais/bairro',
             'locais/rua',
