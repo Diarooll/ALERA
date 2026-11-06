@@ -86,6 +86,22 @@ function abrigoSalvo() {
   return estado.abrigos.find((a) => a.id === estado.perfil?.abrigo) || null
 }
 
+// Para onde o morador vai: o abrigo que ele salvou ou, sem nenhum salvo, o aberto mais perto.
+// A lista já vem do servidor do mais perto para o mais longe
+function abrigoDestino() {
+  const salvo = abrigoSalvo()
+  if (salvo) return { abrigo: salvo, salvo: true }
+  if (!posicaoCasa()) return null
+  const perto = estado.abrigos.find((a) => ['aberto', 'poucas'].includes(a.situacao) && a.distancia_m != null)
+  return perto ? { abrigo: perto, salvo: false } : null
+}
+
+function nivelDoMorador() {
+  const p = estado.perfil
+  if (!p || !p.localizado) return null // sem o ponto da casa não dá para saber a área
+  return p.area?.nivel || 'normal'
+}
+
 function posicaoCasa() {
   const p = estado.perfil
   return p && p.localizado ? [Number(p.latitude), Number(p.longitude)] : null
@@ -147,7 +163,7 @@ function telaAtual() {
 function desenharMapas() {
   const tela = telaAtual()
   const casa = posicaoCasa()
-  const salvo = abrigoSalvo()
+  const salvo = abrigoDestino()?.abrigo || null
 
   if (tela === '#alerta' || tela === '#rota') {
     const item = mapaDe(tela === '#rota' ? 'rota' : 'alerta', tela === '#rota' ? '#mapa-rota' : '#mapa-alerta')
@@ -270,18 +286,26 @@ function desenharAlerta() {
   const p = estado.perfil
 
   $('#alerta-bairro').textContent = p?.bairro || 'Sua região'
-  $('#alerta-apoio').textContent = p
-    ? `${p.cidade}${p.area ? ` · ${p.area.nome}` : ' · região sem monitoramento cadastrado'}`
-    : 'Sem dados'
+  if (!p) {
+    $('#alerta-apoio').textContent = 'Sem dados'
+  } else {
+    const onde = !p.localizado ? 'casa não marcada no mapa' : p.area ? p.area.nome : 'fora das áreas de risco'
+    $('#alerta-apoio').textContent = [p.cidade, onde].filter(Boolean).join(' · ')
+  }
 
-  // Bairro sem área: aparece Normal, com um aviso
-  const nivel = p ? p.area?.nivel || 'normal' : null
+  // O nível vem da posição da casa. Sem o ponto, não mostra um Normal que pode ser falso
+  const nivel = nivelDoMorador()
   const info = nivel ? NIVEIS[nivel] : null
 
   const selo = $('#alerta-selo')
   selo.className = nivel ? `selo nivel--${nivel}` : 'selo'
-  $('#alerta-selo-texto').textContent = info ? info.nome : '…'
-  $('#alerta-ordem').textContent = info ? info.ordem : 'Não conseguimos buscar o nível de risco agora.'
+  $('#alerta-selo-texto').textContent = info ? info.nome : p ? 'SEM LOCAL' : '…'
+  // A orientação escrita pela Defesa Civil vale mais que o texto padrão do nível
+  $('#alerta-ordem').textContent = info
+    ? (nivel !== 'normal' && p.area?.orientacao) || info.ordem
+    : p
+      ? 'Marque o ponto da sua casa em Meus dados para receber os alertas da sua região.'
+      : 'Não conseguimos buscar o nível de risco agora.'
 
   const medidor = $('#alerta-medidor')
   medidor.setAttribute('aria-label', info ? `Nível ${info.numero} de 4` : 'Nível indisponível')
@@ -298,22 +322,28 @@ function desenharAlerta() {
   })
 
   if (estado.erro) mostrarAviso('#alerta-aviso', estado.erro, true)
-  else if (p && !p.area) mostrarAviso('#alerta-aviso', 'Sua região ainda não tem monitoramento cadastrado. O nível mostrado é o Normal.')
+  else if (p && !p.localizado) mostrarAviso('#alerta-aviso', 'Sem o ponto da sua casa no mapa, você não recebe os alertas da sua região.', true)
   else mostrarAviso('#alerta-aviso', '')
 
-  desenharDestino()
+  desenharDestino(nivel)
 }
 
-function desenharDestino() {
+function desenharDestino(nivel) {
+  const destino = abrigoDestino()
   const salvo = abrigoSalvo()
   const caixa = $('#destino-abrigo')
   caixa.replaceChildren()
 
-  if (salvo) {
+  if (destino) {
+    // Em alerta ou perigo, a mensagem vira ordem: "Vá para o seu abrigo"
+    const urgente = nivel === 'alerta' || nivel === 'perigo'
+    const rotulo = destino.salvo
+      ? urgente ? 'Vá para o seu abrigo' : 'Seu abrigo'
+      : urgente ? 'Vá para o abrigo aberto mais perto' : 'Abrigo aberto mais perto'
     caixa.append(
-      elemento('p', 'destino__rotulo', 'Seu abrigo'),
-      elemento('p', 'destino__nome', salvo.nome),
-      elemento('p', 'destino__info', resumoAbrigo(salvo)),
+      elemento('p', 'destino__rotulo', rotulo),
+      elemento('p', 'destino__nome', destino.abrigo.nome),
+      elemento('p', 'destino__info', resumoAbrigo(destino.abrigo)),
     )
   } else if (estado.perfil && !posicaoCasa()) {
     const p = elemento('p', 'destino__info', 'Não achamos sua casa no mapa. ')
@@ -325,7 +355,7 @@ function desenharDestino() {
     caixa.append(elemento('p', 'destino__info', 'Você ainda não salvou um abrigo.'))
   }
 
-  $('#ver-rota').hidden = !salvo
+  $('#ver-rota').hidden = !destino
   // Com abrigo salvo o botão continua na tela, para a pessoa poder trocar
   const escolher = $('#escolher-abrigo')
   escolher.textContent = salvo ? 'Trocar de abrigo' : estado.abrigos.length ? 'Escolher meu abrigo' : 'Ver abrigos'
@@ -333,7 +363,7 @@ function desenharDestino() {
 }
 
 function desenharRota() {
-  const salvo = abrigoSalvo()
+  const salvo = abrigoDestino()?.abrigo || null
   const destino = $('#rota-destino')
   destino.replaceChildren()
 
@@ -344,7 +374,7 @@ function desenharRota() {
     )
     if (salvo.referencia) destino.append(elemento('p', 'destino__info', salvo.referencia))
   } else {
-    destino.append(elemento('p', 'destino__info', 'Salve um abrigo em Missões para ver a rota.'))
+    destino.append(elemento('p', 'destino__info', 'Escolha seu abrigo na tela de Alerta para ver a rota.'))
   }
 
   const google = $('#rota-google')
@@ -524,3 +554,8 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
 
 window.addEventListener('hashchange', desenharMapas)
 carregarTudo()
+
+// Com o app aberto, confere o nível de novo a cada minuto: um alerta novo aparece sozinho
+setInterval(() => {
+  if (document.visibilityState === 'visible' && !modoTesteAtivo()) carregarTudo()
+}, 60_000)

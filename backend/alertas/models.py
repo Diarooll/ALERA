@@ -53,6 +53,8 @@ class HistoricoNivel(models.Model):
         related_name='mudancas_de_nivel',
         verbose_name='responsável',
     )
+    # Orientação escrita pela Defesa Civil no alerta (a previsão não escreve)
+    mensagem = models.CharField(max_length=300, blank=True)
     criado_em = models.DateTimeField(auto_now_add=True)
 
     class Meta:

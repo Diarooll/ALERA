@@ -1,31 +1,32 @@
 from django.core.management.base import BaseCommand
 
-from locais.models import Abrigo, AreaRisco, Bairro, TipoAbrigo
+from locais.models import Abrigo, AreaRisco, CirculoRisco, TipoAbrigo
 
-CIDADE = 'Juiz de Fora'
 AREA = 'Área de Risco Exemplo'
-# Só os bairros de exemplo entram na área; os outros nascem sem área, como no cadastro real
-BAIRROS_NA_AREA = ['Centro', 'São Mateus']
-# Nomes e posições de exemplo: não são abrigos reais
+# Bolinhas de exemplo no centro de Juiz de Fora: (latitude, longitude, raio em metros)
+BOLINHAS = [
+    ('-21.764200', '-43.350300', 400),
+    ('-21.767500', '-43.346500', 300),
+]
+# Nomes e posições de exemplo: não são abrigos reais. Ficam fora das bolinhas
 ABRIGOS = [
-    ('Escola Municipal Exemplo', 'Escola', 'aberto', '-21.762000', '-43.348000', 300),
-    ('Igreja Exemplo', 'Igreja', 'poucas', '-21.768000', '-43.355000', 80),
-    ('Ginásio Exemplo', 'Ginásio/quadra', 'so-alerta', '-21.759000', '-43.343000', 500),
-    ('Centro Comunitário Exemplo', 'Centro comunitário', 'aberto', '-21.772000', '-43.338000', 150),
+    ('Escola Municipal Exemplo', 'Escola', 'aberto', '-21.758000', '-43.356000', 300),
+    ('Igreja Exemplo', 'Igreja', 'poucas', '-21.773000', '-43.357000', 80),
+    ('Ginásio Exemplo', 'Ginásio/quadra', 'so-alerta', '-21.759000', '-43.340000', 500),
+    ('Centro Comunitário Exemplo', 'Centro comunitário', 'aberto', '-21.774000', '-43.338000', 150),
 ]
 
 
 class Command(BaseCommand):
-    help = 'Cria dados de exemplo (uma área, bairros e abrigos em Juiz de Fora). Pode rodar de novo.'
+    help = 'Cria dados de exemplo (uma área com bolinhas e abrigos em Juiz de Fora). Pode rodar de novo.'
 
     def handle(self, *args, **opcoes):
         area, _ = AreaRisco.objects.get_or_create(nome=AREA)
-
-        for nome in BAIRROS_NA_AREA:
-            bairro, _ = Bairro.objects.get_or_create(nome=nome, cidade=CIDADE)
-            if bairro.area_id is None:
-                bairro.area = area
-                bairro.save(update_fields=['area'])
+        if not area.circulos.exists():
+            CirculoRisco.objects.bulk_create(
+                CirculoRisco(area=area, latitude=lat, longitude=lng, raio_m=raio)
+                for lat, lng, raio in BOLINHAS
+            )
 
         for nome, tipo, situacao, lat, lng, vagas in ABRIGOS:
             Abrigo.objects.get_or_create(

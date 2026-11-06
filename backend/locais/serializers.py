@@ -1,9 +1,10 @@
 from decimal import Decimal
 
+from django.db import transaction
 from rest_framework import serializers
 
 from . import servicos
-from .models import Abrigo, AreaRisco, TipoAbrigo
+from .models import RAIO_MAXIMO_M, RAIO_MINIMO_M, Abrigo, AreaRisco, CirculoRisco, TipoAbrigo
 
 LATITUDE = {'max_digits': 9, 'decimal_places': 6, 'coerce_to_string': False}
 
@@ -14,11 +15,49 @@ class TipoAbrigoSerializer(serializers.ModelSerializer):
         fields = ['id', 'nome', 'icone']
 
 
+class CirculoSerializer(serializers.ModelSerializer):
+    latitude = serializers.DecimalField(
+        min_value=Decimal('-90'), max_value=Decimal('90'), **LATITUDE
+    )
+    longitude = serializers.DecimalField(
+        min_value=Decimal('-180'), max_value=Decimal('180'), **LATITUDE
+    )
+    raio_m = serializers.IntegerField(min_value=RAIO_MINIMO_M, max_value=RAIO_MAXIMO_M)
+
+    class Meta:
+        model = CirculoRisco
+        fields = ['latitude', 'longitude', 'raio_m']
+
+
 class AreaRiscoSerializer(serializers.ModelSerializer):
+    """O painel cria e desenha a área. O nível só muda pelo alerta (alertas.servicos)."""
+
+    circulos = CirculoSerializer(many=True, required=False)
+
     class Meta:
         model = AreaRisco
-        fields = ['id', 'nome', 'nivel', 'nivel_atualizado_em']
-        read_only_fields = fields
+        fields = ['id', 'nome', 'nivel', 'nivel_atualizado_em', 'orientacao', 'circulos']
+        read_only_fields = ['nivel', 'nivel_atualizado_em', 'orientacao']
+
+    @transaction.atomic
+    def create(self, dados):
+        circulos = dados.pop('circulos', [])
+        area = AreaRisco.objects.create(**dados)
+        self._trocar_circulos(area, circulos)
+        return area
+
+    @transaction.atomic
+    def update(self, area, dados):
+        circulos = dados.pop('circulos', None)
+        area = super().update(area, dados)
+        # As bolinhas chegam todas juntas e substituem as antigas
+        if circulos is not None:
+            self._trocar_circulos(area, circulos)
+        return area
+
+    def _trocar_circulos(self, area, circulos):
+        area.circulos.all().delete()
+        CirculoRisco.objects.bulk_create(CirculoRisco(area=area, **c) for c in circulos)
 
 
 class AbrigoSerializer(serializers.ModelSerializer):

@@ -94,12 +94,14 @@ class AdminDoDjangoTestes(TestCase):
 
     def test_menu_do_adm_principal(self):
         self.client.force_login(self.principal)
-        liberado = ['locais/arearisco', 'locais/tipoabrigo', 'alertas/previsao', 'alertas/historiconivel']
+        liberado = ['locais/tipoabrigo', 'alertas/previsao', 'alertas/historiconivel']
         for modelo in liberado:
             self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 200, modelo)
 
         fora = [
             'auth/group',
+            'locais/arearisco',
+            'locais/circulorisco',
             'locais/abrigo',
             'locais/bairro',
             'locais/rua',
@@ -110,11 +112,9 @@ class AdminDoDjangoTestes(TestCase):
         for modelo in fora:
             self.assertEqual(self.client.get(f'{ADMIN}{modelo}/').status_code, 404, modelo)
 
-    def test_adm_principal_cria_area_e_tipo_de_abrigo(self):
+    def test_adm_principal_cria_tipo_de_abrigo(self):
         self.client.force_login(self.principal)
-        self.client.post(f'{ADMIN}locais/arearisco/add/', {'nome': 'Zona Norte'})
         self.client.post(f'{ADMIN}locais/tipoabrigo/add/', {'nome': 'Ginásio', 'icone': '🏟'})
-        self.assertTrue(AreaRisco.objects.filter(nome='Zona Norte', nivel=Nivel.NORMAL).exists())
         self.assertTrue(TipoAbrigo.objects.filter(nome='Ginásio').exists())
 
     def test_previsoes_e_historico_sao_so_leitura(self):
@@ -145,6 +145,39 @@ class PainelProprioTestes(APITestCase):
         rota = f"/api/abrigos/{abrigo.data['id']}/"
         self.assertEqual(self.client.patch(rota, {'nome': 'Escola 2'}, format='json').status_code, 200)
         self.assertEqual(self.client.delete(rota).status_code, 204)
+
+    def test_painel_cria_e_desenha_area_de_risco(self):
+        self.client.force_authenticate(self.admzinho)
+        bolinhas = [
+            {'latitude': '-21.7642', 'longitude': '-43.3503', 'raio_m': 200},
+            {'latitude': '-21.7660', 'longitude': '-43.3520', 'raio_m': 350},
+        ]
+        criada = self.client.post('/api/areas/', {'nome': 'Morro Exemplo', 'circulos': bolinhas}, format='json')
+        self.assertEqual(criada.status_code, 201)
+        self.assertEqual(len(criada.data['circulos']), 2)
+        self.assertEqual(criada.data['nivel'], Nivel.NORMAL)
+
+        rota = f"/api/areas/{criada.data['id']}/"
+        # Salvar manda as bolinhas todas juntas e troca as antigas; o nível não muda por aqui
+        editada = self.client.patch(rota, {'circulos': bolinhas[:1], 'nivel': 'perigo'}, format='json')
+        self.assertEqual(len(editada.data['circulos']), 1)
+        self.assertEqual(editada.data['nivel'], Nivel.NORMAL)
+
+        self.assertEqual(self.client.delete(rota).status_code, 204)
+        self.assertFalse(AreaRisco.objects.exists())
+
+    def test_bolinha_com_tamanho_fora_do_limite_e_recusada(self):
+        self.client.force_authenticate(self.admzinho)
+        bolinha = {'latitude': '-21.7642', 'longitude': '-43.3503', 'raio_m': 10}
+        resposta = self.client.post('/api/areas/', {'nome': 'Teste', 'circulos': [bolinha]}, format='json')
+        self.assertEqual(resposta.status_code, 400)
+
+    def test_area_com_alerta_nao_pode_ser_apagada(self):
+        self.client.force_authenticate(self.admzinho)
+        area = AreaRisco.objects.create(nome='Morro Exemplo')
+        self.client.post('/api/alertas/', {'areas': [area.pk], 'nivel': 'alerta', 'mensagem': 'x'}, format='json')
+        self.assertEqual(self.client.delete(f'/api/areas/{area.pk}/').status_code, 409)
+        self.assertTrue(AreaRisco.objects.filter(pk=area.pk).exists())
 
     def test_morador_nao_faz_o_que_e_do_painel(self):
         self.client.force_authenticate(self.morador)

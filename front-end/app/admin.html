@@ -46,6 +46,10 @@
         <path d="M12 9v4" />
         <path d="M12 17h.01" />
       </symbol>
+      <symbol id="i-area" viewBox="0 0 24 24">
+        <circle cx="9" cy="10" r="6" />
+        <circle cx="16" cy="15" r="5" />
+      </symbol>
       <symbol id="i-local" viewBox="0 0 24 24">
         <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />
         <circle cx="12" cy="10" r="3" />
@@ -90,6 +94,13 @@
                 ><svg class="icone" aria-hidden="true" focusable="false">
                   <use href="#i-alerta" /></svg
                 >Alertas</a
+              >
+            </li>
+            <li>
+              <a class="menu__link" href="#areas"
+                ><svg class="icone" aria-hidden="true" focusable="false">
+                  <use href="#i-area" /></svg
+                >Áreas de risco</a
               >
             </li>
             <li>
@@ -172,7 +183,7 @@
             <tbody id="tabela-areas"></tbody>
           </table>
           <p class="gestao__aviso">
-            Áreas de risco e bairros são cadastrados no painel do Django (/admin/).
+            As áreas de risco são desenhadas na aba <a href="#areas">Áreas de risco</a>.
           </p>
         </div>
       </section>
@@ -182,19 +193,29 @@
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Emitir alerta</h1>
-            <p class="faixa__apoio">O alerta vai pelo WhatsApp para os moradores da área</p>
+            <p class="faixa__apoio">O alerta aparece no app de quem mora dentro das áreas escolhidas</p>
           </div>
         </div>
 
         <div class="conteudo gestao">
-          <p class="gestao__aviso">Simulação · nenhuma mensagem é enviada de verdade</p>
+          <p class="gestao__aviso">O WhatsApp ainda não está ligado: por enquanto o alerta chega só pelo app</p>
+
+          <div class="mapa-caixa">
+            <div
+              class="mapa-leaflet mapa-leaflet--alto"
+              id="mapa-alertas"
+              role="application"
+              aria-label="Mapa das áreas de risco. Toque numa área para escolher. A lista do formulário tem as mesmas áreas."
+            ></div>
+          </div>
 
           <form class="envio" id="form-alerta">
             <div class="envio__campos">
-              <div class="campo">
-                <label class="campo__rotulo" for="alerta-rua">Área de risco</label>
-                <select class="campo__entrada" id="alerta-rua" required></select>
-              </div>
+              <fieldset class="escolha">
+                <legend class="campo__rotulo">Áreas que recebem o alerta</legend>
+                <p class="mapa-aviso">Toque nas áreas do mapa ou marque aqui. Pode escolher mais de uma.</p>
+                <ul class="lista-areas" id="alerta-areas"></ul>
+              </fieldset>
 
               <fieldset class="escolha">
                 <legend class="campo__rotulo">Nível</legend>
@@ -302,6 +323,63 @@
             </div>
           </form>
         </dialog>
+      </section>
+
+      <!-- ÁREAS DE RISCO: desenhadas com bolinhas no mapa. O morador não vê o desenho -->
+      <section class="tela" id="areas">
+        <div class="faixa">
+          <div class="conteudo">
+            <h1 class="faixa__titulo">Áreas de risco</h1>
+            <p class="faixa__apoio">Desenhe cada área com bolinhas no mapa. O morador não vê o desenho, só recebe o alerta</p>
+          </div>
+        </div>
+
+        <div class="conteudo gestao">
+          <p class="gestao__aviso" id="areas-status" role="status">Escolha uma área na lista ou crie uma nova.</p>
+
+          <div class="abrigos-admin areas-admin">
+            <div class="mapa-caixa">
+              <div
+                class="mapa-leaflet mapa-leaflet--alto"
+                id="mapa-areas"
+                role="application"
+                aria-label="Mapa para desenhar as áreas de risco com bolinhas"
+              ></div>
+            </div>
+
+            <div class="form-abrigo">
+              <div class="gestao__cabecalho">
+                <h2 class="subtitulo gestao__titulo">Áreas</h2>
+                <button class="botao gestao__acao" type="button" id="area-nova">+ Nova área</button>
+              </div>
+              <ul class="lista-areas" id="areas-lista"></ul>
+
+              <form class="form-area" id="form-area" hidden>
+                <h2 class="subtitulo" id="area-form-titulo">Nova área</h2>
+                <div class="campo">
+                  <label class="campo__rotulo" for="area-nome">Nome da área</label>
+                  <input class="campo__entrada" id="area-nome" required maxlength="120"
+                    placeholder="Ex.: Encosta do Morro do Cristo" />
+                </div>
+                <p class="mapa-aviso" id="area-ajuda">
+                  Toque no mapa para pôr uma bolinha. Arraste o ponto branco para mover e toque numa bolinha para mudar o tamanho.
+                </p>
+                <div class="campo" id="bloco-raio" hidden>
+                  <label class="campo__rotulo" for="area-raio">Tamanho da bolinha: <span id="area-raio-valor"></span></label>
+                  <input class="area-raio" id="area-raio" type="range" min="50" max="3000" step="10" />
+                  <button class="botao botao--secundario" type="button" id="bolinha-apagar">Apagar esta bolinha</button>
+                </div>
+                <p class="mapa-aviso" id="area-contagem"></p>
+                <div class="form-abrigo__acoes">
+                  <button class="botao" type="submit">Salvar área</button>
+                  <button class="botao botao--secundario" type="button" id="area-cancelar">Cancelar</button>
+                  <button class="botao botao--secundario" type="button" id="area-excluir" hidden>Excluir área</button>
+                </div>
+                <p class="envio__retorno" id="area-retorno" role="status"></p>
+              </form>
+            </div>
+          </div>
+        </div>
       </section>
 
       <!-- ABRIGOS: marcados no mapa; aparecem no app dos moradores -->

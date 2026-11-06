@@ -1,5 +1,7 @@
-from rest_framework import generics
+from django.db.models import ProtectedError
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 from usuarios.permissions import EhAdministrador
 
@@ -40,7 +42,29 @@ class TipoAbrigoLista(LeituraLogadoEscritaAdmin, generics.ListCreateAPIView):
     serializer_class = TipoAbrigoSerializer
 
 
-class AreaRiscoLista(generics.ListAPIView):
+# Áreas de risco são só do painel: o morador nunca vê as bolinhas
+
+
+class AreaRiscoLista(generics.ListCreateAPIView):
     permission_classes = [EhAdministrador]
-    queryset = AreaRisco.objects.all()
+    queryset = AreaRisco.objects.prefetch_related('circulos')
     serializer_class = AreaRiscoSerializer
+
+
+class AreaRiscoDetalhe(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [EhAdministrador]
+    queryset = AreaRisco.objects.prefetch_related('circulos')
+    serializer_class = AreaRiscoSerializer
+
+    def destroy(self, request, *args, **kwargs):
+        try:
+            return super().destroy(request, *args, **kwargs)
+        except ProtectedError:
+            # O histórico guarda quem emitiu cada alerta: área com alerta não some
+            return Response(
+                {
+                    'detail': 'Esta área já teve alertas e não pode ser apagada. '
+                    'Você pode renomear a área ou tirar as bolinhas dela.'
+                },
+                status=status.HTTP_409_CONFLICT,
+            )

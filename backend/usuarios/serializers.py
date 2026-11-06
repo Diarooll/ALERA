@@ -7,6 +7,7 @@ from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
+from locais import servicos as servicos_locais
 from locais.models import Abrigo, Bairro
 
 from . import geocodificacao
@@ -173,8 +174,12 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
         return dados
 
     def get_area(self, usuario):
-        area = usuario.bairro.area if usuario.bairro else None
-        return {'nome': area.nome, 'nivel': area.nivel} if area else None
+        # Vale a posição da casa: a área mais grave entre as bolinhas que contêm a casa.
+        # O morador recebe só o nome, o nível e a orientação, nunca o desenho das bolinhas
+        area = servicos_locais.area_mais_grave(usuario.latitude, usuario.longitude)
+        if not area:
+            return None
+        return {'nome': area.nome, 'nivel': area.nivel, 'orientacao': area.orientacao}
 
     def get_localizado(self, usuario):
         return usuario.latitude is not None

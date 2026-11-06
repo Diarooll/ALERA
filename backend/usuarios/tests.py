@@ -4,7 +4,7 @@ from unittest.mock import patch
 from django.core.cache import cache
 from rest_framework.test import APITestCase
 
-from locais.models import Abrigo, AreaRisco, Bairro, TipoAbrigo
+from locais.models import Abrigo, AreaRisco, Bairro, CirculoRisco, TipoAbrigo
 
 from .models import Usuario
 from .serializers import TEXTO_CONSENTIMENTO
@@ -175,10 +175,29 @@ class PerfilTestes(Base):
         self.assertTrue(dados['localizado'])
         self.assertIsNone(dados['area'])
 
-    def test_me_mostra_a_area_de_risco_do_bairro(self):
-        area = AreaRisco.objects.create(nome='Encosta Exemplo')
+    def bolinha(self, nome, nivel, latitude, longitude, raio_m):
+        area = AreaRisco.objects.create(nome=nome, nivel=nivel, orientacao=f'Orientação {nome}')
+        CirculoRisco.objects.create(area=area, latitude=latitude, longitude=longitude, raio_m=raio_m)
+        return area
+
+    def test_me_mostra_a_area_que_contem_a_casa(self):
+        # A casa fica em -21.7642, -43.3503; 0,001 grau de latitude são uns 111 m
+        self.bolinha('Encosta Exemplo', 'alerta', '-21.7650', '-43.3503', 200)
+        self.bolinha('Longe Exemplo', 'perigo', '-21.8000', '-43.3503', 200)
+        self.assertEqual(
+            self.client.get(ME).data['area'],
+            {'nome': 'Encosta Exemplo', 'nivel': 'alerta', 'orientacao': 'Orientação Encosta Exemplo'},
+        )
+
+    def test_casa_em_duas_areas_mostra_a_mais_grave(self):
+        self.bolinha('Atenção Exemplo', 'atencao', '-21.7642', '-43.3503', 300)
+        self.bolinha('Perigo Exemplo', 'perigo', '-21.7645', '-43.3500', 300)
+        self.assertEqual(self.client.get(ME).data['area']['nome'], 'Perigo Exemplo')
+
+    def test_bairro_ligado_a_area_nao_conta_mais(self):
+        area = AreaRisco.objects.create(nome='Encosta Exemplo', nivel='perigo')
         Bairro.objects.filter(nome='Centro').update(area=area)
-        self.assertEqual(self.client.get(ME).data['area'], {'nome': 'Encosta Exemplo', 'nivel': 'normal'})
+        self.assertIsNone(self.client.get(ME).data['area'])
 
     def test_salva_um_abrigo_aberto_e_troca_por_outro(self):
         resposta = self.client.patch(ME, {'abrigo': self.aberto.pk}, format='json')

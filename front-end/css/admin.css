@@ -9,11 +9,25 @@ body:not(:has(.tela:target)) #painel {
 body:not(:has(.tela:target)) .menu__link[href="#painel"],
 body:has(#painel:target)  .menu__link[href="#painel"],
 body:has(#alertas:target) .menu__link[href="#alertas"],
+body:has(#areas:target)   .menu__link[href="#areas"],
 body:has(#abrigos:target) .menu__link[href="#abrigos"],
 body:has(#bueiros:target) .menu__link[href="#bueiros"] {
   color: var(--app-azul);
   font-weight: var(--peso-forte);
   box-shadow: inset 0 3px 0 var(--app-azul);
+}
+
+/* No celular o painel tem 5 abas embaixo (o app tem 4) */
+@media (max-width: 899.98px) {
+  .menu__lista {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .menu__link {
+    padding-inline: 2px;
+    font-size: 12px;
+    line-height: 1.15;
+    text-align: center;
+  }
 }
 
 /* ---------- Topo ---------- */
@@ -305,6 +319,82 @@ input:focus-visible + .escolha__opcao {
   color: var(--app-texto-suave);
 }
 
+/* ---------- Áreas de risco: lista para escolher (aba Áreas e formulário do alerta) ---------- */
+.lista-areas {
+  display: grid;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  width: 100%;
+  min-height: 48px;
+  padding: var(--esp-2) var(--esp-3);
+  border: 2px solid var(--app-linha);
+  border-radius: var(--app-raio);
+  background: var(--app-superficie);
+  color: var(--app-texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.area-item:hover {
+  border-color: var(--app-borda);
+}
+.area-item--ativa,
+.area-item:has(input:checked) {
+  border-color: var(--app-azul);
+  background: var(--app-azul-claro);
+}
+.area-item:has(input:focus-visible) {
+  box-shadow: var(--app-foco);
+}
+.area-item__nome {
+  flex: 1;
+  font-weight: var(--peso-forte);
+  overflow-wrap: anywhere;
+}
+.area-item__info {
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+.area-item input {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+  accent-color: var(--app-azul);
+}
+.form-area {
+  display: grid;
+  gap: var(--esp-3);
+  padding-top: var(--esp-4);
+  border-top: 1px solid var(--app-linha);
+}
+.area-raio {
+  width: 100%;
+  accent-color: var(--cor-risco-perigo);
+}
+/* Ponto branco no centro da bolinha em edição: arrastar move a bolinha */
+.alca {
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  border: 3px solid var(--cor-risco-perigo);
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--sombra-card);
+  cursor: grab;
+}
+.alca--escolhida {
+  width: 22px;
+  height: 22px;
+  border-width: 5px;
+}
+
 /* ---------- Bueiros ---------- */
 .lista-bueiros {
   margin: 0;
@@ -374,6 +464,7 @@ input:focus-visible + .escolha__opcao {
   body:not(:has(.tela:target)) .menu__link[href="#painel"],
   body:has(#painel:target)  .menu__link[href="#painel"],
   body:has(#alertas:target) .menu__link[href="#alertas"],
+  body:has(#areas:target)   .menu__link[href="#areas"],
   body:has(#abrigos:target) .menu__link[href="#abrigos"],
   body:has(#bueiros:target) .menu__link[href="#bueiros"] {
     background: var(--cor-fundo);
