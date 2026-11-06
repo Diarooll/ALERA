@@ -37,7 +37,9 @@ class Usuario(AbstractUser):
     # só voltam para o próprio morador (nunca aparecem para outra pessoa nem no painel)
     cep = models.CharField(max_length=8, blank=True)
     logradouro = models.CharField(max_length=150, blank=True)
+    # Número na rua. Em condomínio é o número do condomínio; a casa vai no complemento
     numero = models.CharField('número', max_length=10, blank=True)
+    complemento = models.CharField(max_length=60, blank=True)
     bairro = models.ForeignKey(
         'locais.Bairro', on_delete=models.SET_NULL, null=True, blank=True, related_name='moradores'
     )

@@ -248,13 +248,13 @@
             </div>
 
             <div class="field">
-              <label for="cadastro-number">Número</label>
+              <label for="cadastro-number">Número na rua</label>
               <div class="control">
                 <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
                 <input
                   type="text"
                   id="cadastro-number"
-                  placeholder="Ex.: 120"
+                  placeholder="Ex.: 182 (em condomínio, o do condomínio)"
                   autocomplete="off"
                   maxlength="10"
                   aria-describedby="cadastro-number-error"
@@ -266,6 +266,20 @@
                 <span>Minha casa não tem número</span>
               </label>
               <p class="error" id="cadastro-nonumber-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="cadastro-complement">Complemento (opcional)</label>
+              <div class="control">
+                <svg class="icon" aria-hidden="true"><use href="#i-pin"></use></svg>
+                <input
+                  type="text"
+                  id="cadastro-complement"
+                  placeholder="Ex.: Casa 12, Bloco B apto 301"
+                  autocomplete="address-line2"
+                  maxlength="60"
+                />
+              </div>
             </div>
 
             <div class="field">

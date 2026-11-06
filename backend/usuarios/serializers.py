@@ -23,8 +23,9 @@ REGEX_CEP = re.compile(r'^\d{8}$')
 REGEX_TELEFONE = re.compile(r'^[1-9]{2}9?\d{8}$')
 
 
-def montar_endereco(logradouro, numero, bairro, cidade):
-    return f'{logradouro}, {numero}, {bairro}, {cidade}'
+def montar_endereco(logradouro, numero, bairro, cidade, complemento=''):
+    partes = [logradouro, numero, complemento.strip(), bairro, cidade]
+    return ', '.join(p for p in partes if p)
 
 
 def achar_bairro(nome, cidade):
@@ -50,6 +51,8 @@ class CadastroSerializer(serializers.Serializer):
     logradouro = serializers.CharField(max_length=150)
     # "S/N" para casa sem número
     numero = serializers.CharField(max_length=10)
+    # Casa ou apartamento dentro do condomínio. Não entra na busca do mapa
+    complemento = serializers.CharField(max_length=60, required=False, allow_blank=True, default='')
     bairro = serializers.CharField(max_length=120)
     cidade = serializers.CharField(max_length=120)
     consentimento = serializers.BooleanField(write_only=True)
@@ -80,7 +83,7 @@ class CadastroSerializer(serializers.Serializer):
 
     def create(self, dados):
         posicao = geocodificacao.localizar(
-            dados['logradouro'], dados['numero'], dados['bairro'], dados['cidade']
+            dados['logradouro'], dados['numero'], dados['bairro'], dados['cidade'], dados['cep']
         )
         latitude, longitude = posicao or (None, None)
 
@@ -89,11 +92,16 @@ class CadastroSerializer(serializers.Serializer):
             dados['senha'],
             telefone=dados['telefone'],
             endereco=montar_endereco(
-                dados['logradouro'], dados['numero'], dados['bairro'], dados['cidade']
+                dados['logradouro'],
+                dados['numero'],
+                dados['bairro'],
+                dados['cidade'],
+                dados['complemento'],
             ),
             cep=dados['cep'],
             logradouro=dados['logradouro'].strip(),
             numero=dados['numero'].strip(),
+            complemento=dados['complemento'].strip(),
             bairro=achar_bairro(dados['bairro'], dados['cidade']),
             latitude=latitude,
             longitude=longitude,
@@ -156,6 +164,7 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
             'cep',
             'logradouro',
             'numero',
+            'complemento',
             'bairro',
             'cidade',
             'latitude',
@@ -217,26 +226,26 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
         for campo in ('cep', 'logradouro', 'numero'):
             if campo in dados and dados[campo] != getattr(usuario, campo):
                 endereco_mudou = True
+        # O complemento (casa ou apto) muda o endereço escrito, mas não o ponto no mapa
+        complemento_mudou = 'complemento' in dados and dados['complemento'] != usuario.complemento
 
         for campo, valor in dados.items():
-            setattr(usuario, campo, valor)
+            setattr(usuario, campo, valor.strip() if isinstance(valor, str) else valor)
 
-        if endereco_mudou:
+        nome_do_bairro = usuario.bairro.nome if usuario.bairro else ''
+        nome_da_cidade = usuario.bairro.cidade if usuario.bairro else ''
+
+        if endereco_mudou or complemento_mudou:
             usuario.endereco = montar_endereco(
-                usuario.logradouro,
-                usuario.numero,
-                usuario.bairro.nome if usuario.bairro else '',
-                usuario.bairro.cidade if usuario.bairro else '',
+                usuario.logradouro, usuario.numero, nome_do_bairro, nome_da_cidade, usuario.complemento
             )
-            # Se a pessoa já marcou o ponto no mapa, vale o que ela marcou
-            if not posicao_enviada:
-                posicao = geocodificacao.localizar(
-                    usuario.logradouro,
-                    usuario.numero,
-                    usuario.bairro.nome if usuario.bairro else '',
-                    usuario.bairro.cidade if usuario.bairro else '',
-                )
-                usuario.latitude, usuario.longitude = posicao or (None, None)
+
+        # Se a pessoa já marcou o ponto no mapa, vale o que ela marcou
+        if endereco_mudou and not posicao_enviada:
+            posicao = geocodificacao.localizar(
+                usuario.logradouro, usuario.numero, nome_do_bairro, nome_da_cidade, usuario.cep
+            )
+            usuario.latitude, usuario.longitude = posicao or (None, None)
 
         usuario.save()
         return usuario

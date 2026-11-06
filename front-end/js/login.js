@@ -303,6 +303,7 @@ configurarFormulario(
         cep: cadastroCep.value.replace(/\D/g, ''),
         logradouro: cadastroRua.value.trim(),
         numero: cadastroSemNumero.checked ? 'S/N' : cadastroNumero.value.trim(),
+        complemento: document.querySelector('#cadastro-complement').value.trim(),
         bairro: cadastroBairro.value.trim(),
         cidade: cadastroCidade.value.trim(),
         consentimento: cadastroConsentimento.checked,

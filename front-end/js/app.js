@@ -278,6 +278,7 @@ function desenharTudo() {
   desenharRota()
   desenharListaAbrigos()
   desenharMeusDados()
+  desenharMissoes()
   desenharRanking()
   desenharMapas()
 }
@@ -307,6 +308,12 @@ function desenharAlerta() {
       ? 'Marque o ponto da sua casa em Meus dados para receber os alertas da sua região.'
       : 'Não conseguimos buscar o nível de risco agora.'
 
+  // Mensagem personalizada: em qualquer nível acima do Normal, o alerta diz para onde ir
+  const abrigo = $('#alerta-abrigo')
+  const frase = nivel && nivel !== 'normal' ? fraseDoAbrigo(nivel, abrigoDestino()) : ''
+  abrigo.textContent = frase
+  abrigo.hidden = !frase
+
   const medidor = $('#alerta-medidor')
   medidor.setAttribute('aria-label', info ? `Nível ${info.numero} de 4` : 'Nível indisponível')
   medidor.querySelectorAll('.medidor__parte').forEach((parte, i) => {
@@ -326,6 +333,19 @@ function desenharAlerta() {
   else mostrarAviso('#alerta-aviso', '')
 
   desenharDestino(nivel)
+}
+
+// "Vá para o seu abrigo: Escola X, a 400 m (5 min a pé)."
+function fraseDoAbrigo(nivel, destino) {
+  if (!destino) return 'Você ainda não tem um abrigo. Toque em "Escolher meu abrigo" para saber para onde ir.'
+
+  const { abrigo, salvo } = destino
+  const qual = salvo ? 'o seu abrigo' : 'o abrigo aberto mais perto'
+  const distancia = abrigo.distancia_m != null
+    ? `, a ${formatarDistancia(abrigo.distancia_m)} (${abrigo.tempo_a_pe_min} min a pé)`
+    : ''
+  const comeco = nivel === 'atencao' ? `Confira o caminho até ${qual}` : `Vá para ${qual}`
+  return `${comeco}: ${abrigo.nome}${distancia}.`
 }
 
 function desenharDestino(nivel) {
@@ -452,6 +472,52 @@ async function salvarAbrigo(id) {
 
 $('#abrigos-atualizar').addEventListener('click', carregarTudo)
 
+// ---------- Missões ----------
+
+// "Salve seu abrigo" segue o que o morador fez. As outras ainda são exemplos fixos no HTML
+function desenharMissoes() {
+  const temAbrigo = !!estado.perfil?.abrigo
+  const cartao = $('#missao-abrigo-cartao')
+  cartao.querySelector('progress').value = temAbrigo ? 1 : 0
+  cartao.querySelector('.progresso__legenda').textContent = temAbrigo ? 'Concluída' : 'Não iniciada'
+
+  let concluidas = 0
+  const cartoes = document.querySelectorAll('#lista-missoes .missao')
+  cartoes.forEach((missao) => {
+    const progresso = missao.querySelector('progress')
+    const feita = progresso.value >= progresso.max
+    missao.toggleAttribute('data-concluida', feita)
+    if (feita) concluidas += 1
+  })
+
+  $('#conta-fazer').textContent = `(${cartoes.length - concluidas})`
+  $('#conta-concluidas').textContent = `(${concluidas})`
+  mostrarAba($('#lista-missoes').dataset.aba, cartoes.length - concluidas, concluidas)
+}
+
+function mostrarAba(aba, paraFazer, concluidas) {
+  const lista = $('#lista-missoes')
+  lista.dataset.aba = aba
+  lista.setAttribute('aria-labelledby', aba === 'fazer' ? 'aba-fazer' : 'aba-concluidas')
+  document.querySelectorAll('.aba-missao').forEach((botao) => {
+    botao.setAttribute('aria-selected', String(botao.dataset.aba === aba))
+  })
+
+  const vazio = $('#missoes-vazio')
+  const nenhuma = aba === 'fazer' ? paraFazer === 0 : concluidas === 0
+  vazio.hidden = !nenhuma
+  vazio.textContent = aba === 'fazer'
+    ? 'Você concluiu todas as missões. Veja na aba Concluídas.'
+    : 'Nenhuma missão concluída ainda.'
+}
+
+document.querySelectorAll('.aba-missao').forEach((botao) => {
+  botao.addEventListener('click', () => {
+    $('#lista-missoes').dataset.aba = botao.dataset.aba
+    desenharMissoes()
+  })
+})
+
 function desenharRanking() {
   $('#ranking-bairro').textContent = estado.perfil?.bairro || 'Seu bairro'
 }
@@ -463,6 +529,7 @@ const campo = {
   rua: $('#dados-rua'),
   numero: $('#dados-numero'),
   semNumero: $('#dados-sem-numero'),
+  complemento: $('#dados-complemento'),
   bairro: $('#dados-bairro'),
   cidade: $('#dados-cidade'),
 }
@@ -482,6 +549,7 @@ function desenharMeusDados() {
   campo.semNumero.checked = p.numero === 'S/N'
   campo.numero.value = p.numero === 'S/N' ? '' : p.numero || ''
   campo.numero.disabled = campo.semNumero.checked
+  campo.complemento.value = p.complemento || ''
   campo.bairro.value = p.bairro || ''
   campo.cidade.value = p.cidade || ''
 }
@@ -529,6 +597,7 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
         cep: campo.cep.value.replace(/\D/g, ''),
         logradouro: campo.rua.value.trim(),
         numero: campo.semNumero.checked ? 'S/N' : campo.numero.value.trim(),
+        complemento: campo.complemento.value.trim(),
         bairro: campo.bairro.value.trim(),
         cidade: campo.cidade.value.trim(),
       },
@@ -542,7 +611,7 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
     mostrarAviso(
       '#dados-retorno',
       estado.perfil.localizado
-        ? 'Endereço salvo e casa localizada no mapa.'
+        ? 'Endereço salvo. Confira o ponto da casa no mapa abaixo: se não estiver certo, toque no lugar exato.'
         : 'Endereço salvo, mas não achamos o ponto no mapa. Toque no mapa abaixo para marcar sua casa.',
     )
   } catch {

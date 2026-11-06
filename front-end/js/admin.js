@@ -19,7 +19,8 @@ const NIVEIS = {
     nome: 'ALERTA',
     orientacao: 'Chuva forte prevista em até 24 horas. Evite ruas alagadas e deixe documentos à mão.',
   },
-  perigo: { nome: 'PERIGO', orientacao: 'Risco agora. Saia de casa e vá para o abrigo.' },
+  // O app completa com o abrigo de cada morador: "Vá para o seu abrigo: ..."
+  perigo: { nome: 'PERIGO', orientacao: 'Risco agora. Saia de casa.' },
 }
 const ESTADOS_ABERTOS = ['aberto', 'poucas']
 
@@ -298,6 +299,12 @@ function atualizarPrevia() {
   $('#previa-nivel').textContent = nivel.nome
   // No app, o morador vê a orientação e, embaixo, o abrigo dele
   $('#previa-mensagem').textContent = mensagemAtual()
+  $('#previa-abrigo').textContent = {
+    normal: '',
+    atencao: 'Confira o caminho até o seu abrigo: [abrigo de cada morador], a [distância].',
+    alerta: 'Vá para o seu abrigo: [abrigo de cada morador], a [distância].',
+    perigo: 'Vá para o seu abrigo: [abrigo de cada morador], a [distância].',
+  }[nivelEscolhido()]
   $('#previa-alcance').textContent = !estado.areas.length
     ? 'Crie uma área na aba Áreas de risco para poder emitir alertas.'
     : areas.length

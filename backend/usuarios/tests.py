@@ -6,6 +6,7 @@ from rest_framework.test import APITestCase
 
 from locais.models import Abrigo, AreaRisco, Bairro, CirculoRisco, TipoAbrigo
 
+from . import geocodificacao
 from .models import Usuario
 from .serializers import TEXTO_CONSENTIMENTO
 
@@ -35,6 +36,52 @@ class Base(APITestCase):
         )
         self.localizar = patcher.start()
         self.addCleanup(patcher.stop)
+
+
+class GeocodificacaoTestes(APITestCase):
+    """A ordem da busca, sem consultar o OpenStreetMap de verdade."""
+
+    def setUp(self):
+        for alvo, valor in (('usuarios.geocodificacao.PAUSA_S', 0),):
+            patcher = patch(alvo, valor)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def buscar(self, respostas):
+        """Cada consulta devolve a próxima resposta da lista e guarda o que foi pedido."""
+        pedidos = []
+
+        def falso(parametros):
+            pedidos.append(parametros)
+            return respostas.pop(0) if respostas else None
+
+        with patch('usuarios.geocodificacao._buscar', side_effect=falso):
+            posicao = geocodificacao.localizar('Av. Exemplo', '182', 'Centro', 'Rio de Janeiro', '22790000')
+        return posicao, pedidos
+
+    def test_numero_achado_no_mapa_vale_direto(self):
+        exato = {'lat': '-23.0', 'lon': '-43.4', 'address': {'house_number': '182'}}
+        posicao, pedidos = self.buscar([exato])
+        self.assertEqual(posicao, (Decimal('-23.000000'), Decimal('-43.400000')))
+        self.assertEqual(pedidos, [{'street': '182 Av. Exemplo', 'city': 'Rio de Janeiro'}])
+
+    def test_sem_o_numero_no_mapa_o_cep_vale_mais_que_o_meio_da_rua(self):
+        meio_da_rua = {'lat': '-23.1', 'lon': '-43.5', 'address': {}}
+        pelo_cep = {'lat': '-23.2', 'lon': '-43.6'}
+        posicao, pedidos = self.buscar([meio_da_rua, pelo_cep])
+        self.assertEqual(posicao, (Decimal('-23.200000'), Decimal('-43.600000')))
+        self.assertEqual(pedidos[1], {'postalcode': '22790-000'})
+
+    def test_sem_cep_no_mapa_fica_o_meio_da_rua(self):
+        meio_da_rua = {'lat': '-23.1', 'lon': '-43.5', 'address': {}}
+        posicao, _ = self.buscar([meio_da_rua, None])
+        self.assertEqual(posicao, (Decimal('-23.100000'), Decimal('-43.500000')))
+
+    def test_nada_achado_tenta_o_texto_livre_e_depois_desiste(self):
+        posicao, pedidos = self.buscar([None, None, None])
+        self.assertIsNone(posicao)
+        self.assertEqual(len(pedidos), 3)
+        self.assertIn('q', pedidos[2])
 
 
 class CadastroTestes(Base):
@@ -264,6 +311,19 @@ class PerfilTestes(Base):
 
         self.assertEqual(resposta.status_code, 200)
         self.assertEqual(Usuario.objects.get().latitude, Decimal('-22.000000'))
+
+    def test_busca_usa_o_cep(self):
+        self.client.patch(ME, {'numero': '182'}, format='json')
+        self.assertEqual(self.localizar.call_args.args, ('Rua Tal', '182', 'Centro', 'Juiz de Fora', '36010000'))
+
+    def test_complemento_entra_no_endereco_mas_nao_move_o_pin(self):
+        self.client.patch(ME, {'latitude': -21.75, 'longitude': -43.34}, format='json')
+        dados = self.client.patch(ME, {'complemento': ' Casa 12 '}, format='json').data
+
+        self.assertEqual(dados['complemento'], 'Casa 12')
+        self.assertEqual(dados['endereco'], 'Rua Tal, 10, Casa 12, Centro, Juiz de Fora')
+        self.assertEqual(Usuario.objects.get().latitude, Decimal('-21.750000'))
+        self.assertEqual(self.localizar.call_count, 1)  # só a do cadastro
 
     def test_latitude_e_longitude_andam_juntas(self):
         resposta = self.client.patch(ME, {'latitude': -21.75}, format='json')

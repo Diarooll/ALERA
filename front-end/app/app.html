@@ -177,6 +177,8 @@
               ><span id="alerta-selo-texto">…</span>
             </p>
             <p class="alerta__ordem" id="alerta-ordem">Buscando o nível de risco da sua região…</p>
+            <!-- A parte personalizada: o abrigo de cada morador entra na mensagem do alerta -->
+            <p class="alerta__abrigo" id="alerta-abrigo" hidden></p>
             <div class="medidor" role="img" id="alerta-medidor" aria-label="Nível indisponível">
               <span class="medidor__parte"></span>
               <span class="medidor__parte"></span>
@@ -299,7 +301,21 @@
           </div>
         </div>
 
-        <div class="conteudo missoes">
+        <!-- Abas: as missões concluídas saem da lista principal e ficam guardadas aqui -->
+        <div class="conteudo abas-missoes" role="tablist" aria-label="Missões">
+          <button class="aba-missao" type="button" role="tab" id="aba-fazer" data-aba="fazer"
+            aria-selected="true" aria-controls="lista-missoes">
+            Para fazer <span class="aba-missao__conta" id="conta-fazer"></span>
+          </button>
+          <button class="aba-missao" type="button" role="tab" id="aba-concluidas" data-aba="concluidas"
+            aria-selected="false" aria-controls="lista-missoes">
+            Concluídas <span class="aba-missao__conta" id="conta-concluidas"></span>
+          </button>
+        </div>
+
+        <div class="conteudo missoes" id="lista-missoes" role="tabpanel" data-aba="fazer"
+          aria-labelledby="aba-fazer">
+          <p class="mapa-aviso missoes__vazio" id="missoes-vazio" hidden></p>
           <article class="missao tipo--bueiro">
             <div class="missao__topo">
               <svg class="missao__icone" aria-hidden="true" focusable="false">
@@ -344,7 +360,7 @@
               ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
             ></a>
           </article>
-          <article class="missao tipo--abrigo">
+          <article class="missao tipo--abrigo" id="missao-abrigo-cartao">
             <div class="missao__topo">
               <svg class="missao__icone" aria-hidden="true" focusable="false">
                 <use href="#i-local" />
@@ -727,13 +743,19 @@
               <span class="campo__erro" id="dados-rua-erro">Informe a rua.</span>
             </div>
             <div class="campo">
-              <label class="campo__rotulo" for="dados-numero">Número</label>
+              <label class="campo__rotulo" for="dados-numero">Número na rua</label>
               <input class="campo__entrada" id="dados-numero" maxlength="10" autocomplete="off"
+                placeholder="Em condomínio, o número do condomínio"
                 aria-describedby="dados-numero-erro" />
               <span class="campo__erro" id="dados-numero-erro">Digite o número ou marque que não tem.</span>
               <label class="cadastro__texto" for="dados-sem-numero">
                 <input type="checkbox" id="dados-sem-numero" /> Minha casa não tem número
               </label>
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="dados-complemento">Complemento (opcional)</label>
+              <input class="campo__entrada" id="dados-complemento" maxlength="60" autocomplete="address-line2"
+                placeholder="Ex.: Casa 12, Bloco B apto 301" />
             </div>
             <div class="campo">
               <label class="campo__rotulo" for="dados-bairro">Bairro</label>

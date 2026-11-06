@@ -339,6 +339,18 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .selo .icone {
   stroke-width: 2.5;
 }
+.alerta__abrigo {
+  margin: var(--esp-3) 0 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 5px solid var(--app-azul);
+  border-radius: 0 var(--app-raio) var(--app-raio) 0;
+  background: var(--app-superficie);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
 .alerta__ordem {
   margin: var(--esp-4) 0 0;
   font-family: var(--fonte-titulo);
@@ -575,6 +587,49 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .missoes {
   display: grid;
   gap: var(--esp-4);
+}
+/* Abas Para fazer / Concluídas: cada aba mostra só as suas missões */
+.missoes[data-aba="fazer"] .missao[data-concluida],
+.missoes[data-aba="concluidas"] .missao:not([data-concluida]) {
+  display: none;
+}
+.missoes__vazio {
+  grid-column: 1 / -1;
+}
+.abas-missoes {
+  display: flex;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-4);
+}
+.aba-missao {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min, 44px);
+  padding: 0 var(--esp-4);
+  border: 2px solid var(--app-linha);
+  border-radius: 999px;
+  background: var(--app-superficie);
+  color: var(--app-texto);
+  font: inherit;
+  font-weight: var(--peso-forte);
+  cursor: pointer;
+}
+.aba-missao[aria-selected="true"] {
+  border-color: var(--app-azul);
+  background: var(--app-azul);
+  color: #fff;
+}
+.aba-missao:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+.aba-missao__conta {
+  font-variant-numeric: tabular-nums;
+  opacity: .85;
+}
+.missao[data-concluida] .missao__titulo::after {
+  content: " ✓";
 }
 /* Cada tipo de missão tem a sua cor: --tipo pra faixas e botões (texto branco),
    --tipo-texto pra ícones e textos em cima do cartão */
