@@ -45,9 +45,10 @@ python manage.py test
 | Variável | Obrigatória | Uso |
 | --- | --- | --- |
 | `DJANGO_DEBUG` | Não | `true` só em desenvolvimento |
-| `DJANGO_SECRET_KEY` | Fora do modo de desenvolvimento | Chave secreta do Django |
+| `DJANGO_SECRET_KEY` | Fora do modo de desenvolvimento | Chave secreta do Django. Sem ela, no desenvolvimento, cada computador cria a sua em `backend/.chave-local`, que não vai para o Git |
 | `DATABASE_URL` | Fora do modo de desenvolvimento | Conexão com o PostgreSQL, como `postgres://usuario:senha@host:5432/alera` |
 | `DJANGO_ALLOWED_HOSTS` | Fora do modo de desenvolvimento | Domínios da API, separados por vírgula |
 | `CORS_ALLOWED_ORIGINS` | Quando o front-end chamar a API | Endereços do front-end, separados por vírgula, como `http://127.0.0.1:5500` |
+| `DJANGO_NUM_PROXIES` | Quando houver proxy na frente da API | Quantos proxies de confiança repassam o IP de quem acessa. Padrão `0`. Na hospedagem atrás de um proxy, normalmente `1`; sem isso, o limite de tentativas conta todo mundo como um só IP |
 
 Sem `DATABASE_URL`, o modo de desenvolvimento usa um SQLite local, apenas para começar rápido. O banco oficial do projeto é o PostgreSQL no Supabase. As tabelas são criadas com `python manage.py migrate`, sem SQL à parte: mudanças no banco entram por novas migrações.

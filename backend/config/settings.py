@@ -10,6 +10,7 @@ from pathlib import Path
 
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -21,6 +22,28 @@ def lista_do_ambiente(nome):
     return [item.strip() for item in os.environ.get(nome, '').split(',') if item.strip()]
 
 
+def chave_local_de_desenvolvimento():
+    """Chave aleatória deste computador, guardada em backend/.chave-local (fora do Git).
+
+    A chave assina os logins. Ela não pode ficar escrita no código: quem lesse o
+    repositório conseguiria fabricar o login de qualquer conta, até a do ADM principal.
+    Cada computador cria a sua na primeira vez que o servidor sobe.
+    """
+    arquivo = BASE_DIR / '.chave-local'
+    if arquivo.exists():
+        chave = arquivo.read_text(encoding='utf-8').strip()
+        if chave:
+            return chave
+    chave = get_random_secret_key()
+    try:
+        # 'x' não sobrescreve: se o servidor subir dois processos juntos, vale a primeira
+        with open(arquivo, 'x', encoding='utf-8') as saida:
+            saida.write(chave)
+    except FileExistsError:
+        return arquivo.read_text(encoding='utf-8').strip() or chave
+    return chave
+
+
 # Fica desligado por padrão: quem desenvolve liga no próprio .env
 DEBUG = os.environ.get('DJANGO_DEBUG', '').lower() == 'true'
 
@@ -28,7 +51,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '')
 if not SECRET_KEY:
     if not DEBUG:
         raise ImproperlyConfigured('Defina DJANGO_SECRET_KEY quando DJANGO_DEBUG não for true.')
-    SECRET_KEY = 'somente-para-desenvolvimento-local'
+    SECRET_KEY = chave_local_de_desenvolvimento()
 
 ALLOWED_HOSTS = lista_do_ambiente('DJANGO_ALLOWED_HOSTS')
 
@@ -117,8 +140,13 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_RENDERER_CLASSES': ['rest_framework.renderers.JSONRenderer'],
-    # Limita quem tenta adivinhar senhas ou criar contas em massa
-    'DEFAULT_THROTTLE_RATES': {'login': '10/min', 'cadastro': '20/hour'},
+    # Limita quem tenta adivinhar senhas, cria contas em massa ou muda o perfil sem parar
+    # (cada mudança de endereço consulta o serviço de mapas)
+    'DEFAULT_THROTTLE_RATES': {'login': '10/min', 'cadastro': '20/hour', 'perfil': '30/hour'},
+    # Quantos proxies de confiança ficam na frente do servidor. Com 0, o limite conta pelo
+    # IP da conexão. Sem isto, o DRF confiava no cabeçalho X-Forwarded-For, que qualquer
+    # um escreve, e o limite de tentativas caía trocando o cabeçalho a cada chute
+    'NUM_PROXIES': int(os.environ.get('DJANGO_NUM_PROXIES', '0')),
 }
 
 SIMPLE_JWT = {'ACCESS_TOKEN_LIFETIME': timedelta(hours=2)}

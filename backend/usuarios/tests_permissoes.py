@@ -1,3 +1,4 @@
+from django.core.cache import cache
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
@@ -20,7 +21,22 @@ def criar_contas():
 
 class AdminDoDjangoTestes(TestCase):
     def setUp(self):
+        cache.clear()  # zera o limite de tentativas da tela de login entre os testes
         self.principal, self.admzinho, self.morador = criar_contas()
+
+    def test_tela_de_login_do_admin_limita_tentativas(self):
+        # Sem limite, a senha do ADM principal podia ser chutada sem parar pelo /admin/
+        errada = {'username': self.principal.email, 'password': 'chute-errado'}
+        respostas = [self.client.post(LOGIN_ADMIN, errada).status_code for _ in range(11)]
+        self.assertEqual(respostas[:10], [200] * 10)
+        self.assertEqual(respostas[-1], 429)
+
+        # Nem a senha certa entra enquanto o limite vale
+        self.client.post(LOGIN_ADMIN, {'username': self.principal.email, 'password': SENHA})
+        self.assertNotIn('_auth_user_id', self.client.session)
+
+        # Abrir a tela (sem tentar entrar) não conta como tentativa
+        self.assertEqual(self.client.get(LOGIN_ADMIN).status_code, 200)
 
     def test_so_o_adm_principal_abre_o_admin(self):
         esperado = [(self.principal, 200), (self.admzinho, 302), (self.morador, 302)]

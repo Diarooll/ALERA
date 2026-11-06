@@ -22,6 +22,11 @@ class LoginView(TokenObtainPairView):
 class MeuPerfilView(generics.RetrieveUpdateAPIView):
     serializer_class = MeuPerfilSerializer
     http_method_names = ['get', 'patch', 'head', 'options']
+    throttle_scope = 'perfil'
+
+    def get_throttles(self):
+        # Só a mudança tem limite (por conta). Ler fica livre: o app confere o nível a cada minuto
+        return [ScopedRateThrottle()] if self.request.method == 'PATCH' else []
 
     def get_object(self):
         return self.request.user

@@ -10,6 +10,8 @@ infra/
 .env
 .env.*
 !.env.example
+# Chave que assina os logins no desenvolvimento: cada computador cria a sua
+.chave-local
 
 # Python e Django: arquivos gerados localmente
 .venv/

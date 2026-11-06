@@ -219,6 +219,40 @@ class LoginTestes(Base):
         respostas = [self.entrar('admin@exemplo.com', 'errada').status_code for _ in range(11)]
         self.assertEqual(respostas[-1], 429)
 
+    def test_limite_nao_cai_trocando_o_cabecalho_de_ip(self):
+        # Qualquer um escreve o X-Forwarded-For. Se o limite confiar nele, cada tentativa
+        # com um valor diferente conta como outra pessoa e a senha pode ser chutada sem fim
+        respostas = [
+            self.client.post(
+                LOGIN,
+                {'email': 'admin@exemplo.com', 'password': 'errada'},
+                format='json',
+                HTTP_X_FORWARDED_FOR=f'10.0.0.{i}',
+            ).status_code
+            for i in range(11)
+        ]
+        self.assertEqual(respostas[-1], 429)
+
+    def test_token_assinado_com_a_chave_antiga_do_repositorio_nao_vale(self):
+        # A chave de desenvolvimento ficava escrita no código: quem lesse o repositório
+        # conseguia fabricar o token de qualquer conta, inclusive a do ADM principal
+        import jwt
+        from django.utils import timezone
+
+        admin = Usuario.objects.get(email='admin@exemplo.com')
+        falso = jwt.encode(
+            {
+                'token_type': 'access',
+                'user_id': str(admin.pk),
+                'jti': 'feito-por-fora',
+                'exp': int((timezone.now() + timezone.timedelta(hours=1)).timestamp()),
+            },
+            'somente-para-desenvolvimento-local',
+            algorithm='HS256',
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {falso}')
+        self.assertEqual(self.client.get(ME).status_code, 401)
+
     def test_me_exige_token_e_devolve_o_papel_do_banco(self):
         self.assertEqual(self.client.get(ME).status_code, 401)
         token = self.entrar('admin@exemplo.com', 'senha-do-painel-1').data['token']
@@ -245,6 +279,18 @@ class PerfilTestes(Base):
         self.fechado = Abrigo.objects.create(
             nome='Ginásio Exemplo', tipo=tipo, situacao=Abrigo.Situacao.FECHADO
         )
+
+    def test_limita_mudancas_seguidas_no_perfil(self):
+        # Cada mudança de endereço consulta o serviço de mapas. Sem limite, uma conta podia
+        # mandar mudanças sem parar: prende o servidor e faz o serviço bloquear o ALERA inteiro
+        respostas = [
+            self.client.patch(ME, {'alertas_ativos': True}, format='json').status_code
+            for _ in range(31)
+        ]
+        self.assertEqual(respostas[:30], [200] * 30)
+        self.assertEqual(respostas[-1], 429)
+        # Ler o perfil continua livre: o app confere o nível a cada minuto
+        self.assertEqual(self.client.get(ME).status_code, 200)
 
     def test_me_mostra_o_endereco_e_a_posicao_do_proprio_morador(self):
         dados = self.client.get(ME).data
