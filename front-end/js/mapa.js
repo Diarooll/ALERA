@@ -1,5 +1,6 @@
 // Mapa de abrigos (Leaflet + OpenStreetMap), usado no app e no painel.
 // Todo texto que vem do servidor entra na tela por textContent, nunca por innerHTML.
+// Cuidado com o Leaflet: bindTooltip e bindPopup com texto puro viram HTML. Passe elemento().
 
 const CENTRO_MAPA = [-21.7642, -43.3503] // Juiz de Fora (MG)
 const ENDERECO_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
@@ -12,6 +13,8 @@ const SITUACOES = {
   'so-alerta': 'abre só em nível de alerta',
   fechado: 'fechado',
 }
+// Situações em que o abrigo recebe gente agora
+const ESTADOS_ABERTOS = ['aberto', 'poucas']
 
 function criarMapa(elemento, { centro = CENTRO_MAPA, zoom = 14 } = {}) {
   const mapa = L.map(elemento).setView(centro, zoom)

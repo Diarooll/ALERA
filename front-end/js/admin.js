@@ -22,13 +22,14 @@ const NIVEIS = {
   // O app completa com o abrigo de cada morador: "Vá para o seu abrigo: ..."
   perigo: { nome: 'PERIGO', orientacao: 'Risco agora. Saia de casa.' },
 }
-const ESTADOS_ABERTOS = ['aberto', 'poucas']
 
 const estado = { areas: [], abrigos: [], tipos: [], alertas: [] }
 
-// Mesmas cores de tokens.css (--cor-risco-*): o Leaflet precisa da cor escrita
-const CORES_NIVEL = { normal: '#34A853', atencao: '#F2C200', alerta: '#F07A1A', perigo: '#D7261E' }
+// O Leaflet precisa da cor escrita: lê os valores de tokens.css, que fica como única fonte
+const corDoToken = (nome) => getComputedStyle(document.documentElement).getPropertyValue(nome).trim()
+const CORES_NIVEL = Object.fromEntries(Object.keys(NIVEIS).map((n) => [n, corDoToken(`--cor-risco-${n}`)]))
 const COR_DESENHO = CORES_NIVEL.perigo
+const COR_ESCOLHIDA = corDoToken('--cor-primaria')
 
 function encerrarSessao() {
   localStorage.removeItem('token')
@@ -138,25 +139,31 @@ function desenharBolinha(camada, circulo, opcoes) {
   }).addTo(camada)
 }
 
-// Cantos de cada bolinha: 1 grau de latitude tem uns 111 km
-function cantosDaBolinha(circulo) {
-  const lat = Number(circulo.latitude)
-  const lng = Number(circulo.longitude)
-  const dLat = circulo.raio_m / 111320
-  const dLng = circulo.raio_m / (111320 * Math.cos((lat * Math.PI) / 180))
-  return [
-    [lat - dLat, lng - dLng],
-    [lat + dLat, lng + dLng],
-  ]
+// Retângulo que cobre todas as bolinhas (toBounds recebe o lado do quadrado: o dobro do raio)
+function limitesDasBolinhas(circulos) {
+  return circulos.reduce(
+    (limites, c) => limites.extend(L.latLng(Number(c.latitude), Number(c.longitude)).toBounds(2 * c.raio_m)),
+    L.latLngBounds([]),
+  )
 }
 
 function enquadrarBolinhas(mapa, circulos) {
   setTimeout(() => {
     mapa.invalidateSize()
-    if (circulos.length) {
-      mapa.fitBounds(circulos.flatMap(cantosDaBolinha), { padding: [30, 30], maxZoom: 16 })
-    }
+    if (circulos.length) mapa.fitBounds(limitesDasBolinhas(circulos), { padding: [30, 30], maxZoom: 16 })
   }, 50)
+}
+
+// Na primeira vez que há bolinhas, enquadra todas; depois respeita o zoom da pessoa.
+// Devolve se o mapa já foi enquadrado
+function ajustarMapa(mapa, jaEnquadrado) {
+  const todas = estado.areas.flatMap((a) => a.circulos)
+  if (!jaEnquadrado && todas.length) {
+    enquadrarBolinhas(mapa, todas)
+    return true
+  }
+  setTimeout(() => mapa.invalidateSize(), 50)
+  return jaEnquadrado
 }
 
 // ---------- alertas: escolher as áreas no mapa e emitir de verdade ----------
@@ -231,23 +238,17 @@ function desenharMapaAlertas() {
     const cor = CORES_NIVEL[area.nivel]
     area.circulos.forEach((circulo) => {
       desenharBolinha(camadaAlertas, circulo, {
-        color: escolhida ? '#1E2A5A' : cor,
+        color: escolhida ? COR_ESCOLHIDA : cor,
         fillColor: cor,
         weight: escolhida ? 5 : 2,
         fillOpacity: escolhida ? 0.45 : 0.2,
       })
-        .bindTooltip(`${area.nome} · ${NIVEIS[area.nivel].nome}`)
+        .bindTooltip(elemento('span', '', `${area.nome} · ${NIVEIS[area.nivel].nome}`))
         .on('click', () => alternarArea(area.id))
     })
   })
 
-  const todas = estado.areas.flatMap((a) => a.circulos)
-  if (!alertasEnquadrado && todas.length) {
-    alertasEnquadrado = true
-    enquadrarBolinhas(mapaAlertas, todas)
-  } else {
-    setTimeout(() => mapaAlertas.invalidateSize(), 50)
-  }
+  alertasEnquadrado = ajustarMapa(mapaAlertas, alertasEnquadrado)
 }
 
 function mensagemAtual() {
@@ -277,7 +278,9 @@ function desenharAreas() {
   })
 
   // Área apagada sai da escolha do alerta
-  escolhidas.forEach((id) => estado.areas.some((a) => a.id === id) || escolhidas.delete(id))
+  for (const id of escolhidas) {
+    if (!estado.areas.some((a) => a.id === id)) escolhidas.delete(id)
+  }
   desenharListaAlerta()
 
   $('#total-areas').textContent = estado.areas.length || '–'
@@ -299,12 +302,10 @@ function atualizarPrevia() {
   $('#previa-nivel').textContent = nivel.nome
   // No app, o morador vê a orientação e, embaixo, o abrigo dele
   $('#previa-mensagem').textContent = mensagemAtual()
-  $('#previa-abrigo').textContent = {
-    normal: '',
-    atencao: 'Confira o caminho até o seu abrigo: [abrigo de cada morador], a [distância].',
-    alerta: 'Vá para o seu abrigo: [abrigo de cada morador], a [distância].',
-    perigo: 'Vá para o seu abrigo: [abrigo de cada morador], a [distância].',
-  }[nivelEscolhido()]
+  const nivelId = nivelEscolhido()
+  const comeco = nivelId === 'atencao' ? 'Confira o caminho até o seu abrigo' : 'Vá para o seu abrigo'
+  $('#previa-abrigo').textContent =
+    nivelId === 'normal' ? '' : `${comeco}: [abrigo de cada morador], a [distância].`
   $('#previa-alcance').textContent = !estado.areas.length
     ? 'Crie uma área na aba Áreas de risco para poder emitir alertas.'
     : areas.length
@@ -416,6 +417,7 @@ const formArea = $('#form-area')
 // Área em edição: { id (null se nova), nome, circulos: [{ latitude, longitude, raio_m }] }
 let areaEditando = null
 let bolinhaEscolhida = null // índice em areaEditando.circulos
+let camadaEscolhida = null // desenho da bolinha escolhida: o controle de tamanho mexe só nele
 let mapaAreas = null
 let camadaOutras = null // áreas que não estão em edição
 let camadaEdicao = null
@@ -467,7 +469,7 @@ function desenharMapaAreas() {
     if (areaEditando?.id === area.id) return
     area.circulos.forEach((circulo) => {
       desenharBolinha(camadaOutras, circulo, { color: '#6b7280', fillColor: '#6b7280', fillOpacity: 0.12, weight: 1 })
-        .bindTooltip(area.nome)
+        .bindTooltip(elemento('span', '', area.nome))
         .on('click', (evento) => {
           // Desenhando outra área, o toque vira bolinha nova; fora disso, abre esta área
           if (areaEditando) return
@@ -479,18 +481,13 @@ function desenharMapaAreas() {
 
   desenharEdicao()
 
-  const todas = estado.areas.flatMap((a) => a.circulos)
-  if (!areasEnquadrado && todas.length) {
-    areasEnquadrado = true
-    enquadrarBolinhas(mapaAreas, todas)
-  } else {
-    setTimeout(() => mapaAreas.invalidateSize(), 50)
-  }
+  areasEnquadrado = ajustarMapa(mapaAreas, areasEnquadrado)
 }
 
 function desenharEdicao() {
   if (!camadaEdicao) return
   camadaEdicao.clearLayers()
+  camadaEscolhida = null
   if (!areaEditando) return
 
   areaEditando.circulos.forEach((circulo, indice) => {
@@ -504,6 +501,7 @@ function desenharEdicao() {
       L.DomEvent.stopPropagation(evento)
       escolherBolinha(indice)
     })
+    if (escolhida) camadaEscolhida = bolinha
 
     // Ponto branco no centro: arrastar move a bolinha
     const alca = L.marker([Number(circulo.latitude), Number(circulo.longitude)], {
@@ -603,7 +601,9 @@ $('#area-raio').addEventListener('input', (evento) => {
   const circulo = areaEditando?.circulos[bolinhaEscolhida]
   if (!circulo) return
   circulo.raio_m = Number(evento.target.value)
-  desenharEdicao()
+  // Só muda o tamanho da bolinha que já está no mapa: redesenhar tudo a cada passo pesa
+  camadaEscolhida?.setRadius(circulo.raio_m)
+  atualizarControles()
 })
 
 $('#bolinha-apagar').addEventListener('click', () => {
@@ -618,7 +618,7 @@ formArea.addEventListener('submit', async (evento) => {
   const novo = !areaEditando.id
   const corpo = {
     nome: $('#area-nome').value.trim(),
-    circulos: areaEditando.circulos.map(({ latitude, longitude, raio_m }) => ({ latitude, longitude, raio_m })),
+    circulos: areaEditando.circulos,
   }
   if (!corpo.circulos.length) {
     $('#area-retorno').textContent = 'Toque no mapa para pôr pelo menos uma bolinha antes de salvar.'
@@ -646,18 +646,21 @@ formArea.addEventListener('submit', async (evento) => {
   }
 })
 
-// Excluir pede um segundo toque para confirmar
-let timerExcluirArea = null
+// Excluir pede um segundo toque. O primeiro só troca o texto do botão por 4 segundos.
+// Devolve true no segundo toque, quando pode excluir de verdade
+const timersDeExcluir = new Map()
+
+function segundoToque(botao, rotulo) {
+  if (botao.textContent !== rotulo) return true
+  botao.textContent = 'Toque de novo para excluir'
+  clearTimeout(timersDeExcluir.get(botao))
+  timersDeExcluir.set(botao, setTimeout(() => (botao.textContent = rotulo), 4000))
+  return false
+}
 
 $('#area-excluir').addEventListener('click', async (evento) => {
   const botao = evento.currentTarget
-
-  if (botao.textContent === 'Excluir área') {
-    botao.textContent = 'Toque de novo para excluir'
-    clearTimeout(timerExcluirArea)
-    timerExcluirArea = setTimeout(() => (botao.textContent = 'Excluir área'), 4000)
-    return
-  }
+  if (!segundoToque(botao, 'Excluir área')) return
 
   try {
     const resposta = await chamarApi(`/areas/${areaEditando.id}/`, { metodo: 'DELETE' })
@@ -855,18 +858,8 @@ formAbrigo.addEventListener('submit', async (evento) => {
 
 $('#abrigo-cancelar').addEventListener('click', fecharFormulario)
 
-// Excluir pede um segundo toque para confirmar
-let timerExcluir = null
-
 $('#abrigo-excluir').addEventListener('click', async (evento) => {
-  const botao = evento.currentTarget
-
-  if (botao.textContent === 'Excluir') {
-    botao.textContent = 'Toque de novo para excluir'
-    clearTimeout(timerExcluir)
-    timerExcluir = setTimeout(() => (botao.textContent = 'Excluir'), 4000)
-    return
-  }
+  if (!segundoToque(evento.currentTarget, 'Excluir')) return
 
   try {
     const resposta = await chamarApi(`/abrigos/${editando.id}/`, { metodo: 'DELETE' })

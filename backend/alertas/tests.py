@@ -1,3 +1,5 @@
+from unittest.mock import patch
+
 from django.db import IntegrityError, transaction
 from django.db.models import ProtectedError
 from django.test import TestCase
@@ -126,6 +128,24 @@ class EmitirAlertaTestes(Base):
 
     def test_precisa_de_pelo_menos_uma_area(self):
         self.assertEqual(self.emitir([]).status_code, 400)
+
+    def test_erro_numa_area_nao_deixa_alerta_pela_metade(self):
+        chamadas = []
+
+        def falha_na_segunda(*args, **kwargs):
+            chamadas.append(args[0])
+            if len(chamadas) == 2:
+                raise RuntimeError('falha no meio do alerta')
+            return mudar_nivel(*args, **kwargs)
+
+        with patch('alertas.views.mudar_nivel', side_effect=falha_na_segunda):
+            with self.assertRaises(RuntimeError):
+                self.emitir([self.area.pk, self.outra.pk])
+
+        # A primeira área tinha mudado antes da falha: tem que voltar como estava
+        self.area.refresh_from_db()
+        self.assertEqual(self.area.nivel, Nivel.NORMAL)
+        self.assertFalse(HistoricoNivel.objects.exists())
 
     def test_morador_nao_emite_nem_ve_alertas(self):
         morador = Usuario.objects.create_user('morador@exemplo.com', 'senha-do-app-1')

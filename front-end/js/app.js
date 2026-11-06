@@ -54,22 +54,22 @@ const NIVEIS = {
   perigo: {
     nome: 'PERIGO',
     numero: 4,
-    ordem: 'Risco agora. Saia de casa e vá para o abrigo.',
+    // A linha de baixo completa com o abrigo do morador: "Vá para o seu abrigo: ..."
+    ordem: 'Risco agora. Saia de casa.',
   },
 }
 
 const estado = { perfil: null, abrigos: [], erro: '' }
 
-async function carregarTudo() {
-  if (modoTesteAtivo()) {
-    estado.erro = 'Modo teste: sem servidor, os dados reais não carregam.'
-    return desenharTudo()
-  }
-
+// Busca o perfil e os abrigos. Devolve false quando a sessão caiu (a pessoa já foi para o login)
+async function buscarDados() {
   try {
     const [resPerfil, resAbrigos] = await Promise.all([chamarApi('/me/'), chamarApi('/abrigos/')])
 
-    if (resPerfil.status === 401 || resAbrigos.status === 401) return irParaLogin()
+    if (resPerfil.status === 401 || resAbrigos.status === 401) {
+      irParaLogin()
+      return false
+    }
     if (!resPerfil.ok || !resAbrigos.ok) throw new Error('resposta com erro')
 
     estado.perfil = await resPerfil.json()
@@ -78,8 +78,26 @@ async function carregarTudo() {
   } catch {
     estado.erro = 'Não foi possível falar com o servidor. Tente de novo em instantes.'
   }
+  return true
+}
 
-  desenharTudo()
+async function carregarTudo() {
+  if (modoTesteAtivo()) {
+    estado.erro = 'Modo teste: sem servidor, os dados reais não carregam.'
+    return desenharTudo()
+  }
+
+  if (await buscarDados()) desenharTudo()
+}
+
+// A conferência de cada minuto redesenha só os textos do alerta e da rota.
+// O formulário de Meus dados e os mapas ficam como estão: não apaga o que a pessoa
+// está digitando nem tira o zoom que ela deu no mapa
+async function atualizarAlerta() {
+  if (await buscarDados()) {
+    desenharAlerta()
+    desenharRota()
+  }
 }
 
 function abrigoSalvo() {
@@ -92,7 +110,7 @@ function abrigoDestino() {
   const salvo = abrigoSalvo()
   if (salvo) return { abrigo: salvo, salvo: true }
   if (!posicaoCasa()) return null
-  const perto = estado.abrigos.find((a) => ['aberto', 'poucas'].includes(a.situacao) && a.distancia_m != null)
+  const perto = estado.abrigos.find((a) => ESTADOS_ABERTOS.includes(a.situacao) && a.distancia_m != null)
   return perto ? { abrigo: perto, salvo: false } : null
 }
 
@@ -152,7 +170,7 @@ function pinCasa(item, posicao) {
 // Pino com o ícone do tipo (🏫, ⛪...) e o nome ao passar o mouse ou tocar
 function pinAbrigo(item, abrigo, classes) {
   L.marker(posicaoAbrigo(abrigo), { icon: iconePin(abrigo.tipo?.icone || '📍', classes), title: abrigo.nome })
-    .bindTooltip(abrigo.nome, { direction: 'top', offset: [0, -30] })
+    .bindTooltip(elemento('span', '', abrigo.nome), { direction: 'top', offset: [0, -30] })
     .addTo(item.camada)
 }
 
@@ -163,7 +181,8 @@ function telaAtual() {
 function desenharMapas() {
   const tela = telaAtual()
   const casa = posicaoCasa()
-  const salvo = abrigoDestino()?.abrigo || null
+  // Para onde o morador vai: o abrigo salvo ou, sem nenhum, o aberto mais perto
+  const destino = abrigoDestino()?.abrigo || null
 
   if (tela === '#alerta' || tela === '#rota') {
     const item = mapaDe(tela === '#rota' ? 'rota' : 'alerta', tela === '#rota' ? '#mapa-rota' : '#mapa-alerta')
@@ -175,21 +194,21 @@ function desenharMapas() {
       pontos.push(casa)
     }
     // Na tela de Alerta aparecem todos os abrigos que a Defesa Civil marcou.
-    // Sem abrigo salvo, o mapa enquadra todos; com abrigo salvo, enquadra a casa e ele
+    // Sem destino, o mapa enquadra todos; com destino, enquadra a casa e ele
     if (tela === '#alerta') {
       estado.abrigos
-        .filter((abrigo) => abrigo.id !== salvo?.id && abrigo.latitude != null)
+        .filter((abrigo) => abrigo.id !== destino?.id && abrigo.latitude != null)
         .forEach((abrigo) => {
           pinAbrigo(item, abrigo, abrigo.situacao === 'fechado' ? 'pin--fechado' : '')
-          if (!salvo) pontos.push(posicaoAbrigo(abrigo))
+          if (!destino) pontos.push(posicaoAbrigo(abrigo))
         })
     }
-    if (salvo) {
-      pinAbrigo(item, salvo, 'pin--salvo')
-      pontos.push(posicaoAbrigo(salvo))
+    if (destino) {
+      pinAbrigo(item, destino, 'pin--salvo')
+      pontos.push(posicaoAbrigo(destino))
     }
-    if (casa && salvo) {
-      L.polyline([casa, posicaoAbrigo(salvo)], { color: '#1E2A5A', weight: 4, dashArray: '8 8' }).addTo(item.camada)
+    if (casa && destino) {
+      L.polyline([casa, posicaoAbrigo(destino)], { color: '#1E2A5A', weight: 4, dashArray: '8 8' }).addTo(item.camada)
     }
     enquadrar(item, pontos)
   }
@@ -300,13 +319,19 @@ function desenharAlerta() {
 
   const selo = $('#alerta-selo')
   selo.className = nivel ? `selo nivel--${nivel}` : 'selo'
-  $('#alerta-selo-texto').textContent = info ? info.nome : p ? 'SEM LOCAL' : '…'
-  // A orientação escrita pela Defesa Civil vale mais que o texto padrão do nível
-  $('#alerta-ordem').textContent = info
-    ? (nivel !== 'normal' && p.area?.orientacao) || info.ordem
-    : p
-      ? 'Marque o ponto da sua casa em Meus dados para receber os alertas da sua região.'
-      : 'Não conseguimos buscar o nível de risco agora.'
+  const seloTexto = $('#alerta-selo-texto')
+  const ordem = $('#alerta-ordem')
+  if (info) {
+    seloTexto.textContent = info.nome
+    // A orientação escrita pela Defesa Civil vale mais que o texto padrão do nível
+    ordem.textContent = (nivel !== 'normal' && p.area?.orientacao) || info.ordem
+  } else if (p) {
+    seloTexto.textContent = 'SEM LOCAL'
+    ordem.textContent = 'Marque o ponto da sua casa em Meus dados para receber os alertas da sua região.'
+  } else {
+    seloTexto.textContent = '…'
+    ordem.textContent = 'Não conseguimos buscar o nível de risco agora.'
+  }
 
   // Mensagem personalizada: em qualquer nível acima do Normal, o alerta diz para onde ir
   const abrigo = $('#alerta-abrigo')
@@ -350,7 +375,7 @@ function fraseDoAbrigo(nivel, destino) {
 
 function desenharDestino(nivel) {
   const destino = abrigoDestino()
-  const salvo = abrigoSalvo()
+  const salvo = !!destino?.salvo
   const caixa = $('#destino-abrigo')
   caixa.replaceChildren()
 
@@ -379,27 +404,28 @@ function desenharDestino(nivel) {
   // Com abrigo salvo o botão continua na tela, para a pessoa poder trocar
   const escolher = $('#escolher-abrigo')
   escolher.textContent = salvo ? 'Trocar de abrigo' : estado.abrigos.length ? 'Escolher meu abrigo' : 'Ver abrigos'
-  escolher.classList.toggle('botao--secundario', !!salvo)
+  escolher.classList.toggle('botao--secundario', salvo)
 }
 
 function desenharRota() {
-  const salvo = abrigoDestino()?.abrigo || null
+  // O abrigo salvo ou, sem nenhum, o aberto mais perto
+  const abrigo = abrigoDestino()?.abrigo || null
   const destino = $('#rota-destino')
   destino.replaceChildren()
 
-  if (salvo) {
+  if (abrigo) {
     destino.append(
-      elemento('h2', 'rota__nome', salvo.nome),
-      elemento('p', 'destino__info', resumoAbrigo(salvo)),
+      elemento('h2', 'rota__nome', abrigo.nome),
+      elemento('p', 'destino__info', resumoAbrigo(abrigo)),
     )
-    if (salvo.referencia) destino.append(elemento('p', 'destino__info', salvo.referencia))
+    if (abrigo.referencia) destino.append(elemento('p', 'destino__info', abrigo.referencia))
   } else {
     destino.append(elemento('p', 'destino__info', 'Escolha seu abrigo na tela de Alerta para ver a rota.'))
   }
 
   const google = $('#rota-google')
-  google.hidden = !salvo
-  if (salvo) google.href = linkGoogleMaps(salvo)
+  google.hidden = !abrigo
+  if (abrigo) google.href = linkGoogleMaps(abrigo)
 
   const nivel = estado.perfil?.area?.nivel
   const evitar = $('#rota-evitar')
@@ -490,15 +516,14 @@ function desenharMissoes() {
     if (feita) concluidas += 1
   })
 
-  $('#conta-fazer').textContent = `(${cartoes.length - concluidas})`
+  const paraFazer = cartoes.length - concluidas
+  $('#conta-fazer').textContent = `(${paraFazer})`
   $('#conta-concluidas').textContent = `(${concluidas})`
-  mostrarAba($('#lista-missoes').dataset.aba, cartoes.length - concluidas, concluidas)
-}
 
-function mostrarAba(aba, paraFazer, concluidas) {
+  // A aba aberta fica guardada em data-aba da lista ("fazer" ou "concluidas")
   const lista = $('#lista-missoes')
-  lista.dataset.aba = aba
-  lista.setAttribute('aria-labelledby', aba === 'fazer' ? 'aba-fazer' : 'aba-concluidas')
+  const aba = lista.dataset.aba
+  lista.setAttribute('aria-labelledby', `aba-${aba}`)
   document.querySelectorAll('.aba-missao').forEach((botao) => {
     botao.setAttribute('aria-selected', String(botao.dataset.aba === aba))
   })
@@ -626,5 +651,5 @@ carregarTudo()
 
 // Com o app aberto, confere o nível de novo a cada minuto: um alerta novo aparece sozinho
 setInterval(() => {
-  if (document.visibilityState === 'visible' && !modoTesteAtivo()) carregarTudo()
+  if (document.visibilityState === 'visible' && !modoTesteAtivo()) atualizarAlerta()
 }, 60_000)

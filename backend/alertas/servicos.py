@@ -15,7 +15,8 @@ def mudar_nivel(area, nivel, origem, responsavel=None, mensagem=None):
     antiga sai: o app volta a usar o texto padrão do nível.
     """
     area = AreaRisco.objects.select_for_update().get(pk=area.pk)
-    mensagem = (mensagem or '').strip() if mensagem is not None else None
+    if mensagem is not None:
+        mensagem = mensagem.strip()
     if area.nivel == nivel and (mensagem is None or area.orientacao == mensagem):
         return None
     mensagem = mensagem or ''

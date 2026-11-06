@@ -22,22 +22,20 @@ def tempo_a_pe_min(metros):
     return max(1, math.ceil(metros / METROS_POR_MINUTO))
 
 
-def areas_do_ponto(latitude, longitude):
-    """Áreas de risco com alguma bolinha que contém o ponto, da mais grave para a menos."""
-    if latitude is None or longitude is None:
-        return []
+def area_mais_grave(latitude, longitude):
+    """Entre as áreas com alguma bolinha que contém o ponto, a de nível mais grave.
 
-    areas = [
+    Empate no nível: vale a primeira em ordem alfabética. Sem área nenhuma, None.
+    """
+    if latitude is None or longitude is None:
+        return None
+
+    areas = (
         area
         for area in AreaRisco.objects.prefetch_related('circulos')
         if any(
             distancia_em_metros(latitude, longitude, c.latitude, c.longitude) <= c.raio_m
             for c in area.circulos.all()
         )
-    ]
-    return sorted(areas, key=lambda area: (-GRAVIDADE[area.nivel], area.nome))
-
-
-def area_mais_grave(latitude, longitude):
-    areas = areas_do_ponto(latitude, longitude)
-    return areas[0] if areas else None
+    )
+    return min(areas, key=lambda area: (-GRAVIDADE[area.nivel], area.nome), default=None)

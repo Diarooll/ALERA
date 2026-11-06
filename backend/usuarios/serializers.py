@@ -1,7 +1,5 @@
 import re
 
-from decimal import Decimal
-
 from django.contrib.auth.password_validation import validate_password
 from django.utils import timezone
 from rest_framework import serializers
@@ -9,6 +7,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from locais import servicos as servicos_locais
 from locais.models import Abrigo, Bairro
+from locais.serializers import campo_latitude, campo_longitude
 
 from . import geocodificacao
 from .models import Usuario
@@ -24,7 +23,7 @@ REGEX_TELEFONE = re.compile(r'^[1-9]{2}9?\d{8}$')
 
 
 def montar_endereco(logradouro, numero, bairro, cidade, complemento=''):
-    partes = [logradouro, numero, complemento.strip(), bairro, cidade]
+    partes = [logradouro, numero, complemento, bairro, cidade]
     return ', '.join(p for p in partes if p)
 
 
@@ -130,24 +129,8 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
     bairro = serializers.CharField(max_length=120, required=False)
     cidade = serializers.CharField(max_length=120, required=False)
     cep = serializers.CharField(required=False)
-    latitude = serializers.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        min_value=Decimal('-90'),
-        max_value=Decimal('90'),
-        required=False,
-        allow_null=True,
-        coerce_to_string=False,
-    )
-    longitude = serializers.DecimalField(
-        max_digits=9,
-        decimal_places=6,
-        min_value=Decimal('-180'),
-        max_value=Decimal('180'),
-        required=False,
-        allow_null=True,
-        coerce_to_string=False,
-    )
+    latitude = campo_latitude(required=False, allow_null=True)
+    longitude = campo_longitude(required=False, allow_null=True)
     abrigo = serializers.PrimaryKeyRelatedField(
         queryset=Abrigo.objects.all(), required=False, allow_null=True
     )
@@ -230,7 +213,7 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
         complemento_mudou = 'complemento' in dados and dados['complemento'] != usuario.complemento
 
         for campo, valor in dados.items():
-            setattr(usuario, campo, valor.strip() if isinstance(valor, str) else valor)
+            setattr(usuario, campo, valor)
 
         nome_do_bairro = usuario.bairro.nome if usuario.bairro else ''
         nome_da_cidade = usuario.bairro.cidade if usuario.bairro else ''

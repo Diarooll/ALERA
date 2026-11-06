@@ -1,3 +1,4 @@
+import http.client
 import json
 import time
 import urllib.parse
@@ -12,8 +13,15 @@ SEM_NUMERO = {'', 's/n', 'sn', 'sem numero', 'sem número'}
 PAUSA_S = 1
 
 
+class ServicoFora(Exception):
+    """O Nominatim falhou: sem internet, fora do ar ou resposta quebrada.
+
+    Não adianta tentar as outras buscas agora; cada uma esperaria o tempo limite de novo.
+    """
+
+
 def _buscar(parametros):
-    """Uma consulta ao Nominatim. Devolve o primeiro resultado ou None."""
+    """Uma consulta ao Nominatim. Devolve o primeiro lugar achado ou None se não achou nada."""
     consulta = urllib.parse.urlencode(
         {**parametros, 'format': 'json', 'limit': 1, 'countrycodes': 'br', 'addressdetails': 1}
     )
@@ -21,9 +29,13 @@ def _buscar(parametros):
     try:
         with urllib.request.urlopen(pedido, timeout=5) as resposta:
             achados = json.load(resposta)
-        return achados[0] if achados else None
-    except (OSError, ValueError):
-        return None
+    except (OSError, ValueError, http.client.HTTPException) as erro:
+        raise ServicoFora from erro
+
+    # O esperado é uma lista de lugares. Qualquer outra coisa conta como "não achou"
+    if isinstance(achados, list) and achados and isinstance(achados[0], dict):
+        return achados[0]
+    return None
 
 
 def _posicao(achado):
@@ -52,7 +64,17 @@ def localizar(logradouro, numero, bairro, cidade, cep=''):
        da rua, então vale mais que o meio da rua.
     3. Sem CEP achado, fica o meio da rua; sem nada, a busca em texto livre.
     O morador sempre pode corrigir tocando no mapa em Meus dados.
+
+    Se o serviço falhar em qualquer passo, desiste na hora: o cadastro não fica preso
+    esperando três vezes o tempo limite.
     """
+    try:
+        return _procurar(logradouro, numero, bairro, cidade, cep)
+    except ServicoFora:
+        return None
+
+
+def _procurar(logradouro, numero, bairro, cidade, cep):
     rua = logradouro.strip()
     numero = numero.strip()
     tem_numero = numero.lower() not in SEM_NUMERO

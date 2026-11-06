@@ -9,6 +9,19 @@ from .models import RAIO_MAXIMO_M, RAIO_MINIMO_M, Abrigo, AreaRisco, CirculoRisc
 LATITUDE = {'max_digits': 9, 'decimal_places': 6, 'coerce_to_string': False}
 
 
+# Campos de posição no mapa, iguais em abrigos, bolinhas e na casa do morador
+def campo_latitude(**extra):
+    return serializers.DecimalField(
+        min_value=Decimal('-90'), max_value=Decimal('90'), **LATITUDE, **extra
+    )
+
+
+def campo_longitude(**extra):
+    return serializers.DecimalField(
+        min_value=Decimal('-180'), max_value=Decimal('180'), **LATITUDE, **extra
+    )
+
+
 class TipoAbrigoSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoAbrigo
@@ -16,12 +29,8 @@ class TipoAbrigoSerializer(serializers.ModelSerializer):
 
 
 class CirculoSerializer(serializers.ModelSerializer):
-    latitude = serializers.DecimalField(
-        min_value=Decimal('-90'), max_value=Decimal('90'), **LATITUDE
-    )
-    longitude = serializers.DecimalField(
-        min_value=Decimal('-180'), max_value=Decimal('180'), **LATITUDE
-    )
+    latitude = campo_latitude()
+    longitude = campo_longitude()
     raio_m = serializers.IntegerField(min_value=RAIO_MINIMO_M, max_value=RAIO_MAXIMO_M)
 
     class Meta:
@@ -62,12 +71,8 @@ class AreaRiscoSerializer(serializers.ModelSerializer):
 
 class AbrigoSerializer(serializers.ModelSerializer):
     tipo = serializers.PrimaryKeyRelatedField(queryset=TipoAbrigo.objects.all())
-    latitude = serializers.DecimalField(
-        min_value=Decimal('-90'), max_value=Decimal('90'), **LATITUDE
-    )
-    longitude = serializers.DecimalField(
-        min_value=Decimal('-180'), max_value=Decimal('180'), **LATITUDE
-    )
+    latitude = campo_latitude()
+    longitude = campo_longitude()
     # Calculadas para quem está logado: linha reta da casa dele até o abrigo
     distancia_m = serializers.SerializerMethodField()
     tempo_a_pe_min = serializers.SerializerMethodField()

@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -25,15 +26,18 @@ class Alertas(APIView):
         pedido.is_valid(raise_exception=True)
         dados = pedido.validated_data
 
-        gravados = [
-            mudar_nivel(
-                area,
-                dados['nivel'],
-                HistoricoNivel.Origem.DEFESA_CIVIL,
-                request.user,
-                mensagem=dados['mensagem'],
-            )
-            for area in dados['areas']
-        ]
+        # Tudo ou nada: se uma área falhar, nenhuma muda. Sem isso, um erro no meio
+        # deixaria metade das áreas com o alerta novo e a outra metade sem
+        with transaction.atomic():
+            gravados = [
+                mudar_nivel(
+                    area,
+                    dados['nivel'],
+                    HistoricoNivel.Origem.DEFESA_CIVIL,
+                    request.user,
+                    mensagem=dados['mensagem'],
+                )
+                for area in dados['areas']
+            ]
         novos = [h for h in gravados if h]
         return Response(HistoricoSerializer(novos, many=True).data, status=status.HTTP_201_CREATED)

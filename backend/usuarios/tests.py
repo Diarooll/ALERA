@@ -1,3 +1,4 @@
+import io
 from decimal import Decimal
 from unittest.mock import patch
 
@@ -82,6 +83,38 @@ class GeocodificacaoTestes(APITestCase):
         self.assertIsNone(posicao)
         self.assertEqual(len(pedidos), 3)
         self.assertIn('q', pedidos[2])
+
+    def test_servico_fora_desiste_na_primeira_falha(self):
+        # Sem isso o cadastro esperaria o tempo limite três vezes seguidas
+        pedidos = []
+
+        def fora(parametros):
+            pedidos.append(parametros)
+            raise geocodificacao.ServicoFora
+
+        with patch('usuarios.geocodificacao._buscar', side_effect=fora):
+            posicao = geocodificacao.localizar('Av. Exemplo', '182', 'Centro', 'Rio de Janeiro', '22790000')
+        self.assertIsNone(posicao)
+        self.assertEqual(len(pedidos), 1)
+
+    def test_resposta_fora_do_formato_conta_como_nao_achou(self):
+        for corpo in (b'{"error": "Unable to geocode"}', b'["texto"]', b'[]'):
+            with self.subTest(corpo=corpo), patch(
+                'usuarios.geocodificacao.urllib.request.urlopen', return_value=io.BytesIO(corpo)
+            ):
+                self.assertIsNone(geocodificacao._buscar({'q': 'Rua Tal'}))
+
+    def test_falha_de_rede_vira_servico_fora(self):
+        with patch('usuarios.geocodificacao.urllib.request.urlopen', side_effect=OSError('sem internet')):
+            with self.assertRaises(geocodificacao.ServicoFora):
+                geocodificacao._buscar({'q': 'Rua Tal'})
+
+    def test_cadastro_continua_quando_o_mapa_esta_fora(self):
+        cache.clear()
+        with patch('usuarios.geocodificacao.urllib.request.urlopen', side_effect=OSError('sem internet')):
+            resposta = self.client.post(CADASTRO, DADOS, format='json')
+        self.assertEqual(resposta.status_code, 201)
+        self.assertFalse(resposta.data['localizado'])
 
 
 class CadastroTestes(Base):
