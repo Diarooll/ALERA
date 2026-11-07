@@ -1,0 +1,12 @@
+{
+    "python.terminal.useEnvFile": true,
+    // Live Server ("Go Live"): não recarregar a página quando o back-end mexe nos arquivos dele.
+    // Sem isto, salvar um abrigo grava no backend/db.sqlite3 e a página recarrega sozinha.
+    "liveServer.settings.ignoreFiles": [
+        ".vscode/**",
+        "**/*.scss",
+        "**/*.sass",
+        "**/*.ts",
+        "backend/**"
+    ]
+}
