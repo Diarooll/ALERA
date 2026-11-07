@@ -1838,3 +1838,98 @@ body:has(.detalhe:target) {
     gap: var(--esp-6);
   }
 }
+
+/* ---------- Computador: menu na lateral esquerda ----------
+   No celular o menu continua embaixo (regras do começo do arquivo). A partir de 900px
+   ele vira uma coluna fixa logo abaixo do topo azul, e o conteúdo anda para a direita.
+   O marcador desce até a aba aberta (só translate, como no celular). */
+@media (min-width: 900px) {
+  :root {
+    --app-lateral: 232px;       /* largura da coluna do menu */
+    --app-passo-menu: 52px;     /* altura de um item (48) + o vão entre eles (4) */
+  }
+
+  /* O topo ocupa a largura toda e a marca fica alinhada com a coluna do menu */
+  .topo {
+    position: sticky;
+    top: 0;
+  }
+  .topo__faixa {
+    width: auto;
+    margin: 0;
+    padding-inline: var(--esp-5);
+  }
+
+  .menu {
+    position: fixed;
+    inset: 64px auto 0 0;       /* começa logo abaixo do topo (64px) */
+    width: var(--app-lateral);
+    padding: var(--esp-5) var(--esp-3);
+    background: var(--app-superficie);
+    box-shadow: inset -1px 0 0 var(--app-linha, rgb(20 32 43 / .08));
+    overflow-y: auto;
+  }
+  .menu__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .menu__marcador {
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 48px;
+    border-radius: 999px;
+    background: var(--cor-brilho);
+    translate: 0 calc(var(--aba) * var(--app-passo-menu));
+  }
+  .menu__link {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: var(--esp-3);
+    min-height: 48px;
+    margin: 0;
+    padding: 0 var(--esp-4);
+    border-radius: var(--raio);
+    color: var(--app-texto-suave);
+    font-size: var(--fs-md);
+    transition: background-color var(--dur-curta) ease, color var(--dur-curta) ease;
+  }
+  .menu__link .icone {
+    width: 20px;
+    height: 20px;
+  }
+  @media (hover: hover) {
+    .menu__link:hover {
+      background: color-mix(in srgb, var(--app-azul) 8%, transparent);
+      color: var(--app-texto);
+    }
+  }
+  .menu__link:focus-visible {
+    outline-color: var(--app-azul);
+    outline-offset: -3px;
+  }
+  body:not(:has(.tela:target, .detalhe:target)) .menu__link[href="#alerta"],
+  body:has(#alerta:target)     .menu__link[href="#alerta"],
+  body:has(#rota:target)       .menu__link[href="#alerta"],
+  body:has(#missoes:target, .detalhe:target) .menu__link[href="#missoes"],
+  body:has(#ranking:target)    .menu__link[href="#ranking"],
+  body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
+    background: color-mix(in srgb, var(--app-azul) 14%, transparent);
+    color: var(--app-texto);
+    font-weight: 700;
+    transition: background-color var(--dur-curta) ease;
+  }
+
+  /* O conteúdo e o rodapé andam para a direita da coluna */
+  .telas {
+    margin-left: var(--app-lateral);
+  }
+  /* O rodapé tinha largura fixa (1120px) e passava da tela somado ao menu */
+  .rodape {
+    width: auto;
+    margin-left: var(--app-lateral);
+    margin-right: 0;
+    padding-inline: var(--app-margem);
+  }
+}
