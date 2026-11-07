@@ -58,6 +58,12 @@ class MoradorAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).filter(is_staff=False)
 
+    def lookup_allowed(self, lookup, value, request):
+        # Nenhum filtro pela barra de endereço. Sem isto, ?email__startswith=m ou
+        # ?password__startswith=... mostrava quantos moradores batiam, e o ADMzão descobria
+        # e-mail, endereço e até o hash da senha letra por letra. Fica só a busca por telefone
+        return False
+
     def get_search_results(self, request, queryset, termo):
         # A busca aceita o telefone com ou sem pontuação: (32) 99999-0000
         return super().get_search_results(request, queryset, re.sub(r'\D', '', termo))

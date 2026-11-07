@@ -40,12 +40,15 @@ def _buscar(parametros):
 
 def _posicao(achado):
     try:
-        return (
-            Decimal(achado['lat']).quantize(Decimal('0.000001')),
-            Decimal(achado['lon']).quantize(Decimal('0.000001')),
-        )
+        latitude = Decimal(achado['lat']).quantize(Decimal('0.000001'))
+        longitude = Decimal(achado['lon']).quantize(Decimal('0.000001'))
+        # Fora do mundo não cabe no banco e derrubava o cadastro. Com NaN, a comparação
+        # já dá ArithmeticError e cai no except
+        if -90 <= latitude <= 90 and -180 <= longitude <= 180:
+            return latitude, longitude
     except (KeyError, TypeError, ArithmeticError):
-        return None
+        pass
+    return None
 
 
 def _formatar_cep(cep):
@@ -81,7 +84,9 @@ def _procurar(logradouro, numero, bairro, cidade, cep):
     cidade = cidade.strip()
 
     pela_rua = _buscar({'street': f'{numero} {rua}' if tem_numero else rua, 'city': cidade})
-    if pela_rua and tem_numero and pela_rua.get('address', {}).get('house_number'):
+    # "address" fora do formato (null, texto) dava AttributeError e o cadastro caía com erro 500
+    endereco = pela_rua.get('address') if pela_rua else None
+    if tem_numero and isinstance(endereco, dict) and endereco.get('house_number'):
         return _posicao(pela_rua)
 
     cep_formatado = _formatar_cep(cep)

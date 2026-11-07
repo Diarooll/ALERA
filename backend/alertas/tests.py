@@ -129,6 +129,28 @@ class EmitirAlertaTestes(Base):
     def test_precisa_de_pelo_menos_uma_area(self):
         self.assertEqual(self.emitir([]).status_code, 400)
 
+    def test_nivel_desconhecido_e_recusado(self):
+        resposta = self.emitir([self.area.pk], nivel='inventado')
+        self.assertEqual(resposta.status_code, 400)
+        self.assertIn('nivel', resposta.data)
+        self.assertFalse(HistoricoNivel.objects.exists())
+
+    def test_area_que_nao_existe_recusa_o_alerta_inteiro(self):
+        resposta = self.emitir([self.area.pk, 999_999])
+        self.assertEqual(resposta.status_code, 400)
+        self.area.refresh_from_db()
+        self.assertEqual(self.area.nivel, Nivel.NORMAL)
+
+    def test_area_repetida_no_pedido_grava_uma_vez(self):
+        resposta = self.emitir([self.area.pk, self.area.pk])
+        self.assertEqual(resposta.status_code, 201)
+        self.assertEqual(len(resposta.data), 1)
+        self.assertEqual(HistoricoNivel.objects.count(), 1)
+
+    def test_orientacao_maior_que_o_limite_e_recusada(self):
+        self.assertEqual(self.emitir([self.area.pk], mensagem='x' * 301).status_code, 400)
+        self.assertFalse(HistoricoNivel.objects.exists())
+
     def test_erro_numa_area_nao_deixa_alerta_pela_metade(self):
         chamadas = []
 

@@ -1,9 +1,10 @@
-/* ALERA · tokens.css (v0.1)
-   Paleta B · Noite de Chuva · Fontes Plus Jakarta Sans + Source Sans 3 · Escala Expressiva (1,25) · Cantos Suave
-   Arquivo COMPARTILHADO entre o site (index.html) e as páginas de app/ (login.html e app.html).
+/* ALERA · tokens.css (v0.2 · "Cartaz de rua")
+   Paleta B · Noite de Chuva (cores iguais à v0.1) · Fontes Bebas Neue + Source Sans 3
+   Direção visual: docs/redesign/cartaz-de-rua.md
+   Arquivo COMPARTILHADO entre o site (index.html) e as páginas de app/ (login, app e admin).
    Linkar ANTES de base.css e de site.css / login.css / app.css. Contraste conferido pela WCAG 2.1. */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Source+Sans+3:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Source+Sans+3:wght@400;600;700&display=swap");
 
 :root {
   /* Marca */
@@ -28,9 +29,12 @@
   --cor-risco-perigo:             #D7261E; /* vermelho mais forte */
   --cor-risco-perigo-texto:       #FFFFFF; /* 5,02:1 — o único com texto branco, pra se destacar dos outros */
 
-  /* Fontes */
-  --fonte-titulo: "Plus Jakarta Sans", system-ui, sans-serif;
+  /* Fontes. Bebas Neue é de cartaz: só caixa alta e um peso só (400).
+     Nunca usar em negrito (o navegador inventa um negrito feio) nem em texto corrido.
+     Títulos pequenos de tela do app (cartões, formulários) usam --fonte-texto em 700. */
+  --fonte-titulo: "Bebas Neue", "Arial Narrow", Impact, sans-serif;
   --fonte-texto:  "Source Sans 3", system-ui, sans-serif;
+  --tracking-titulo: -0.01em;
 
   /* Tamanhos (escala 1,25) */
   --fs-sm:  14px; /* apoio, legendas */
@@ -39,21 +43,39 @@
   --fs-xl:  25px; /* títulos de seção */
   --fs-2xl: 31px; /* título de página no app */
   --fs-3xl: 39px; /* título principal do site */
-  --peso-texto: 400; --peso-forte: 700; --peso-titulo: 800;
-  --altura-texto: 1.5; --altura-titulo: 1.15;
+  --peso-texto: 400; --peso-forte: 700; --peso-titulo: 400; /* Bebas só tem 400 */
+  --altura-texto: 1.5; --altura-titulo: 0.9;
+  /* Tamanhos de cartaz (só no site e em números grandes do app) */
+  --fs-cartaz:  clamp(80px, 13vw, 210px); /* a manchete do topo */
+  --fs-numero:  clamp(140px, 22vw, 360px); /* um número que ocupa a tela */
+  --fs-secao:   clamp(48px, 7vw, 112px);  /* título de seção do site */
 
   /* Espaçamento (base 4px) */
   --esp-1: 4px; --esp-2: 8px; --esp-3: 12px; --esp-4: 16px;
   --esp-5: 24px; --esp-6: 32px; --esp-7: 48px; --esp-8: 64px;
 
-  /* Cantos */
-  --raio-campo: 8px;
-  --raio-card:  16px;
-  --raio-botao: 999px;
+  /* Cantos: cartaz é recortado reto. Um raio só, pequeno, em todo lugar.
+     (os nomes antigos continuam valendo para não quebrar o que já usa eles) */
+  --raio:       4px;
+  --raio-campo: var(--raio);
+  --raio-card:  var(--raio);
+  --raio-botao: var(--raio);
 
-  /* Sombras */
-  --sombra-card:  0 2px 8px rgb(20 32 43 / .10);
-  --sombra-forte: 0 8px 24px rgb(20 32 43 / .18); /* só o card de alerta */
+  /* Sombras: só no que flutua de verdade (menu aberto, aviso, diálogo).
+     Coisa parada na tela se separa por cor, não por sombra. */
+  --sombra-card:  none;
+  --sombra-forte: none;
+  --sombra-flutua: 0 12px 32px rgb(20 32 43 / .28);
+
+  /* Movimento (usado por css/movimento.css e js/movimento.js) */
+  --curva-saida:  cubic-bezier(.16, 1, .3, 1);   /* sai rápido e assenta devagar */
+  --curva-mola:   cubic-bezier(.34, 1.56, .64, 1); /* passa um pouco e volta: só em toque */
+  --curva-entra:  cubic-bezier(.7, 0, .84, 0);
+  --dur-toque:    140ms;  /* resposta a clique e tecla */
+  --dur-curta:    240ms;  /* hover, troca de estado */
+  --dur-media:    560ms;  /* entrada de bloco */
+  --dur-longa:    1100ms; /* o obturador da foto principal */
+  --escalonar:    70ms;   /* atraso entre itens de um grupo */
 
   /* Acessibilidade */
   --toque-min: 48px;

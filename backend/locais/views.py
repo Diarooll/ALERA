@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.db.models import ProtectedError
 from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticated
@@ -57,14 +58,26 @@ class AreaRiscoDetalhe(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = AreaRiscoSerializer
 
     def destroy(self, request, *args, **kwargs):
+        area = self.get_object()
         try:
-            return super().destroy(request, *args, **kwargs)
+            with transaction.atomic():
+                # Vínculo do cadastro antigo: o abrigo não pertence mais a uma área e o painel
+                # nem mostra esse campo. Sem soltar aqui, a área ficava presa sem motivo à vista
+                area.abrigos.update(area=None)
+                area.delete()
         except ProtectedError:
+            # Se a área não sai, o vínculo dos abrigos volta como estava (transação desfeita)
+            return self._nao_pode_apagar(area)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def _nao_pode_apagar(self, area):
+        if area.historico.exists():
             # O histórico guarda quem emitiu cada alerta: área com alerta não some
-            return Response(
-                {
-                    'detail': 'Esta área já teve alertas e não pode ser apagada. '
-                    'Você pode renomear a área ou tirar as bolinhas dela.'
-                },
-                status=status.HTTP_409_CONFLICT,
-            )
+            motivo = 'Esta área já teve alertas e não pode ser apagada.'
+        else:
+            # Sobram as ruas do cadastro antigo, que não aparecem em tela nenhuma
+            motivo = 'Esta área ainda tem ruas do cadastro antigo ligadas a ela e não pode ser apagada.'
+        return Response(
+            {'detail': f'{motivo} Você pode renomear a área ou tirar as bolinhas dela.'},
+            status=status.HTTP_409_CONFLICT,
+        )

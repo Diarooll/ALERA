@@ -1,6 +1,7 @@
 import re
 
 from django.contrib.auth.password_validation import validate_password
+from django.db import IntegrityError, transaction
 from django.utils import timezone
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
@@ -10,7 +11,7 @@ from locais.models import Abrigo, Bairro
 from locais.serializers import campo_latitude, campo_longitude
 
 from . import geocodificacao
-from .models import Usuario
+from .models import Usuario, normalizar_email
 
 # Igual ao texto da caixa de consentimento em front-end/app/login.html
 TEXTO_CONSENTIMENTO = (
@@ -20,6 +21,12 @@ TEXTO_CONSENTIMENTO = (
 REGEX_CEP = re.compile(r'^\d{8}$')
 # DDD + número fixo (8 dígitos) ou celular (9 + 8 dígitos), como no login.js
 REGEX_TELEFONE = re.compile(r'^[1-9]{2}9?\d{8}$')
+EMAIL_REPETIDO = 'Este e-mail já tem uma conta.'
+
+
+def normalizar_telefone(valor):
+    """Só os dígitos, com DDD. O "+55" do começo sai, como na máscara do login.js."""
+    return re.sub(r'\D', '', re.sub(r'^\s*\+55', '', valor))
 
 
 def montar_endereco(logradouro, numero, bairro, cidade, complemento=''):
@@ -28,9 +35,14 @@ def montar_endereco(logradouro, numero, bairro, cidade, complemento=''):
 
 
 def achar_bairro(nome, cidade):
-    """Bairro novo nasce sem área de risco: o admin completa depois."""
-    bairro, _ = Bairro.objects.get_or_create(nome=nome.strip(), cidade=cidade.strip())
-    return bairro
+    """Bairro novo nasce sem área de risco: o admin completa depois.
+
+    "Centro" e "centro" são o mesmo bairro. Sem isso nascia outro bairro, e no perfil
+    mudar só a maiúscula consultava o mapa de novo e trocava o ponto marcado pela pessoa.
+    """
+    nome, cidade = ' '.join(nome.split()), ' '.join(cidade.split())
+    achado = Bairro.objects.filter(nome__iexact=nome, cidade__iexact=cidade).first()
+    return achado or Bairro.objects.get_or_create(nome=nome, cidade=cidade)[0]
 
 
 def validar_cep(valor):
@@ -43,7 +55,8 @@ def validar_cep(valor):
 class CadastroSerializer(serializers.Serializer):
     """Cria só contas de morador: administradores não nascem do cadastro público."""
 
-    email = serializers.EmailField()
+    # 254 é o tamanho da coluna: maior que isso dava erro 500 no PostgreSQL
+    email = serializers.EmailField(max_length=254)
     senha = serializers.CharField(write_only=True)
     telefone = serializers.CharField()
     cep = serializers.CharField()
@@ -57,9 +70,9 @@ class CadastroSerializer(serializers.Serializer):
     consentimento = serializers.BooleanField(write_only=True)
 
     def validate_email(self, valor):
-        valor = valor.strip().lower()
-        if Usuario.objects.filter(email=valor).exists():
-            raise serializers.ValidationError('Este e-mail já tem uma conta.')
+        valor = normalizar_email(valor)
+        if Usuario.objects.filter(email__iexact=valor).exists():
+            raise serializers.ValidationError(EMAIL_REPETIDO)
         return valor
 
     def validate_senha(self, valor):
@@ -67,7 +80,7 @@ class CadastroSerializer(serializers.Serializer):
         return valor
 
     def validate_telefone(self, valor):
-        digitos = re.sub(r'\D', '', valor)
+        digitos = normalizar_telefone(valor)
         if not REGEX_TELEFONE.match(digitos):
             raise serializers.ValidationError('Telefone inválido. Exemplo: (32) 99999-0000')
         return digitos
@@ -86,27 +99,35 @@ class CadastroSerializer(serializers.Serializer):
         )
         latitude, longitude = posicao or (None, None)
 
-        return Usuario.objects.create_user(
-            dados['email'],
-            dados['senha'],
-            telefone=dados['telefone'],
-            endereco=montar_endereco(
-                dados['logradouro'],
-                dados['numero'],
-                dados['bairro'],
-                dados['cidade'],
-                dados['complemento'],
-            ),
-            cep=dados['cep'],
-            logradouro=dados['logradouro'].strip(),
-            numero=dados['numero'].strip(),
-            complemento=dados['complemento'].strip(),
-            bairro=achar_bairro(dados['bairro'], dados['cidade']),
-            latitude=latitude,
-            longitude=longitude,
-            consentimento_em=timezone.now(),
-            consentimento_texto=TEXTO_CONSENTIMENTO,
-        )
+        try:
+            # O atomic isola o erro: o e-mail repetido não estraga o resto da transação
+            with transaction.atomic():
+                return Usuario.objects.create_user(
+                    dados['email'],
+                    dados['senha'],
+                    telefone=dados['telefone'],
+                    endereco=montar_endereco(
+                        dados['logradouro'],
+                        dados['numero'],
+                        dados['bairro'],
+                        dados['cidade'],
+                        dados['complemento'],
+                    ),
+                    cep=dados['cep'],
+                    logradouro=dados['logradouro'].strip(),
+                    numero=dados['numero'].strip(),
+                    complemento=dados['complemento'].strip(),
+                    bairro=achar_bairro(dados['bairro'], dados['cidade']),
+                    latitude=latitude,
+                    longitude=longitude,
+                    consentimento_em=timezone.now(),
+                    consentimento_texto=TEXTO_CONSENTIMENTO,
+                )
+        except IntegrityError:
+            # Outro cadastro com o mesmo e-mail terminou enquanto este buscava a casa no mapa
+            if Usuario.objects.filter(email__iexact=dados['email']).exists():
+                raise serializers.ValidationError({'email': [EMAIL_REPETIDO]})
+            raise
 
     def to_representation(self, usuario):
         # Nada além do necessário: a posição da casa não volta no cadastro
@@ -116,11 +137,26 @@ class CadastroSerializer(serializers.Serializer):
 class LoginSerializer(TokenObtainPairSerializer):
     # A mesma mensagem para e-mail ou senha errados: não revela quais e-mails têm conta
     default_error_messages = {'no_active_account': 'E-mail ou senha incorretos.'}
+    # Conta de administrador emite alerta para a cidade inteira: a sessão dela acaba depois de
+    # 12 horas sem uso (um turno). A do morador, 30 dias (REFRESH_TOKEN_LIFETIME no settings.py).
+    # Os dois prazos andam junto com o uso: cada renovação conta o prazo de novo
+    SESSAO_ADMIN = timezone.timedelta(hours=12)
+
+    @classmethod
+    def prazo_da_sessao(cls, usuario):
+        return cls.SESSAO_ADMIN if usuario.is_staff else cls.token_class.lifetime
+
+    @classmethod
+    def get_token(cls, usuario):
+        token = super().get_token(usuario)
+        token.set_exp(lifetime=cls.prazo_da_sessao(usuario))
+        return token
 
     def validate(self, dados):
         dados[self.username_field] = dados[self.username_field].strip().lower()
         tokens = super().validate(dados)
-        return {'token': tokens['access'], 'papel': self.user.papel}
+        # "token" vence rápido; "renovacao" troca por um novo sem pedir a senha (ver /auth/renovar/)
+        return {'token': tokens['access'], 'renovacao': tokens['refresh'], 'papel': self.user.papel}
 
 
 class MeuPerfilSerializer(serializers.ModelSerializer):
@@ -158,6 +194,8 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
             'localizado',
         ]
         read_only_fields = ['email', 'telefone', 'endereco']
+        # Como no cadastro: a rua e o número não podem ser apagados ("S/N" para casa sem número)
+        extra_kwargs = {'logradouro': {'allow_blank': False}, 'numero': {'allow_blank': False}}
 
     def to_representation(self, usuario):
         dados = super().to_representation(usuario)
@@ -185,11 +223,12 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
         return abrigo
 
     def validate(self, dados):
-        # Latitude e longitude andam juntas: ou as duas, ou nenhuma
-        if ('latitude' in dados) != ('longitude' in dados):
-            raise serializers.ValidationError('Envie latitude e longitude juntas.')
-        if (dados.get('latitude') is None) != (dados.get('longitude') is None):
-            raise serializers.ValidationError('Envie latitude e longitude juntas.')
+        # Latitude e longitude andam juntas: ou as duas, ou nenhuma.
+        # O erro vai no campo, no mesmo formato {campo: [mensagem]} dos outros
+        if ('latitude' in dados) != ('longitude' in dados) or (
+            (dados.get('latitude') is None) != (dados.get('longitude') is None)
+        ):
+            raise serializers.ValidationError({'latitude': ['Envie latitude e longitude juntas.']})
         return dados
 
     def update(self, usuario, dados):

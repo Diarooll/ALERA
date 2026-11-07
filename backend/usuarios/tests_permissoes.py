@@ -119,6 +119,30 @@ class AdminDoDjangoTestes(TestCase):
         # Conta de ADM não entra na lista de moradores
         self.assertNotIn(self.admzinho.email, self.client.get('/admin/usuarios/morador/').content.decode())
 
+    def test_lista_de_moradores_nao_filtra_pelo_que_esta_escondido(self):
+        # Filtro escrito na barra de endereço (?email__startswith=m) mostrava quantos
+        # moradores batiam: dava para descobrir e-mail, endereço e até o hash da senha
+        # de cada um, letra por letra
+        self.morador.endereco = 'Rua Secreta, 10'
+        self.morador.save()
+        self.client.force_login(self.principal)
+
+        filtros = [
+            'email__startswith=morador',
+            f'password__startswith={self.morador.password[:6]}',
+            'endereco__icontains=secreta',
+            'latitude__isnull=true',
+            'bairro__isnull=true',
+            'consentimento_em__isnull=true',
+        ]
+        for filtro in filtros:
+            with self.assertLogs('django.security.DisallowedModelAdminLookup', 'ERROR'):
+                resposta = self.client.get(f'/admin/usuarios/morador/?{filtro}')
+            self.assertEqual(resposta.status_code, 400, filtro)
+
+        # A busca pelo telefone continua
+        self.assertEqual(self.client.get('/admin/usuarios/morador/?q=3299').status_code, 200)
+
     def test_morador_no_admin_e_so_leitura(self):
         self.client.force_login(self.principal)
         rota = f'/admin/usuarios/morador/{self.morador.pk}/'
@@ -239,6 +263,41 @@ class PainelProprioTestes(APITestCase):
         self.client.post('/api/alertas/', {'areas': [area.pk], 'nivel': 'alerta', 'mensagem': 'x'}, format='json')
         self.assertEqual(self.client.delete(f'/api/areas/{area.pk}/').status_code, 409)
         self.assertTrue(AreaRisco.objects.filter(pk=area.pk).exists())
+
+    def test_visitante_e_morador_nao_alcancam_nenhuma_rota_do_painel(self):
+        area = AreaRisco.objects.create(nome='Morro Exemplo')
+        rotas = [
+            ('get', '/api/areas/'),
+            ('post', '/api/areas/'),
+            ('get', f'/api/areas/{area.pk}/'),
+            ('patch', f'/api/areas/{area.pk}/'),
+            ('delete', f'/api/areas/{area.pk}/'),
+            ('get', '/api/alertas/'),
+            ('post', '/api/alertas/'),
+            ('post', '/api/abrigos/'),
+            ('post', '/api/tipos-abrigo/'),
+        ]
+        for usuario, esperado in ((None, 401), (self.morador, 403)):
+            self.client.force_authenticate(usuario)
+            for metodo, rota in rotas:
+                resposta = getattr(self.client, metodo)(rota, {}, format='json')
+                self.assertEqual(resposta.status_code, esperado, f'{metodo} {rota}')
+        self.assertTrue(AreaRisco.objects.filter(pk=area.pk).exists())
+
+    def test_adm_rebaixado_ou_desativado_perde_o_painel_com_o_mesmo_token(self):
+        # A permissão vem do banco a cada pedido, não do que o token dizia no login
+        cache.clear()
+        login = self.client.post(
+            '/api/auth/login/', {'email': self.admzinho.email, 'password': SENHA}, format='json'
+        )
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {login.data['token']}")
+        self.assertEqual(self.client.get('/api/areas/').status_code, 200)
+
+        Usuario.objects.filter(pk=self.admzinho.pk).update(is_staff=False)
+        self.assertEqual(self.client.get('/api/areas/').status_code, 403)
+
+        Usuario.objects.filter(pk=self.admzinho.pk).update(is_staff=True, is_active=False)
+        self.assertEqual(self.client.get('/api/areas/').status_code, 401)
 
     def test_morador_nao_faz_o_que_e_do_painel(self):
         self.client.force_authenticate(self.morador)

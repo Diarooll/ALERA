@@ -31,28 +31,43 @@ const CORES_NIVEL = Object.fromEntries(Object.keys(NIVEIS).map((n) => [n, corDoT
 const COR_DESENHO = CORES_NIVEL.perigo
 const COR_ESCOLHIDA = corDoToken('--cor-primaria')
 
-function encerrarSessao() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('papel')
-  localStorage.removeItem('modoTeste')
-}
-
-function irParaLogin() {
-  encerrarSessao()
+// Botão Sair: o api.js avisa o servidor (sem travar se ele estiver fora) e só então vai para o login
+async function encerrarSessao(evento) {
+  evento?.preventDefault()
+  await sairDaConta()
   location.replace('login.html')
 }
 
-// O servidor decide quem é administrador. A pessoa sai quando ele diz que a sessão não vale
-// ou que a conta não é de administrador. Sem resposta, ela fica e vê o aviso de erro;
+// Só o 401 derruba: a sessão acabou de vez (o api.js já tentou renovar).
+// O 403 numa ação (a conta não pode fazer aquilo) cai no aviso de erro de quem chamou
+function irParaLogin() {
+  limparSessao()
+  location.replace('login.html')
+}
+
+// Conta que não é de administrador: o lugar dela é o app do morador, sem perder a sessão.
+// Guarda o papel, para o login não a mandar de volta para cá
+function irParaOApp(papel = 'morador') {
+  guardarPapel(papel)
+  location.replace('app.html')
+}
+
+// O servidor decide quem é administrador. Sem resposta, a pessoa fica e vê o aviso de erro;
 // os dados do painel continuam protegidos, porque o servidor só os entrega a administradores.
 async function conferirAdministrador() {
-  if (modoTesteAtivo() && localStorage.getItem('papel') === 'admin') return
+  if (modoTesteAtivo()) {
+    if (lerSessao()?.papel !== 'admin') location.replace('app.html')
+    return
+  }
 
   try {
     const resposta = await chamarApi('/me/')
 
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
-    if (resposta.ok && (await resposta.json()).papel !== 'admin') irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
+    if (resposta.ok) {
+      const { papel } = await resposta.json()
+      if (papel !== 'admin') irParaOApp(papel)
+    }
   } catch {
     // sem resposta do servidor: carregarTudo() mostra o aviso
   }
@@ -67,9 +82,13 @@ window.addEventListener('pageshow', conferirAdministrador)
 
 async function pegar(rota) {
   const resposta = await chamarApi(rota)
-  if (resposta.status === 401 || resposta.status === 403) {
+  if (resposta.status === 401) {
     irParaLogin()
     throw new Error('sessão')
+  }
+  if (resposta.status === 403) {
+    irParaOApp()
+    throw new Error('sem permissão')
   }
   if (!resposta.ok) throw new Error(`erro ${resposta.status}`)
   return resposta.json()
@@ -362,7 +381,7 @@ async function registrarAlerta() {
       metodo: 'POST',
       corpo: { areas: areas.map((a) => a.id), nivel: nivelId, mensagem: mensagemAtual() },
     })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
     if (!resposta.ok) {
       $('#alerta-retorno').textContent = mensagemDeErro(await resposta.json().catch(() => null))
       return
@@ -631,7 +650,7 @@ formArea.addEventListener('submit', async (evento) => {
       metodo: novo ? 'POST' : 'PATCH',
       corpo,
     })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
     if (!resposta.ok) {
       $('#area-retorno').textContent = mensagemDeErro(await resposta.json().catch(() => null))
       return
@@ -664,7 +683,7 @@ $('#area-excluir').addEventListener('click', async (evento) => {
 
   try {
     const resposta = await chamarApi(`/areas/${areaEditando.id}/`, { metodo: 'DELETE' })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
     if (!resposta.ok) {
       const dados = await resposta.json().catch(() => null)
       $('#area-retorno').textContent = dados?.detail || 'Não foi possível excluir. Tente de novo.'
@@ -841,7 +860,7 @@ formAbrigo.addEventListener('submit', async (evento) => {
       metodo: editando ? 'PATCH' : 'POST',
       corpo,
     })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
 
     if (!resposta.ok) {
       $('#abrigo-retorno').textContent = mensagemDeErro(await resposta.json().catch(() => null))
@@ -863,7 +882,7 @@ $('#abrigo-excluir').addEventListener('click', async (evento) => {
 
   try {
     const resposta = await chamarApi(`/abrigos/${editando.id}/`, { metodo: 'DELETE' })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
     if (!resposta.ok) throw new Error('erro')
 
     fecharFormulario()
@@ -889,7 +908,7 @@ $('#tipo-novo-criar').addEventListener('click', async () => {
       metodo: 'POST',
       corpo: { nome, icone: $('#tipo-novo-icone').value.trim() || '📍' },
     })
-    if (resposta.status === 401 || resposta.status === 403) return irParaLogin()
+    if (resposta.status === 401) return irParaLogin()
 
     if (!resposta.ok) {
       $('#abrigo-retorno').textContent = mensagemDeErro(await resposta.json().catch(() => null))

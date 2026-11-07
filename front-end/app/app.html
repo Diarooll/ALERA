@@ -8,13 +8,9 @@
     <!-- Aqui em cima para o app nem aparecer a quem não entrou.
          Quem confirma de verdade é o servidor, na conferência que está em app.js. -->
     <noscript><meta http-equiv="refresh" content="0; url=login.html" /></noscript>
-    <script>
-      try {
-        if (!localStorage.getItem('token')) location.replace('login.html')
-      } catch {
-        location.replace('login.html')
-      }
-    </script>
+    <script src="../js/guarda.js"></script>
+    <!-- Sem defer: o tema certo entra antes da primeira pintura e a tela não pisca -->
+    <script src="../js/tema.js"></script>
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />
     <link
@@ -23,6 +19,7 @@
       integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="../css/movimento.css" />
     <link rel="stylesheet" href="../css/app.css" />
     <link rel="stylesheet" href="../css/mapa.css" />
   </head>
@@ -98,15 +95,18 @@
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></symbol>
     </svg>
 
-    <!-- TOPO: no computador leva o menu e o Ligar 199; no celular o menu vira abas embaixo -->
+    <!-- TOPO: no computador leva o menu; no celular o menu vira abas embaixo.
+         O Ligar 199 fica no topo nas duas larguras: numa emergência ele não pode sumir -->
     <header class="topo">
       <div class="topo__faixa">
-        <a class="topo__marca" href="#alerta">
+        <a class="topo__marca pressionavel" href="#alerta">
           <svg class="topo__logo" aria-hidden="true" focusable="false"><use href="#i-logo" /></svg>
           A.L.E.R.A
         </a>
 
         <nav class="menu" aria-label="Navegação do app">
+          <!-- O marcador escorrega até a aba aberta (posição dada pelo CSS, sem script) -->
+          <span class="menu__marcador" aria-hidden="true"></span>
           <ul class="menu__lista">
             <li>
               <a class="menu__link" href="#alerta"
@@ -140,14 +140,13 @@
         </nav>
 
         <div class="topo__acoes">
-          <a class="topo__ligar" href="tel:199"
+          <a class="topo__ligar pressionavel" href="tel:199"
             ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-telefone" /></svg
             >Ligar 199</a
           >
-          <a class="topo__ligar topo__ligar--sempre" id="sair" href="login.html">Sair</a>
-          <!-- Tema claro/escuro só com CSS: o checkbox liga o tema escuro, o label é o botão -->
+          <!-- Tema claro/escuro: o checkbox liga o escuro e o label é o botão (js/tema.js guarda a escolha) -->
           <input class="visualmente-oculto" type="checkbox" id="tema" role="switch" />
-          <label class="tema" for="tema">
+          <label class="tema pressionavel" for="tema">
             <svg class="icone tema__lua" aria-hidden="true" focusable="false">
               <use href="#i-lua" />
             </svg>
@@ -156,93 +155,119 @@
             </svg>
             <span class="visualmente-oculto">Tema escuro</span>
           </label>
+          <a class="topo__sair pressionavel" id="sair" href="login.html">Sair</a>
         </div>
       </div>
     </header>
 
     <main class="telas">
-      <!-- ALERTA: tela inicial. A rua é o título porque é o que a ALERA tem de diferente -->
-      <section class="tela" id="alerta">
-        <div class="faixa faixa--selo">
-          <div class="conteudo">
-            <h1 class="faixa__titulo" id="alerta-bairro">Sua região</h1>
-            <p class="faixa__apoio" id="alerta-apoio">Carregando…</p>
+      <!-- ALERTA: tela inicial. O topo é um campo inteiro na cor do nível, com o nome dele enorme.
+           data-nivel troca o texto na hora; data-fundo só troca quando a cortina termina de descer -->
+      <section class="tela" id="alerta" aria-labelledby="alerta-titulo">
+        <div class="campo-nivel" id="campo-nivel" data-nivel="carregando" data-fundo="carregando">
+          <div class="conteudo campo-nivel__grade">
+            <div class="campo-nivel__nome">
+              <p class="campo-nivel__rua" id="alerta-rua"><span class="esqueleto">Carregando sua rua</span></p>
+              <h1 class="campo-nivel__nivel" id="alerta-titulo">
+                <span class="visualmente-oculto">Nível de risco agora: </span
+                ><span class="campo-nivel__palavra" id="alerta-nivel"
+                  ><span class="esqueleto">Carregando</span></span
+                >
+              </h1>
+              <p class="campo-nivel__onde" id="alerta-apoio"><span class="esqueleto">Buscando a área</span></p>
+            </div>
+            <div class="campo-nivel__ordem">
+              <p class="campo-nivel__fazer" id="alerta-ordem">Buscando o nível de risco da sua rua…</p>
+              <!-- A parte personalizada: o abrigo de cada morador entra na mensagem do alerta -->
+              <p class="campo-nivel__abrigo" id="alerta-abrigo" hidden></p>
+              <div class="medidor" role="img" id="alerta-medidor" aria-label="Nível indisponível">
+                <span class="medidor__parte"></span>
+                <span class="medidor__parte"></span>
+                <span class="medidor__parte"></span>
+                <span class="medidor__parte"></span>
+              </div>
+              <p class="campo-nivel__hora" id="alerta-hora" role="status"></p>
+              <div class="campo-nivel__acoes">
+                <button class="botao botao--campo pressionavel" type="button" id="alerta-tentar" hidden>
+                  Tentar de novo
+                </button>
+                <a class="botao botao--campo pressionavel" href="#cadastro" id="alerta-marcar" hidden
+                  >Marcar minha casa</a
+                >
+              </div>
+            </div>
           </div>
         </div>
 
         <div class="conteudo alerta">
-          <div class="alerta__principal">
-            <p class="selo" id="alerta-selo">
-              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg
-              ><span id="alerta-selo-texto">…</span>
-            </p>
-            <p class="alerta__ordem" id="alerta-ordem">Buscando o nível de risco da sua região…</p>
-            <!-- A parte personalizada: o abrigo de cada morador entra na mensagem do alerta -->
-            <p class="alerta__abrigo" id="alerta-abrigo" hidden></p>
-            <div class="medidor" role="img" id="alerta-medidor" aria-label="Nível indisponível">
-              <span class="medidor__parte"></span>
-              <span class="medidor__parte"></span>
-              <span class="medidor__parte"></span>
-              <span class="medidor__parte"></span>
-            </div>
-            <p class="medidor__legenda" aria-hidden="true" id="alerta-medidor-legenda"></p>
-            <p class="mapa-aviso" id="alerta-aviso" role="status" hidden></p>
+          <div class="mapa-caixa alerta__mapa">
+            <div
+              class="mapa-leaflet"
+              id="mapa-alerta"
+              role="application"
+              aria-label="Mapa com a sua casa e os abrigos da Defesa Civil. As mesmas informações estão ao lado."
+            ></div>
           </div>
 
-          <div class="alerta__rota">
-            <div class="mapa-caixa alerta__mapa">
-              <div
-                class="mapa-leaflet"
-                id="mapa-alerta"
-                role="application"
-                aria-label="Mapa com a sua casa e os abrigos da Defesa Civil"
-              ></div>
-            </div>
-            <div class="destino">
-              <div id="destino-abrigo"></div>
-              <a class="botao" href="#rota" id="ver-rota" hidden>Ver rota segura</a>
-              <a class="botao" href="#detalhe-abrigo" id="escolher-abrigo">Escolher meu abrigo</a>
-            </div>
-            <a class="botao botao--texto alerta__ligar" href="tel:199"
-              ><svg class="icone" aria-hidden="true" focusable="false">
-                <use href="#i-telefone" /></svg
-              >Ligar 199 · Defesa Civil</a
+          <div class="alerta__lado">
+            <section class="painel destino" aria-labelledby="destino-titulo">
+              <h2 class="bloco-titulo" id="destino-titulo">Abrigo mais perto</h2>
+              <div class="destino__corpo" id="destino-abrigo">
+                <p class="esqueleto-linha esqueleto-linha--grande"></p>
+                <p class="esqueleto-linha"></p>
+                <p class="esqueleto-linha esqueleto-linha--curta"></p>
+              </div>
+              <div class="destino__acoes">
+                <a class="botao pressionavel" href="#rota" id="ver-rota" hidden>Ver rota segura</a>
+                <a class="botao botao--secundario pressionavel" href="#detalhe-abrigo" id="escolher-abrigo"
+                  >Escolher meu abrigo</a
+                >
+              </div>
+            </section>
+            <a class="ligar pressionavel" href="tel:199"
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-telefone" /></svg
+              ><span class="ligar__numero">199</span
+              ><span class="ligar__texto">Ligar para a Defesa Civil<small>Ligação gratuita</small></span></a
             >
           </div>
 
-          <div class="alerta__niveis">
-            <h2 class="subtitulo">O que fazer em cada nível</h2>
-            <ul class="niveis">
+          <section class="alerta__niveis" aria-labelledby="niveis-titulo">
+            <h2 class="bloco-titulo" id="niveis-titulo">O que fazer em cada nível</h2>
+            <ol class="niveis">
               <li class="niveis__item" data-nivel="normal">
                 <span class="niveis__cor nivel--normal"></span>
-                <strong class="niveis__nome">NORMAL</strong>
-                <span
+                <strong class="niveis__nome">Normal</strong>
+                <span class="niveis__agora">Agora</span>
+                <span class="niveis__texto"
                   >Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu
                   rachaduras, ligue 199.</span
                 >
               </li>
               <li class="niveis__item" data-nivel="atencao">
                 <span class="niveis__cor nivel--atencao"></span>
-                <strong class="niveis__nome">ATENÇÃO</strong>
-                <span
+                <strong class="niveis__nome">Atenção</strong>
+                <span class="niveis__agora">Agora</span>
+                <span class="niveis__texto"
                   >Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do
                   bueiro.</span
                 >
               </li>
               <li class="niveis__item" data-nivel="alerta">
                 <span class="niveis__cor nivel--alerta"></span>
-                <strong class="niveis__nome">ALERTA</strong>
-                <span
+                <strong class="niveis__nome">Alerta</strong>
+                <span class="niveis__agora">Agora</span>
+                <span class="niveis__texto"
                   >Chuva forte prevista em até 24 horas. Evite a rua e deixe documentos à mão.</span
                 >
               </li>
               <li class="niveis__item" data-nivel="perigo">
                 <span class="niveis__cor nivel--perigo"></span>
-                <strong class="niveis__nome">PERIGO</strong>
-                <span>Risco agora. Saia de casa e vá para o abrigo.</span>
+                <strong class="niveis__nome">Perigo</strong>
+                <span class="niveis__agora">Agora</span>
+                <span class="niveis__texto">Risco agora. Saia de casa e vá para o abrigo.</span>
               </li>
-            </ul>
-          </div>
+            </ol>
+          </section>
         </div>
       </section>
 
@@ -250,44 +275,56 @@
       <section class="tela" id="rota">
         <div class="faixa">
           <div class="conteudo">
-            <a class="faixa__voltar" href="#alerta"
+            <a class="faixa__voltar pressionavel" href="#alerta"
               ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-voltar" /></svg
-              >Voltar</a
+              >Voltar para o alerta</a
             >
             <h1 class="faixa__titulo">Rota segura</h1>
-            <p class="faixa__apoio">Da sua casa até o abrigo salvo</p>
+            <p class="faixa__apoio">Da sua casa até o abrigo</p>
           </div>
         </div>
 
         <div class="conteudo rota">
-          <div class="mapa-caixa rota__mapa">
-            <div
-              class="mapa-leaflet mapa-leaflet--alto"
-              id="mapa-rota"
-              role="application"
-              aria-label="Mapa com a sua casa e o abrigo salvo"
-            ></div>
+          <div class="rota__mapa">
+            <div class="mapa-caixa">
+              <div
+                class="mapa-leaflet mapa-leaflet--alto"
+                id="mapa-rota"
+                role="application"
+                aria-label="Mapa com a sua casa e o abrigo"
+              ></div>
+            </div>
+            <p class="nota">
+              A linha no mapa é reta, não segue as ruas. Para o caminho a pé, abra no Google Maps.
+            </p>
           </div>
-          <p class="mapa-aviso">
-            A linha no mapa é reta, não segue as ruas. Para o caminho a pé, abra no Google Maps.
-          </p>
 
-          <div class="rota__destino" id="rota-destino"></div>
+          <div class="rota__lado">
+            <p class="rota__evitar" id="rota-evitar" hidden>
+              <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg>
+              <span id="rota-evitar-texto"></span>
+            </p>
 
-          <p class="rota__evitar" id="rota-evitar" hidden>
-            <svg class="icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg>
-            <span id="rota-evitar-texto"></span>
-          </p>
+            <section class="painel" aria-label="Abrigo de destino">
+              <div class="rota__destino" id="rota-destino"></div>
+            </section>
 
-          <div class="rota__acoes">
-            <a class="botao" id="rota-google" href="#rota" target="_blank" rel="noopener" hidden
-              >Abrir no Google Maps</a
-            >
-            <a class="botao botao--secundario" href="tel:199"
-              ><svg class="icone" aria-hidden="true" focusable="false">
-                <use href="#i-telefone" /></svg
-              >Ligar 199 · Defesa Civil</a
-            >
+            <div class="rota__acoes">
+              <a
+                class="botao pressionavel"
+                id="rota-google"
+                href="#rota"
+                target="_blank"
+                rel="noopener noreferrer"
+                hidden
+                >Abrir no Google Maps</a
+              >
+              <a class="ligar pressionavel" href="tel:199"
+                ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-telefone" /></svg
+                ><span class="ligar__numero">199</span
+                ><span class="ligar__texto">Ligar para a Defesa Civil<small>Ligação gratuita</small></span></a
+              >
+            </div>
           </div>
         </div>
       </section>
@@ -296,112 +333,129 @@
       <section class="tela" id="missoes">
         <div class="faixa">
           <div class="conteudo">
-            <h1 class="faixa__titulo">Suas missões</h1>
+            <h1 class="faixa__titulo">Missões</h1>
             <p class="faixa__apoio">Pequenas ações que deixam sua rua mais segura</p>
           </div>
         </div>
 
+        <!-- Os pontos: um campo chapado na cor da gamificação, encostado na faixa azul -->
+        <section class="pontos" aria-labelledby="pontos-rotulo">
+          <div class="conteudo pontos__grade">
+            <div class="pontos__total">
+              <h2 class="pontos__rotulo" id="pontos-rotulo">Seus pontos</h2>
+              <p class="pontos__valor">
+                <span class="pontos__numero" id="pontos-total">0</span
+                ><span class="pontos__unidade">pts</span>
+              </p>
+            </div>
+            <div class="pontos__progresso">
+              <progress class="progresso progresso--claro" id="pontos-barra" value="0" max="160"
+                aria-labelledby="pontos-rotulo" aria-describedby="pontos-legenda"></progress>
+              <p class="pontos__legenda" id="pontos-legenda" aria-live="polite"></p>
+            </div>
+          </div>
+        </section>
+
         <!-- Abas: as missões concluídas saem da lista principal e ficam guardadas aqui -->
-        <div class="conteudo abas-missoes" role="tablist" aria-label="Missões">
-          <button class="aba-missao" type="button" role="tab" id="aba-fazer" data-aba="fazer"
-            aria-selected="true" aria-controls="lista-missoes">
-            Para fazer <span class="aba-missao__conta" id="conta-fazer"></span>
-          </button>
-          <button class="aba-missao" type="button" role="tab" id="aba-concluidas" data-aba="concluidas"
-            aria-selected="false" aria-controls="lista-missoes">
-            Concluídas <span class="aba-missao__conta" id="conta-concluidas"></span>
-          </button>
+        <div class="conteudo abas-linha">
+          <div class="abas-missoes" role="tablist" aria-label="Missões" id="abas-missoes" data-aba="fazer">
+            <span class="abas-missoes__marcador" aria-hidden="true"></span>
+            <button class="aba-missao" type="button" role="tab" id="aba-fazer" data-aba="fazer"
+              aria-selected="true" aria-controls="lista-missoes">
+              Para fazer <span class="aba-missao__conta" id="conta-fazer"></span>
+            </button>
+            <button class="aba-missao" type="button" role="tab" id="aba-concluidas" data-aba="concluidas"
+              aria-selected="false" aria-controls="lista-missoes">
+              Concluídas <span class="aba-missao__conta" id="conta-concluidas"></span>
+            </button>
+          </div>
         </div>
 
+        <!-- data-pontos: quanto cada missão vale. O total é a soma das concluídas (app.js) -->
         <div class="conteudo missoes" id="lista-missoes" role="tabpanel" data-aba="fazer"
           aria-labelledby="aba-fazer">
-          <p class="mapa-aviso missoes__vazio" id="missoes-vazio" hidden></p>
-          <article class="missao tipo--bueiro">
-            <div class="missao__topo">
-              <svg class="missao__icone" aria-hidden="true" focusable="false">
-                <use href="#i-vassoura" />
+          <p class="vazio missoes__vazio" id="missoes-vazio" hidden></p>
+          <article class="missao" id="missao-abrigo-cartao" data-pontos="10">
+            <p class="missao__pontos">
+              <svg class="missao__visto" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 13l4 4L19 7" />
               </svg>
-              <span class="missao__pontos">+50 pts</span>
+              <span class="missao__valor">+10</span><span class="visualmente-oculto"> pontos</span>
+            </p>
+            <div class="missao__corpo">
+              <h2 class="missao__titulo" id="missao-abrigo">Salve seu abrigo mais perto</h2>
+              <p class="missao__texto">Saiba para onde ir antes da chuva chegar.</p>
             </div>
-            <h2 class="missao__titulo" id="missao-bueiro">Limpe o bueiro da sua rua</h2>
-            <p class="missao__texto">Lixo entope o bueiro e piora o alagamento.</p>
-            <progress
-              class="progresso"
-              value="3"
-              max="5"
-              aria-labelledby="missao-bueiro"
-              aria-describedby="legenda-bueiro"
-            ></progress>
-            <p class="progresso__legenda" id="legenda-bueiro">3 de 5 vizinhos ajudaram</p>
-            <a class="missao__abrir" href="#detalhe-bueiro"
-              >Ver bueiros no mapa<span class="visualmente-oculto">: Limpe o bueiro da sua rua</span
-              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
-            ></a>
-          </article>
-          <article class="missao tipo--bueiro">
-            <div class="missao__topo">
-              <svg class="missao__icone" aria-hidden="true" focusable="false">
-                <use href="#i-lixo" />
-              </svg>
-              <span class="missao__pontos">+20 pts</span>
+            <div class="missao__andamento">
+              <progress class="progresso" value="0" max="1" aria-labelledby="missao-abrigo"
+                aria-describedby="legenda-abrigo"></progress>
+              <p class="progresso__legenda" id="legenda-abrigo">Não iniciada</p>
             </div>
-            <h2 class="missao__titulo" id="missao-lixo">Reporte lixo acumulado</h2>
-            <p class="missao__texto">Avise onde tem lixo acumulado ou bueiro entupido.</p>
-            <progress
-              class="progresso"
-              value="0"
-              max="1"
-              aria-labelledby="missao-lixo"
-              aria-describedby="legenda-lixo"
-            ></progress>
-            <p class="progresso__legenda" id="legenda-lixo">Não iniciada</p>
-            <a class="missao__abrir" href="#detalhe-lixo"
-              >Ver como reportar<span class="visualmente-oculto">: Reporte lixo acumulado</span
-              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
-            ></a>
-          </article>
-          <article class="missao tipo--abrigo" id="missao-abrigo-cartao">
-            <div class="missao__topo">
-              <svg class="missao__icone" aria-hidden="true" focusable="false">
-                <use href="#i-local" />
-              </svg>
-              <span class="missao__pontos">+10 pts</span>
-            </div>
-            <h2 class="missao__titulo" id="missao-abrigo">Salve seu abrigo mais perto</h2>
-            <p class="missao__texto">Saiba para onde ir antes da chuva chegar.</p>
-            <progress
-              class="progresso"
-              value="1"
-              max="1"
-              aria-labelledby="missao-abrigo"
-              aria-describedby="legenda-abrigo"
-            ></progress>
-            <p class="progresso__legenda" id="legenda-abrigo">Concluída</p>
-            <a class="missao__abrir" href="#detalhe-abrigo"
+            <a class="missao__abrir pressionavel" href="#detalhe-abrigo"
               >Escolher abrigo<span class="visualmente-oculto">: Salve seu abrigo mais perto</span
               ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
             ></a>
           </article>
-          <article class="missao tipo--muda">
-            <div class="missao__topo">
-              <svg class="missao__icone" aria-hidden="true" focusable="false">
-                <use href="#i-muda" />
+          <article class="missao" data-pontos="50">
+            <p class="missao__pontos">
+              <svg class="missao__visto" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 13l4 4L19 7" />
               </svg>
-              <span class="missao__pontos">+80 pts</span>
+              <span class="missao__valor">+50</span><span class="visualmente-oculto"> pontos</span>
+            </p>
+            <div class="missao__corpo">
+              <h2 class="missao__titulo" id="missao-bueiro">Limpe o bueiro da sua rua</h2>
+              <p class="missao__texto">Lixo entope o bueiro e piora o alagamento.</p>
             </div>
-            <h2 class="missao__titulo" id="missao-muda">Plante uma muda na encosta</h2>
-            <p class="missao__texto">Raiz segura o solo e reduz deslizamento.</p>
-            <progress
-              class="progresso"
-              value="0"
-              max="1"
-              aria-labelledby="missao-muda"
-              aria-describedby="legenda-muda"
-            ></progress>
-            <p class="progresso__legenda" id="legenda-muda">Não iniciada</p>
-            <a class="missao__abrir" href="#detalhe-muda"
-              >Ver áreas para plantar<span class="visualmente-oculto"
-                >: Plante uma muda na encosta</span
+            <div class="missao__andamento">
+              <progress class="progresso" value="3" max="5" aria-labelledby="missao-bueiro"
+                aria-describedby="legenda-bueiro"></progress>
+              <p class="progresso__legenda" id="legenda-bueiro">3 de 5 vizinhos ajudaram</p>
+            </div>
+            <a class="missao__abrir pressionavel" href="#detalhe-bueiro"
+              >Ver bueiros no mapa<span class="visualmente-oculto">: Limpe o bueiro da sua rua</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+          <article class="missao" data-pontos="20">
+            <p class="missao__pontos">
+              <svg class="missao__visto" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+              <span class="missao__valor">+20</span><span class="visualmente-oculto"> pontos</span>
+            </p>
+            <div class="missao__corpo">
+              <h2 class="missao__titulo" id="missao-lixo">Reporte lixo acumulado</h2>
+              <p class="missao__texto">Avise onde tem lixo acumulado ou bueiro entupido.</p>
+            </div>
+            <div class="missao__andamento">
+              <progress class="progresso" value="0" max="1" aria-labelledby="missao-lixo"
+                aria-describedby="legenda-lixo"></progress>
+              <p class="progresso__legenda" id="legenda-lixo">Não iniciada</p>
+            </div>
+            <a class="missao__abrir pressionavel" href="#detalhe-lixo"
+              >Ver como reportar<span class="visualmente-oculto">: Reporte lixo acumulado</span
+              ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
+            ></a>
+          </article>
+          <article class="missao" data-pontos="80">
+            <p class="missao__pontos">
+              <svg class="missao__visto" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+              <span class="missao__valor">+80</span><span class="visualmente-oculto"> pontos</span>
+            </p>
+            <div class="missao__corpo">
+              <h2 class="missao__titulo" id="missao-muda">Plante uma muda na encosta</h2>
+              <p class="missao__texto">Raiz segura o solo e reduz deslizamento.</p>
+            </div>
+            <div class="missao__andamento">
+              <progress class="progresso" value="0" max="1" aria-labelledby="missao-muda"
+                aria-describedby="legenda-muda"></progress>
+              <p class="progresso__legenda" id="legenda-muda">Não iniciada</p>
+            </div>
+            <a class="missao__abrir pressionavel" href="#detalhe-muda"
+              >Ver áreas para plantar<span class="visualmente-oculto">: Plante uma muda na encosta</span
               ><svg class="icone" aria-hidden="true" focusable="false"><use href="#i-seguir" /></svg
             ></a>
           </article>
@@ -603,8 +657,8 @@
               </div>
               <div class="detalhe__coluna">
                 <h3 class="detalhe__subtitulo">Abrigos, do mais perto ao mais longe</h3>
-                <ul class="lista-abrigos-app" id="abrigos-lista"></ul>
-                <button class="botao botao--texto" type="button" id="abrigos-atualizar">
+                <ul class="lista-abrigos-app" id="abrigos-lista" data-revelar-grupo></ul>
+                <button class="botao botao--texto pressionavel" type="button" id="abrigos-atualizar">
                   Atualizar lista
                 </button>
               </div>
@@ -688,30 +742,24 @@
       <section class="tela" id="ranking">
         <div class="faixa">
           <div class="conteudo">
-            <h1 class="faixa__titulo">Ranking dos bairros</h1>
-            <p class="faixa__apoio">Prévia · pontos de exemplo</p>
+            <h1 class="faixa__titulo">Ranking das ruas</h1>
+            <p class="faixa__apoio">Prévia com pontos de exemplo. Cada missão sua soma para a sua rua.</p>
           </div>
         </div>
 
-        <div class="conteudo">
-          <ol class="ranking">
-            <li class="ranking__item">
-              <span class="ranking__posicao">1</span
-              ><span class="ranking__nome">Bairro das Flores</span
-              ><span class="ranking__pontos">1.240 pts</span>
-            </li>
-            <li class="ranking__item ranking__item--voce" aria-current="true">
-              <span class="ranking__posicao">2</span
-              ><span class="ranking__nome"
-                ><span id="ranking-bairro">Seu bairro</span>
-                <span class="ranking__sua">seu bairro</span></span
-              ><span class="ranking__pontos">980 pts</span>
-            </li>
-            <li class="ranking__item">
-              <span class="ranking__posicao">3</span><span class="ranking__nome">Bairro da Paz</span
-              ><span class="ranking__pontos">760 pts</span>
-            </li>
-          </ol>
+        <div class="conteudo ranking-grade">
+          <section class="painel sua-rua" aria-labelledby="sua-rua-titulo">
+            <h2 class="bloco-titulo" id="sua-rua-titulo">Posição da sua rua</h2>
+            <p class="sua-rua__posicao" id="sua-rua-posicao">–</p>
+            <p class="sua-rua__nome" id="sua-rua-nome">Sua rua</p>
+            <p class="sua-rua__texto" id="sua-rua-texto"></p>
+            <a class="botao pressionavel" href="#missoes">Ver missões</a>
+          </section>
+
+          <section class="ranking-bloco" aria-labelledby="ranking-titulo">
+            <h2 class="bloco-titulo" id="ranking-titulo">As ruas com mais pontos</h2>
+            <ol class="ranking" id="ranking-lista" data-revelar-grupo></ol>
+          </section>
         </div>
       </section>
 
@@ -720,62 +768,67 @@
         <div class="faixa">
           <div class="conteudo">
             <h1 class="faixa__titulo">Meus dados</h1>
-            <p class="faixa__apoio">Endereço e ponto da casa, para achar o abrigo mais perto</p>
+            <p class="faixa__apoio" id="dados-contato">Endereço e ponto da casa, para achar o abrigo mais perto</p>
           </div>
         </div>
 
-        <div class="conteudo">
-          <form class="cadastro" id="form-endereco">
-            <h2 class="cadastro__titulo">Onde você mora</h2>
-            <p class="cadastro__texto" id="dados-contato"></p>
-            <!-- Validação nativa do HTML: o erro aparece depois que a pessoa sai do campo -->
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-cep">CEP</label>
-              <input class="campo__entrada" id="dados-cep" required inputmode="numeric"
-                pattern="\d{5}-?\d{3}" autocomplete="postal-code" placeholder="36010-000"
-                aria-describedby="dados-cep-erro" />
-              <span class="campo__erro" id="dados-cep-erro">Digite o CEP com 8 números.</span>
+        <div class="conteudo dados-grade">
+          <!-- novalidate: quem confere é o app.js, que mostra o erro embaixo do campo certo -->
+          <form class="painel cadastro" id="form-endereco" method="post" novalidate>
+            <h2 class="bloco-titulo">Onde você mora</h2>
+            <p class="nota">Com o endereço certo, o alerta chega para a sua rua.</p>
+            <div class="campos">
+              <div class="campo">
+                <label class="campo__rotulo" for="dados-cep">CEP</label>
+                <input class="campo__entrada" id="dados-cep" inputmode="numeric" autocomplete="postal-code"
+                  placeholder="36010-000" aria-describedby="cep-ajuda dados-cep-erro" />
+                <span class="campo__ajuda" id="cep-ajuda" role="status"></span>
+                <span class="campo__erro" id="dados-cep-erro" hidden></span>
+              </div>
+              <div class="campo campo--largo">
+                <label class="campo__rotulo" for="dados-rua">Rua</label>
+                <input class="campo__entrada" id="dados-rua" autocomplete="address-line1"
+                  aria-describedby="dados-rua-erro" />
+                <span class="campo__erro" id="dados-rua-erro" hidden></span>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="dados-numero">Número na rua</label>
+                <input class="campo__entrada" id="dados-numero" maxlength="10" autocomplete="off"
+                  inputmode="numeric" aria-describedby="dados-numero-dica dados-numero-erro" />
+                <span class="campo__ajuda" id="dados-numero-dica">Em condomínio, o número do condomínio</span>
+                <span class="campo__erro" id="dados-numero-erro" hidden></span>
+                <label class="caixinha" for="dados-sem-numero">
+                  <input type="checkbox" id="dados-sem-numero" /> Minha casa não tem número
+                </label>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="dados-complemento">Complemento (opcional)</label>
+                <input class="campo__entrada" id="dados-complemento" maxlength="60"
+                  autocomplete="address-line2" placeholder="Casa 12, Bloco B apto 301"
+                  aria-describedby="dados-complemento-erro" />
+                <span class="campo__erro" id="dados-complemento-erro" hidden></span>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="dados-bairro">Bairro</label>
+                <input class="campo__entrada" id="dados-bairro" autocomplete="address-level3"
+                  aria-describedby="dados-bairro-erro" />
+                <span class="campo__erro" id="dados-bairro-erro" hidden></span>
+              </div>
+              <div class="campo">
+                <label class="campo__rotulo" for="dados-cidade">Cidade</label>
+                <input class="campo__entrada" id="dados-cidade" autocomplete="address-level2"
+                  aria-describedby="dados-cidade-erro" />
+                <span class="campo__erro" id="dados-cidade-erro" hidden></span>
+              </div>
             </div>
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-rua">Rua</label>
-              <input class="campo__entrada" id="dados-rua" required autocomplete="address-line1"
-                aria-describedby="dados-rua-erro" />
-              <span class="campo__erro" id="dados-rua-erro">Informe a rua.</span>
-            </div>
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-numero">Número na rua</label>
-              <input class="campo__entrada" id="dados-numero" maxlength="10" autocomplete="off"
-                placeholder="Em condomínio, o número do condomínio"
-                aria-describedby="dados-numero-erro" />
-              <span class="campo__erro" id="dados-numero-erro">Digite o número ou marque que não tem.</span>
-              <label class="cadastro__texto" for="dados-sem-numero">
-                <input type="checkbox" id="dados-sem-numero" /> Minha casa não tem número
-              </label>
-            </div>
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-complemento">Complemento (opcional)</label>
-              <input class="campo__entrada" id="dados-complemento" maxlength="60" autocomplete="address-line2"
-                placeholder="Ex.: Casa 12, Bloco B apto 301" />
-            </div>
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-bairro">Bairro</label>
-              <input class="campo__entrada" id="dados-bairro" required autocomplete="address-level3"
-                aria-describedby="dados-bairro-erro" />
-              <span class="campo__erro" id="dados-bairro-erro">Informe o bairro.</span>
-            </div>
-            <div class="campo">
-              <label class="campo__rotulo" for="dados-cidade">Cidade</label>
-              <input class="campo__entrada" id="dados-cidade" required autocomplete="address-level2"
-                aria-describedby="dados-cidade-erro" />
-              <span class="campo__erro" id="dados-cidade-erro">Informe a cidade.</span>
-            </div>
-            <button class="botao" type="submit">Salvar endereço</button>
-            <p class="mapa-aviso" id="dados-retorno" role="status" hidden></p>
+            <button class="botao pressionavel cadastro__salvar" type="submit" id="dados-salvar">
+              Salvar endereço
+            </button>
           </form>
 
-          <div class="cadastro">
-            <h2 class="cadastro__titulo">Sua casa no mapa</h2>
-            <p class="cadastro__texto">
+          <section class="painel cadastro" aria-labelledby="casa-titulo">
+            <h2 class="bloco-titulo" id="casa-titulo">Sua casa no mapa</h2>
+            <p class="nota">
               Toque no mapa para ajustar o ponto da sua casa. A distância até os abrigos usa esse
               ponto, e só você o vê.
             </p>
@@ -784,20 +837,18 @@
                 class="mapa-leaflet mapa-leaflet--alto"
                 id="mapa-casa"
                 role="application"
-                aria-label="Mapa para marcar a sua casa. Você também pode corrigir o endereço no formulário acima."
+                aria-label="Mapa para marcar a sua casa. Você também pode corrigir o endereço no formulário."
               ></div>
             </div>
             <p class="mapa-aviso" id="casa-retorno" role="status" hidden></p>
-          </div>
+          </section>
         </div>
       </section>
     </main>
 
     <footer class="rodape">
-      <p class="rodape__texto">
-        ALERA · No lugar certo, na hora certa · MonkeyNerds
-      </p>
-      <a class="rodape__link" href="../index.html">Conheça o projeto ALERA</a>
+      <p class="rodape__texto">A.L.E.R.A · No lugar certo, na hora certa · MonkeyNerds, FIAP</p>
+      <a class="rodape__link" href="../index.html">Conheça o projeto</a>
     </footer>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
@@ -807,6 +858,7 @@
     <script src="../js/api.js"></script>
     <script src="../js/endereco.js"></script>
     <script src="../js/mapa.js"></script>
+    <script src="../js/movimento.js"></script>
     <script src="../js/app.js"></script>
   </body>
 </html>

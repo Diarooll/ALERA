@@ -1,53 +1,49 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Source+Sans+3:wght@400;500;600&display=swap');
+/* ALERA · login.css
+   Tela de login e cadastro (app/login.html), na direção "Cartaz de rua".
+   Um lado é o cartaz: campo azul-noite chapado, manchete enorme em Bebas e a foto em arco.
+   O outro é o formulário no fundo claro. No celular o cartaz vira uma faixa no topo.
+   Só tokens do tokens.css; as fontes também vêm de lá. Mobile first. */
 
 :root {
-  --primaria: #1e2a5a;
-  --primaria-hover: #293976;
-  --destaque: #0b6e78;
-  --fundo: #eceae2;
-  --superficie: #fff;
-  --texto: #1a1d27;
-  --suave: #555a66;
-  --borda: #7d8290;
-  --linha: #d6d3c9;
-  --erro: #d7261e;
-  --titulo: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --corpo: 'Source Sans 3', system-ui, sans-serif;
-  --t: 0.2s ease;
+  --cartaz-fundo: var(--cor-primaria);
+  --cartaz-texto: #fff;
+  --botao-fundo: var(--cor-primaria);
+  --botao-texto: #fff;
+  --titulo-cor: var(--cor-primaria);
+  --trilho: color-mix(in srgb, var(--cor-borda) 30%, transparent);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+/* Modo escuro: data-tema vem do js/tema.js; o :has() vale para quem está sem script */
+:root[data-tema='escuro'],
+:root:has(#tema:checked) {
+  color-scheme: dark;
+  --cor-primaria: var(--cor-escuro-azul);
+  --cor-fundo: var(--cor-escuro-fundo);
+  --cor-superficie: var(--cor-escuro-superficie);
+  --cor-texto: var(--cor-escuro-texto);
+  --cor-texto-suave: var(--cor-escuro-texto-suave);
+  --cor-borda: var(--cor-escuro-borda);
+  --cor-linha: var(--cor-escuro-linha);
+  --cor-erro: var(--cor-escuro-erro);
+  --cartaz-fundo: var(--cor-escuro-azul-fundo);
+  --cartaz-texto: var(--cor-escuro-texto);
+  --botao-fundo: var(--cor-escuro-azul);
+  --botao-texto: var(--cor-escuro-sobre-azul);
+  --titulo-cor: var(--cor-escuro-texto);
 }
 
 [hidden] {
   display: none !important;
 }
 
-body {
-  min-height: 100vh;
-  font: 16px/1.5 var(--corpo);
-  color: var(--texto);
-  background: var(--fundo);
-  -webkit-font-smoothing: antialiased;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-/* grade de fundo */
-body::before {
-  content: '';
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  opacity: 0.6;
-  background-image:
-    linear-gradient(var(--linha) 1px, transparent 1px),
-    linear-gradient(90deg, var(--linha) 1px, transparent 1px);
-  background-size: 40px 40px;
-  background-position: center;
-  mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000, transparent);
-  -webkit-mask-image: radial-gradient(ellipse 60% 60% at 50% 50%, #000, transparent);
+body {
+  min-height: 100svh;
 }
 
 button,
@@ -55,320 +51,533 @@ input {
   font: inherit;
 }
 
-button {
-  cursor: pointer;
-}
-
 a {
-  color: var(--primaria);
-  text-decoration: none;
-  transition: color var(--t);
+  color: var(--cor-primaria);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
 }
 
-a:hover {
-  color: var(--destaque);
-}
+/* ---------- Página: cartaz + formulário ---------- */
 
-:focus-visible {
-  outline: 3px solid var(--destaque);
-  outline-offset: 3px;
-  border-radius: 6px;
-}
-
-/* ---------- layout ---------- */
-.page {
-  min-height: 100vh;
+.pagina {
+  position: relative;
   display: grid;
-  place-items: center;
-  padding: 32px 20px;
+  min-height: 100svh;
 }
 
-.card {
-  width: 100%;
-  max-width: 460px;
-  padding: 44px;
-  background: var(--superficie);
-  border: 1px solid var(--linha);
-  border-radius: 24px;
-  box-shadow:
-    0 1px 2px rgba(30, 42, 90, 0.06),
-    0 12px 24px -8px rgba(30, 42, 90, 0.12),
-    0 32px 64px -16px rgba(30, 42, 90, 0.16);
-  animation: entrada 0.5s ease-out both;
+.cartaz {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: var(--esp-3);
+  padding: var(--esp-3) var(--esp-4) 0;
+  overflow: clip;
+  background: var(--cartaz-fundo);
+  color: var(--cartaz-texto);
+  container-type: inline-size;
 }
 
-@keyframes entrada {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
-  }
+.cartaz-topo {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
-.logo {
+.marca {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 40px;
+  gap: var(--esp-3);
+  min-height: var(--toque-min);
+  color: inherit;
+  text-decoration: none;
 }
 
-.logo-symbol {
-  width: 48px;
-  height: 45px;
-  fill: var(--primaria);
+.marca-icone {
+  width: 36px;
+  height: 34px;
+  fill: currentColor;
 }
 
-.logo-text {
-  font: 800 24px/1 var(--titulo);
-  letter-spacing: 0.06em;
-  color: var(--primaria);
+.marca-texto {
+  font-family: var(--fonte-titulo);
+  font-size: 28px;
+  font-weight: var(--peso-titulo);
+  line-height: 1;
+  letter-spacing: 0.04em;
 }
 
-.view:not([hidden]) {
-  animation: entrada 0.35s ease-out both;
+.cartaz-texto {
+  align-self: end;
+  padding: var(--esp-2) 0 var(--esp-5);
 }
 
-/* ---------- cabeçalho ---------- */
-.head {
-  margin-bottom: 36px;
+/* A manchete. No cadastro ela vira o nome da rua (login.js põe a classe pelo tamanho) */
+.manchete {
+  margin: 0;
+  font-size: clamp(40px, 12.5vw, 88px);
+  line-height: 0.88;
+  letter-spacing: var(--tracking-titulo);
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+}
+.manchete--longa {
+  font-size: clamp(32px, 9vw, 64px);
+}
+.manchete--muito-longa {
+  font-size: clamp(28px, 7vw, 48px);
 }
 
-.head h1 {
-  margin-bottom: 10px;
-  font: 800 34px/1.15 var(--titulo);
-  letter-spacing: -0.02em;
-  color: var(--primaria);
+.cartaz-frase {
+  display: none;
+  margin: var(--esp-4) 0 0;
+  max-width: 34ch;
+  font-size: var(--fs-lg);
+  line-height: 1.4;
 }
 
-.head h1:focus {
-  outline: none;
+/* A foto colada no cartaz: arco, inclinada, cortada pela borda de baixo */
+.cartaz-foto {
+  align-self: end;
+  width: clamp(96px, 26vw, 200px);
+  aspect-ratio: 3 / 4;
+  margin: 0 0 -18%;
+  rotate: 5deg;
+  /* gira pelo canto de cima: a inclinação não passa da margem direita */
+  transform-origin: top right;
 }
 
-.head p {
-  font-size: 17px;
-  color: var(--suave);
+.cartaz-foto-arco {
+  height: 100%;
+  overflow: hidden;
+  /* topo em meio círculo: o raio vertical é metade da largura (3:4 → 37,5% da altura) */
+  border-radius: 50% 50% 0 0 / 37.5% 37.5% 0 0;
 }
 
-.head a,
-.forgot a {
-  font-family: var(--titulo);
-  font-weight: 700;
-  text-decoration: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 2px;
-  text-underline-offset: 4px;
-  transition:
-    color var(--t),
-    text-decoration-color var(--t);
+.cartaz-foto [data-obturador] {
+  height: 100%;
 }
 
-.head a:hover,
-.forgot a:hover {
-  text-decoration-color: currentColor;
+.cartaz-foto img {
+  object-position: 44% 50%;
 }
 
-/* ---------- formulário ---------- */
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 22px;
-}
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.field label {
-  font: 600 14px var(--titulo);
-}
-
-.control {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.icon {
+/* Botão do tema (mesmo checkbox #tema do site e do app).
+   No celular fica por cima da faixa do cartaz; no computador, no canto direito da página */
+.tema {
   position: absolute;
-  left: 16px;
-  width: 20px;
-  height: 20px;
-  color: var(--suave);
+  z-index: 2;
+  top: var(--esp-3);
+  right: var(--esp-4);
+  color: var(--cartaz-texto);
+}
+
+.tema-input {
+  position: absolute;
+  opacity: 0;
   pointer-events: none;
-  transition: color var(--t);
 }
 
-.control:focus-within .icon {
-  color: var(--primaria);
-}
-
-.control input {
-  width: 100%;
-  height: 56px;
-  padding: 0 16px 0 48px;
-  color: var(--texto);
-  background: var(--superficie);
-  border: 1px solid var(--borda);
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(30, 42, 90, 0.05);
-  outline: none;
-  transition:
-    border-color var(--t),
-    box-shadow var(--t);
-}
-
-.control input[type='password'],
-.control input.visivel {
-  padding-right: 52px;
-}
-
-.control input::placeholder {
-  color: var(--suave);
-  opacity: 0.7;
-}
-
-.control input:hover,
-.control input:focus {
-  border-color: var(--primaria);
-}
-
-.control input:focus {
-  box-shadow: 0 0 0 4px rgba(30, 42, 90, 0.12);
-}
-
-.control input[aria-invalid='true'] {
-  border-color: var(--erro);
-}
-
-.control input[aria-invalid='true']:focus {
-  box-shadow: 0 0 0 4px rgba(215, 38, 30, 0.1);
-}
-
-.control:has(input[aria-invalid='true']) .icon {
-  color: var(--erro);
-}
-
-.error {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--erro);
-}
-
-.hint {
-  font-size: 14px;
-  color: var(--suave);
-}
-
-/* consentimento: a caixa inteira é clicável */
-.field .consent {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
-  font: 400 15px/1.4 var(--corpo);
-  background: var(--superficie);
-  border: 1px solid var(--borda);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: border-color var(--t);
-}
-
-.consent:hover {
-  border-color: var(--primaria);
-}
-
-.consent:has(input[aria-invalid='true']) {
-  border-color: var(--erro);
-}
-
-.consent input {
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
-  accent-color: var(--primaria);
-  cursor: pointer;
-}
-
-/* botão de mostrar senha */
-.toggle {
-  position: absolute;
-  right: 6px;
+.tema-botao {
   display: grid;
   place-items: center;
-  width: 44px;
-  height: 44px;
-  color: var(--suave);
-  background: none;
-  border: none;
-  border-radius: 8px;
-  transition: color var(--t);
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: var(--raio);
+  color: inherit;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+.tema-botao:hover {
+  border-color: currentColor;
+}
+.tema-input:focus-visible + .tema-botao {
+  outline: 3px solid var(--cor-risco-atencao);
+  outline-offset: 2px;
 }
 
-.toggle:hover {
-  color: var(--primaria);
+.tema-icone {
+  width: var(--esp-5);
+  height: var(--esp-5);
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
-
-.toggle svg {
-  width: 22px;
-  height: 22px;
-}
-
-.toggle .eye-on,
-.toggle[aria-pressed='true'] .eye-off {
+.tema-icone-sol,
+:root[data-tema='escuro'] .tema-icone-lua,
+.tema-input:checked + .tema-botao .tema-icone-lua {
   display: none;
 }
-
-.toggle[aria-pressed='true'] .eye-on {
+:root[data-tema='escuro'] .tema-icone-sol,
+.tema-input:checked + .tema-botao .tema-icone-sol {
   display: block;
 }
 
-/* botão principal */
-.btn {
+/* ---------- Lado do formulário ---------- */
+
+.lado-form {
+  padding: var(--esp-6) var(--esp-4) var(--esp-7);
+}
+
+.tela {
+  width: 100%;
+  max-width: 30rem;
+}
+
+.tela-topo {
+  display: grid;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-5);
+}
+
+.tela-titulo {
+  margin: 0;
+  font-size: clamp(48px, 6vw, 72px);
+  color: var(--titulo-cor);
+}
+
+.tela-troca {
+  margin: 0;
+  font-size: 17px;
+}
+
+.tela-titulo:focus,
+.etapa-titulo:focus {
+  outline: none;
+}
+
+.formulario {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.campos {
+  display: grid;
+  gap: 20px;
+}
+
+.campo {
+  display: grid;
+  gap: 6px;
+}
+
+.campo > label {
+  font-weight: 600;
+}
+
+.caixa {
+  position: relative;
+}
+
+.caixa input {
+  width: 100%;
+  height: 56px;
+  padding: 0 var(--esp-4);
+  font-size: 17px;
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio);
+  transition: border-color var(--dur-curta) ease;
+}
+.caixa input::placeholder {
+  color: var(--cor-texto-suave);
+}
+.caixa input:hover {
+  border-color: var(--cor-texto);
+}
+.caixa input:focus {
+  border-color: var(--cor-primaria);
+}
+.caixa input[aria-invalid='true'] {
+  border-color: var(--cor-erro);
+}
+.caixa input:disabled {
+  color: var(--cor-texto-suave);
+  background: var(--cor-fundo);
+  border-color: var(--trilho);
+  cursor: not-allowed;
+}
+
+.caixa--senha input,
+.caixa--cep input {
+  padding-right: 56px;
+}
+
+/* Campo que o CEP acabou de preencher: pisca de leve em amarelo e apaga */
+.caixa::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--raio);
+  background: var(--cor-risco-atencao);
+  opacity: 0;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caixa.preenchido::after {
+    animation: piscar 900ms var(--curva-saida);
+  }
+}
+
+@keyframes piscar {
+  from {
+    opacity: 0.4;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.erro {
+  margin: 0;
+  font-weight: 600;
+  color: var(--cor-erro);
+}
+
+.erro--geral {
+  padding: var(--esp-3) var(--esp-4);
+  color: var(--cor-risco-perigo-texto);
+  background: var(--cor-risco-perigo);
+  border-radius: var(--raio);
+}
+
+.dica {
+  margin: 0;
+  font-size: 15px;
+  color: var(--cor-texto-suave);
+}
+
+/* ---------- Olho de mostrar/ocultar: o risco some e a pupila abre ---------- */
+
+.olho {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: grid;
+  place-items: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  padding: 0;
+  color: var(--cor-texto-suave);
+  background: none;
+  border: none;
+  border-radius: var(--raio);
+  cursor: pointer;
+}
+.olho:hover {
+  color: var(--cor-texto);
+}
+
+.olho-desenho {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  overflow: visible;
+}
+
+.olho-contorno,
+.olho-pupila {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform var(--dur-curta) var(--curva-mola);
+}
+.olho-contorno {
+  transform: scaleY(0.7);
+}
+.olho-pupila {
+  transform: scale(0.5);
+}
+.olho-risco {
+  clip-path: inset(0 0 0 0);
+  transition: clip-path var(--dur-curta) var(--curva-saida);
+}
+
+.olho[aria-pressed='true'] .olho-contorno,
+.olho[aria-pressed='true'] .olho-pupila {
+  transform: none;
+}
+.olho[aria-pressed='true'] .olho-risco {
+  clip-path: inset(0 0 0 100%);
+}
+
+/* ---------- Medidor de força da senha (cores dos níveis de risco) ---------- */
+
+.forca {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  height: 6px;
+  margin-top: 2px;
+}
+
+.forca-barra {
+  position: relative;
+  overflow: hidden;
+  background: var(--trilho);
+  border-radius: 2px;
+}
+
+.forca-barra::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--forca-cor, transparent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-curta) var(--curva-saida);
+}
+.forca-barra:nth-child(2)::after { transition-delay: 40ms; }
+.forca-barra:nth-child(3)::after { transition-delay: 80ms; }
+.forca-barra:nth-child(4)::after { transition-delay: 120ms; }
+
+.forca[data-nivel='1'] { --forca-cor: var(--cor-risco-perigo); }
+.forca[data-nivel='2'] { --forca-cor: var(--cor-risco-alerta); }
+.forca[data-nivel='3'] { --forca-cor: var(--cor-risco-atencao); }
+.forca[data-nivel='4'] { --forca-cor: var(--cor-risco-normal); }
+
+.forca[data-nivel='1'] .forca-barra:nth-child(-n + 1)::after,
+.forca[data-nivel='2'] .forca-barra:nth-child(-n + 2)::after,
+.forca[data-nivel='3'] .forca-barra:nth-child(-n + 3)::after,
+.forca[data-nivel='4'] .forca-barra::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Caixinha de marcar (a caixa inteira é clicável) ---------- */
+
+.marcar {
+  position: relative;
   display: flex;
+  align-items: flex-start;
+  gap: var(--esp-3);
+  padding: var(--esp-3) 0;
+  cursor: pointer;
+}
+
+.marcar input {
+  position: absolute;
+  top: var(--esp-3);
+  left: 0;
+  width: 26px;
+  height: 26px;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.marcar-caixa {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  background: var(--cor-superficie);
+  border: 2px solid var(--cor-borda);
+  border-radius: var(--raio);
+  transition:
+    background-color var(--dur-curta) ease,
+    border-color var(--dur-curta) ease;
+}
+
+.marcar-caixa svg {
+  width: 18px;
+  height: 18px;
+  color: var(--botao-texto);
+  opacity: 0;
+  transform: scale(0.5);
+  transition:
+    opacity var(--dur-toque) ease,
+    transform var(--dur-curta) var(--curva-mola);
+}
+
+.marcar:hover .marcar-caixa {
+  border-color: var(--cor-texto);
+}
+.marcar input:checked + .marcar-caixa {
+  background: var(--botao-fundo);
+  border-color: var(--botao-fundo);
+}
+.marcar input:checked + .marcar-caixa svg {
+  opacity: 1;
+  transform: scale(1);
+}
+.marcar input:focus-visible + .marcar-caixa {
+  outline: 3px solid var(--cor-risco-atencao);
+  outline-offset: 2px;
+}
+.marcar input[aria-invalid='true'] + .marcar-caixa {
+  border-color: var(--cor-erro);
+}
+
+.marcar-texto {
+  padding-top: 1px;
+}
+
+/* ---------- Botões: chapados, uma cor, canto de 4px ---------- */
+
+.botao {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  width: 100%;
   min-height: 56px;
-  margin-top: 4px;
-  padding: 12px 20px;
-  font: 700 16px var(--titulo);
-  color: #fff;
-  background: var(--primaria);
+  padding: 0 var(--esp-6);
+  font-family: var(--fonte-titulo);
+  font-size: 26px;
+  font-weight: var(--peso-titulo);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--botao-texto);
+  text-decoration: none;
+  background: var(--botao-fundo);
   border: none;
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(30, 42, 90, 0.2);
+  border-radius: var(--raio);
+  cursor: pointer;
   transition:
-    background-color var(--t),
-    transform var(--t),
-    box-shadow var(--t);
+    background-color var(--dur-curta) ease,
+    transform var(--dur-curta) var(--curva-mola);
+}
+.botao:hover {
+  background: color-mix(in srgb, var(--botao-fundo) 86%, var(--cor-texto));
 }
 
-.btn:hover {
-  background: var(--primaria-hover);
-  box-shadow: 0 8px 20px -6px rgba(30, 42, 90, 0.4);
-  transform: translateY(-1px);
+.botao--claro {
+  color: var(--cor-texto);
+  background: var(--cor-superficie);
+  border: 2px solid var(--cor-borda);
+}
+.botao--claro:hover {
+  background: var(--cor-superficie);
+  border-color: var(--cor-texto);
 }
 
-.btn:active {
-  transform: scale(0.98);
+.botao:disabled {
+  cursor: progress;
 }
 
-.btn:disabled {
-  opacity: 0.8;
-  cursor: not-allowed;
-  transform: none;
-}
-
-.btn.carregando::before {
+/* Carregando: um anel pequeno gira antes do texto */
+.botao.carregando::before {
   content: '';
   width: 18px;
   height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.35);
-  border-top-color: #fff;
+  border: 3px solid color-mix(in srgb, currentColor 35%, transparent);
+  border-top-color: currentColor;
   border-radius: 50%;
-  animation: girar 0.7s linear infinite;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .botao.carregando::before {
+    animation: girar 700ms linear infinite;
+  }
 }
 
 @keyframes girar {
@@ -377,82 +586,294 @@ a:hover {
   }
 }
 
-.forgot {
-  text-align: center;
-  color: var(--suave);
-}
-
-/* ---------- mobile ---------- */
-@media (max-width: 480px) {
-  body {
-    background: var(--superficie);
-  }
-
-  body::before {
-    display: none;
-  }
-
-  .page {
-    align-items: start;
-    padding: 48px 24px 32px;
-  }
-
-  .card {
-    padding: 0;
-    background: none;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    animation: none;
-  }
-
-  .logo {
-    margin-bottom: 36px;
-  }
-
-  .head h1 {
-    font-size: 30px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
-}
-
-/* ---------- modo teste (só no computador de quem desenvolve) ---------- */
-.modo-teste {
-  margin-top: 22px;
-  padding: 14px;
-  border: 2px dashed var(--borda);
-  border-radius: 12px;
-  text-align: center;
-  color: var(--suave);
-  font-size: 14px;
-}
-.modo-teste p {
-  margin: 0 0 10px;
-}
-.modo-teste__botoes {
+.acoes {
   display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
+  gap: var(--esp-3);
+  margin-top: var(--esp-1);
 }
-.modo-teste button {
-  min-height: 48px;
-  padding: 0 16px;
-  border: 2px solid var(--primaria);
-  border-radius: 10px;
-  background: transparent;
-  color: var(--primaria);
-  font-family: var(--titulo);
-  font-weight: 700;
+.acoes .btn,
+.acoes .botao:only-child {
+  flex: 1;
+}
+
+/* ---------- Cadastro: barra de etapas ---------- */
+
+.etapas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin: 0 0 var(--esp-6);
+  padding: 0;
+  list-style: none;
+}
+
+.etapas-item {
+  position: relative;
+  padding-top: 14px;
+  font-weight: 600;
+  color: var(--cor-texto-suave);
+  transition: color var(--dur-curta) ease;
+}
+
+.etapas-item::before,
+.etapas-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  border-radius: 2px;
+}
+.etapas-item::before {
+  background: var(--trilho);
+}
+.etapas-item::after {
+  background: var(--botao-fundo);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-media) var(--curva-saida);
+}
+
+.etapas-item[aria-current='step'],
+.etapas-item.feita {
+  color: var(--cor-texto);
+}
+.etapas-item[aria-current='step']::after,
+.etapas-item.feita::after {
+  transform: scaleX(1);
+}
+
+.etapa {
+  display: grid;
+  gap: var(--esp-5);
+}
+
+.etapa-titulo {
+  margin: 0;
+  font-size: 40px;
+  color: var(--titulo-cor);
+}
+
+.linha-dupla {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  gap: var(--esp-3);
+  align-items: start;
+}
+
+.caixa--cep .cep-girando {
+  position: absolute;
+  top: 50%;
+  right: 18px;
+  width: 20px;
+  height: 20px;
+  margin-top: -10px;
+  border: 3px solid var(--trilho);
+  border-top-color: var(--cor-primaria);
+  border-radius: 50%;
+  opacity: 0;
+  transition: opacity var(--dur-curta) ease;
+}
+.caixa--cep.buscando .cep-girando {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .caixa--cep.buscando .cep-girando {
+    animation: girar 700ms linear infinite;
+  }
+}
+
+/* Resumo da etapa Confirmar: um bloco de cor por assunto, sem contorno */
+.resumo {
+  padding: var(--esp-4) 20px;
+  background: var(--cor-superficie);
+  border-radius: var(--raio);
+}
+
+.resumo-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-3);
+}
+
+.resumo h4 {
+  margin: 0;
+  font-family: var(--fonte-texto);
+  font-size: 18px;
+  font-weight: var(--peso-forte);
+  line-height: 1.3;
+  letter-spacing: 0;
+}
+
+.resumo-corrigir {
+  min-height: 44px;
+  padding: 0 var(--esp-2);
+  font-weight: 600;
+  color: var(--cor-primaria);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  background: none;
+  border: none;
+  border-radius: var(--raio);
   cursor: pointer;
 }
-.modo-teste button:hover {
-  background: var(--primaria);
-  color: #fff;
+
+.resumo dl {
+  display: grid;
+  gap: 6px;
+  margin: var(--esp-2) 0 0;
+}
+.resumo dl div {
+  display: grid;
+  grid-template-columns: 6rem minmax(0, 1fr);
+  gap: var(--esp-2);
+}
+.resumo dt {
+  color: var(--cor-texto-suave);
+}
+.resumo dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Conta criada: aparece no lugar do formulário */
+.pronto {
+  display: grid;
+  gap: var(--esp-4);
+}
+.pronto p {
+  margin: 0;
+  font-size: 18px;
+}
+.pronto .pronto-mapa {
+  padding: var(--esp-4);
+  background: color-mix(in srgb, var(--cor-risco-atencao) 28%, var(--cor-superficie));
+  border-radius: var(--raio);
+}
+
+/* ---------- Modo teste (só no computador de quem desenvolve) ---------- */
+
+.modo-teste {
+  margin-top: var(--esp-7);
+  padding: var(--esp-4);
+  background: color-mix(in srgb, var(--cor-borda) 16%, transparent);
+  border-radius: var(--raio);
+}
+.modo-teste p {
+  margin: 0 0 var(--esp-3);
+  font-size: 15px;
+  color: var(--cor-texto-suave);
+}
+.modo-teste-botoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--esp-2);
+}
+.modo-teste .botao {
+  flex: 1 1 12rem;
+  min-height: var(--toque-min);
+  font-family: var(--fonte-texto);
+  font-size: var(--fs-md);
+  font-weight: 600;
+}
+
+/* ---------- Telas médias: a frase volta ---------- */
+
+@media (min-width: 600px) {
+  .cartaz {
+    padding: var(--esp-4) var(--esp-6) 0;
+  }
+  .cartaz-frase {
+    display: block;
+  }
+  .tema {
+    top: var(--esp-4);
+    right: var(--esp-6);
+  }
+  .lado-form {
+    padding: var(--esp-7) var(--esp-6) var(--esp-8);
+  }
+}
+
+/* ---------- Computador: cartaz à esquerda, parado; formulário à direita ---------- */
+
+@media (min-width: 960px) {
+  .pagina {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  }
+
+  .cartaz {
+    position: sticky;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    padding: 28px clamp(32px, 4vw, 56px);
+  }
+
+  .cartaz-texto {
+    align-self: stretch;
+    margin-top: 10svh;
+    padding: 0;
+  }
+
+  .manchete {
+    font-size: clamp(64px, 22cqi, 168px);
+  }
+  .manchete--longa {
+    font-size: clamp(52px, 15cqi, 128px);
+  }
+  .manchete--muito-longa {
+    font-size: clamp(44px, 11cqi, 96px);
+  }
+
+  .cartaz-foto {
+    position: absolute;
+    right: 8%;
+    bottom: -7%;
+    width: min(56cqi, 36svh);
+    margin: 0;
+    transform-origin: bottom center;
+  }
+
+  .tema {
+    top: 28px;
+    right: clamp(32px, 4vw, 56px);
+    color: var(--cor-texto);
+  }
+
+  .lado-form {
+    display: grid;
+    align-content: center;
+    justify-items: center;
+    min-height: 100svh;
+    padding: clamp(48px, 10svh, 112px) clamp(32px, 6vw, 112px);
+  }
+}
+
+/* Menos movimento: tudo aparece no lugar, só não viaja */
+@media (prefers-reduced-motion: reduce) {
+  .olho-contorno,
+  .olho-pupila,
+  .olho-risco,
+  .forca-barra::after,
+  .marcar-caixa svg,
+  .etapas-item::after,
+  .botao {
+    transition: none;
+  }
+}
+
+/* Título da etapa em cima da barra de etapas (o login.js troca o texto) */
+.etapas-topo {
+  display: grid;
+  gap: var(--esp-4);
+  margin-bottom: var(--esp-6);
+}
+.etapas-topo .etapas {
+  margin: 0;
 }

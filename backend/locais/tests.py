@@ -1,13 +1,30 @@
+import math
+
 from django.db import IntegrityError, transaction
 from django.db.models import ProtectedError
 from django.test import TestCase
 from rest_framework.test import APITestCase
 
+from alertas.models import HistoricoNivel
+from alertas.servicos import mudar_nivel
 from usuarios.models import Usuario
 
 from . import servicos
 
-from .models import Abrigo, AreaRisco, Bairro, Rua, TipoAbrigo
+from .models import RAIO_MAXIMO_M, Abrigo, AreaRisco, Bairro, CirculoRisco, Nivel, Rua, TipoAbrigo
+
+# Um grau de latitude tem uns 111 km
+METROS_POR_GRAU = 111_195
+CASA = (-21.7642, -43.3503)
+
+
+def ao_norte(metros, lat=CASA[0], lng=CASA[1]):
+    return round(lat + metros / METROS_POR_GRAU, 6), lng
+
+
+def a_leste(metros, lat=CASA[0], lng=CASA[1]):
+    # Longe do equador o grau de longitude encolhe: em Juiz de Fora tem uns 103 km
+    return lat, round(lng + metros / (METROS_POR_GRAU * math.cos(math.radians(lat))), 6)
 
 
 class LocaisTestes(TestCase):
@@ -191,3 +208,132 @@ class AbrigoTestes(APITestCase):
         with self.assertRaises(IntegrityError), transaction.atomic():
             Bairro.objects.create(nome='Centro', cidade='Juiz de Fora')
         self.assertIsNone(Bairro.objects.get().area)
+
+
+class AreaMaisGraveTestes(TestCase):
+    """O nível do morador vem daqui, e o app pergunta a cada minuto."""
+
+    def area(self, nome, nivel, *bolinhas):
+        area = AreaRisco.objects.create(nome=nome, nivel=nivel)
+        for (lat, lng), raio_m in bolinhas:
+            CirculoRisco.objects.create(area=area, latitude=lat, longitude=lng, raio_m=raio_m)
+        return area
+
+    def na_casa(self):
+        return servicos.area_mais_grave(*CASA)
+
+    def test_gravidade_vai_do_normal_ao_perigo(self):
+        # A ordem do Nivel decide quem é "mais grave": mudar a ordem lá muda o alerta do morador
+        ordem = sorted(Nivel.values, key=servicos.GRAVIDADE.get)
+        self.assertEqual(ordem, ['normal', 'atencao', 'alerta', 'perigo'])
+
+    def test_bolinha_grande_vale_ate_a_borda_em_qualquer_direcao(self):
+        # A conta da casa até o centro da bolinha tem que valer também no limite do raio
+        for nome, centro in (
+            ('Norte', ao_norte(RAIO_MAXIMO_M - 10)),
+            ('Sul', ao_norte(-(RAIO_MAXIMO_M - 10))),
+            ('Leste', a_leste(RAIO_MAXIMO_M - 10)),
+            ('Oeste', a_leste(-(RAIO_MAXIMO_M - 10))),
+        ):
+            with self.subTest(nome):
+                area = self.area(nome, Nivel.ALERTA, (centro, RAIO_MAXIMO_M))
+                self.assertEqual(self.na_casa(), area)
+                area.delete()
+
+    def test_bolinha_que_nao_alcanca_a_casa_nao_conta(self):
+        self.area('Norte', Nivel.PERIGO, (ao_norte(RAIO_MAXIMO_M + 10), RAIO_MAXIMO_M))
+        self.area('Leste', Nivel.PERIGO, (a_leste(RAIO_MAXIMO_M + 10), RAIO_MAXIMO_M))
+        self.area('Pequena', Nivel.PERIGO, (ao_norte(120), 100))
+        self.assertIsNone(self.na_casa())
+
+    def test_casa_em_duas_areas_vale_a_mais_grave(self):
+        self.area('Atenção Exemplo', Nivel.ATENCAO, (CASA, 300))
+        perigo = self.area('Perigo Exemplo', Nivel.PERIGO, (ao_norte(100), 300))
+        self.assertEqual(self.na_casa(), perigo)
+
+    def test_empate_no_nivel_vale_a_ordem_alfabetica(self):
+        self.area('Bairro B', Nivel.ALERTA, (CASA, 300))
+        primeira = self.area('Bairro A', Nivel.ALERTA, (ao_norte(50), 300))
+        self.assertEqual(self.na_casa(), primeira)
+
+    def test_area_com_varias_bolinhas_na_casa_aparece_uma_vez(self):
+        area = self.area('Encosta', Nivel.ALERTA, (CASA, 300), (ao_norte(50), 300))
+        self.assertEqual(self.na_casa(), area)
+
+    def test_area_sem_bolinhas_nao_conta(self):
+        self.area('Sem desenho', Nivel.PERIGO)
+        self.assertIsNone(self.na_casa())
+
+    def test_uma_consulta_so_mesmo_com_a_cidade_cheia_de_areas(self):
+        # Áreas longe da casa não precisam nem sair do banco
+        for i in range(30):
+            self.area(f'Longe {i}', Nivel.PERIGO, (ao_norte(10_000 + 1_000 * i), 500))
+        perto = self.area('Perto', Nivel.ATENCAO, (CASA, 200))
+        with self.assertNumQueries(1):
+            self.assertEqual(self.na_casa(), perto)
+
+    def test_sem_a_casa_no_mapa_nem_consulta_o_banco(self):
+        self.area('Encosta', Nivel.PERIGO, (CASA, 300))
+        with self.assertNumQueries(0):
+            self.assertIsNone(servicos.area_mais_grave(None, None))
+
+    def test_funciona_perto_da_linha_de_data_e_do_polo(self):
+        # Fora de Juiz de Fora, mas a conta não pode quebrar onde a longitude dá a volta
+        lado = self.area('Linha de data', Nivel.ALERTA, (('-16.500000', '-179.999000'), 1000))
+        self.assertEqual(servicos.area_mais_grave('-16.500000', '179.999000'), lado)
+        polo = self.area('Polo', Nivel.ALERTA, (('-89.999000', '10.000000'), 1000))
+        self.assertEqual(servicos.area_mais_grave('-89.999000', '-170.000000'), polo)
+
+
+class ApagarAreaTestes(APITestCase):
+    def setUp(self):
+        self.admin = Usuario.objects.create_superuser('admin@exemplo.com', 'senha-do-painel-1')
+        self.client.force_authenticate(self.admin)
+        self.area = AreaRisco.objects.create(nome='Encosta Exemplo')
+
+    def apagar(self):
+        return self.client.delete(f'/api/areas/{self.area.pk}/')
+
+    def test_abrigo_ligado_pelo_cadastro_antigo_nao_prende_a_area(self):
+        # Antes o abrigo pertencia a uma área. O painel nem mostra mais esse vínculo,
+        # então ele não pode impedir o admin de apagar a área
+        abrigo = Abrigo.objects.create(
+            nome='Escola Antiga', area=self.area, latitude='-21.76', longitude='-43.35'
+        )
+        self.assertEqual(self.apagar().status_code, 204)
+        self.assertFalse(AreaRisco.objects.exists())
+        abrigo.refresh_from_db()
+        self.assertIsNone(abrigo.area)
+
+    def test_area_com_alerta_explica_o_motivo(self):
+        mudar_nivel(self.area, Nivel.ALERTA, HistoricoNivel.Origem.DEFESA_CIVIL, self.admin)
+        abrigo = Abrigo.objects.create(
+            nome='Escola Antiga', area=self.area, latitude='-21.76', longitude='-43.35'
+        )
+        resposta = self.apagar()
+        self.assertEqual(resposta.status_code, 409)
+        self.assertIn('alertas', resposta.data['detail'])
+        # Nada muda quando a área não pode sair
+        abrigo.refresh_from_db()
+        self.assertEqual(abrigo.area, self.area)
+
+    def test_morador_nao_cria_muda_nem_apaga_area(self):
+        self.client.force_authenticate(Usuario.objects.create_user('m@exemplo.com', 'senha-do-app-1'))
+        rota = f'/api/areas/{self.area.pk}/'
+        bolinha = {'latitude': '-21.76', 'longitude': '-43.35', 'raio_m': 200}
+        self.assertEqual(
+            self.client.post('/api/areas/', {'nome': 'Nova', 'circulos': [bolinha]}, format='json').status_code,
+            403,
+        )
+        self.assertEqual(self.client.patch(rota, {'circulos': [bolinha]}, format='json').status_code, 403)
+        self.assertEqual(self.client.delete(rota).status_code, 403)
+        self.assertFalse(self.area.circulos.exists())
+        self.assertTrue(AreaRisco.objects.filter(pk=self.area.pk).exists())
+
+    def test_area_com_rua_antiga_nao_culpa_os_alertas(self):
+        Rua.objects.create(nome='Rua Exemplo', bairro='Centro', area=self.area)
+        resposta = self.apagar()
+        self.assertEqual(resposta.status_code, 409)
+        self.assertNotIn('alertas', resposta.data['detail'])
+        self.assertIn('ruas', resposta.data['detail'])
+        self.assertTrue(AreaRisco.objects.filter(pk=self.area.pk).exists())

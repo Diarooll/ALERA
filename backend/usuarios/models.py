@@ -1,10 +1,16 @@
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 from django.db import models
+from django.db.models.functions import Lower
+
+
+def normalizar_email(email):
+    """O e-mail vale inteiro em minúsculas: "Maria@Gmail.com" e "maria@gmail.com" são a mesma conta."""
+    return (email or '').strip().lower()
 
 
 class UsuarioManager(BaseUserManager):
     def create_user(self, email, password=None, **campos):
-        usuario = self.model(email=email.strip().lower(), **campos)
+        usuario = self.model(email=normalizar_email(email), **campos)
         usuario.set_password(password)  # guarda só o hash, nunca a senha
         usuario.save(using=self._db)
         return usuario
@@ -12,6 +18,10 @@ class UsuarioManager(BaseUserManager):
     def create_superuser(self, email, password=None, **campos):
         campos.update(is_staff=True, is_superuser=True)
         return self.create_user(email, password, **campos)
+
+    def get_by_natural_key(self, email):
+        # Usado pelo login do app e do /admin/: acha a conta digitada com qualquer caixa
+        return self.get(email=normalizar_email(email))
 
 
 class Usuario(AbstractUser):
@@ -62,9 +72,26 @@ class Usuario(AbstractUser):
                 ),
                 name='usuario_lat_lng_juntas',
             ),
+            # Garantia no próprio banco: nem por script ou importação nascem duas contas
+            # com o mesmo e-mail escrito com maiúsculas diferentes
+            models.UniqueConstraint(
+                Lower('email'),
+                name='usuario_email_unico_sem_caixa',
+                violation_error_message='Já existe uma conta com este e-mail.',
+            ),
         ]
 
     objects = UsuarioManager()
+
+    def clean(self):
+        super().clean()
+        # O padrão do Django só passa o domínio para minúsculas. Sem isto, a conta criada
+        # no /admin/ como "Ana@..." ficava assim e não entrava pelo app
+        self.email = normalizar_email(self.email)
+
+    def save(self, *args, **kwargs):
+        self.email = normalizar_email(self.email)
+        super().save(*args, **kwargs)
 
     @property
     def papel(self):

@@ -1,0 +1,1216 @@
+/* ALERA · painel-base.css
+   Cópia do app.css antigo, só para o painel (admin.html). O app.css foi redesenhado
+   e passou a ser só do app do morador; assim o painel não quebra. Fontes, cores e
+   cantos novos chegam pelo tokens.css. Redesenho próprio do painel: próxima etapa. */
+
+/* ALERA · app.css (prévia do app)
+   Direção "Noite de Chuva": azul-marinho e bege, a mesma paleta do site e das apresentações.
+   As cores da marca e de risco vêm do tokens.css; os --app-* só escolhem qual usar em cada tema.
+   As abas funcionam sem JavaScript: cada uma é uma tela aberta por :target (o app.js só confere o login). */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Tema claro (padrão) */
+:root {
+  color-scheme: light;
+  --app-azul:        var(--cor-primaria);    /* botões, links · branco: 13,69:1 */
+  --app-azul-hover:  #141D42;
+  --app-azul-claro:  #DDE1F0;                /* realce da "sua rua" */
+  --app-sobre-azul:  #FFFFFF;
+  --app-destaque:    var(--cor-destaque);    /* só gamificação · no realce: 4,57:1 */
+  --app-topo:        var(--cor-primaria);    /* faixa azul nos dois temas */
+  --app-topo-texto:  #FFFFFF;
+  --app-topo-suave:  #DDE1F0;                /* na faixa azul: 9,9:1 */
+  --app-fundo:       var(--cor-fundo);
+  --app-superficie:  var(--cor-superficie);
+  --app-texto:       var(--cor-texto);
+  --app-texto-suave: var(--cor-texto-suave);
+  --app-borda:       var(--cor-borda);
+  --app-linha:       var(--cor-linha);
+  --app-erro:        var(--cor-erro);
+  --app-foco: 0 0 0 3px var(--app-superficie), 0 0 0 6px var(--app-azul);
+  --app-raio: 10px;
+  --app-largura: 1120px;
+  --app-altura-abas: 64px;
+}
+
+/* Tema escuro: ligado pelo botão sol/lua do topo.
+   As cores de risco não mudam: são iguais em tudo. */
+:root:has(#tema:checked) {
+  color-scheme: dark;
+  --app-azul:        var(--cor-escuro-azul);
+  --app-azul-hover:  var(--cor-escuro-azul-hover);
+  --app-azul-claro:  var(--cor-escuro-azul-fundo);
+  --app-sobre-azul:  var(--cor-escuro-sobre-azul);
+  --app-destaque:    var(--cor-escuro-destaque);
+  --app-fundo:       var(--cor-escuro-fundo);
+  --app-superficie:  var(--cor-escuro-superficie);
+  --app-texto:       var(--cor-escuro-texto);
+  --app-texto-suave: var(--cor-escuro-texto-suave);
+  --app-borda:       var(--cor-escuro-borda);
+  --app-linha:       var(--cor-escuro-linha);
+  --app-erro:        var(--cor-escuro-erro);
+}
+
+/* Níveis de risco: fundo e texto sempre juntos, vindos do tokens.css */
+.nivel--normal  { background: var(--cor-risco-normal);  color: var(--cor-risco-normal-texto); }
+.nivel--atencao { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
+.nivel--alerta  { background: var(--cor-risco-alerta);  color: var(--cor-risco-alerta-texto); }
+.nivel--perigo  { background: var(--cor-risco-perigo);  color: var(--cor-risco-perigo-texto); }
+
+/* ---------- Base ---------- */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--app-fundo);
+  color: var(--app-texto);
+  /* espaço pras abas fixas não cobrirem o rodapé */
+  padding-bottom: calc(var(--app-altura-abas) + env(safe-area-inset-bottom));
+}
+.desenhos {
+  position: absolute;
+}
+.icone {
+  display: block;
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.conteudo {
+  width: min(100% - 2 * var(--esp-4), var(--app-largura));
+  margin-inline: auto;
+}
+
+/* ---------- Topo ---------- */
+.topo {
+  background: var(--app-topo);
+  color: var(--app-topo-texto);
+}
+.topo__faixa {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-5);
+  width: min(100% - 2 * var(--esp-4), var(--app-largura));
+  min-height: var(--esp-8);
+  margin-inline: auto;
+}
+.topo__marca {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  border-radius: var(--app-raio);
+  color: inherit;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .04em;
+  text-decoration: none;
+}
+.topo__logo {
+  width: var(--esp-6);
+  height: var(--esp-6);
+  fill: currentColor;
+  flex-shrink: 0;
+}
+.topo__acoes {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin-left: auto;
+}
+.topo__ligar {
+  display: none; /* no celular o Ligar 199 fica na tela de alerta, logo abaixo da rota */
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-4);
+  border-radius: var(--app-raio);
+  box-shadow: inset 0 0 0 2px var(--app-topo-texto);
+  color: var(--app-topo-texto);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+}
+.topo__ligar:hover {
+  background: var(--app-topo-texto);
+  color: var(--cor-primaria);
+}
+/* Botão que aparece sempre, inclusive no celular (o Sair) */
+.topo__ligar--sempre {
+  display: inline-flex;
+  padding: 0 var(--esp-3);
+}
+
+/* Botão de tema: mostra a lua no claro (pra escurecer) e o sol no escuro (pra clarear) */
+.tema {
+  display: grid;
+  place-items: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: var(--app-raio);
+  cursor: pointer;
+}
+.tema:hover {
+  box-shadow: inset 0 0 0 2px var(--app-topo-suave);
+}
+.tema__sol { display: none; }
+:root:has(#tema:checked) .tema__sol { display: block; }
+:root:has(#tema:checked) .tema__lua { display: none; }
+
+/* Foco dentro da faixa azul: anel branco, que aparece nos dois temas */
+#tema:focus-visible + .tema,
+.topo__marca:focus-visible,
+.topo__ligar:focus-visible,
+.faixa__voltar:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px var(--app-topo-texto);
+}
+
+/* ---------- Menu: abas embaixo no celular, no topo a partir de 900px ---------- */
+.menu {
+  position: fixed;
+  inset: auto 0 0 0;
+  z-index: 10;
+  background: var(--app-superficie);
+  border-top: 1px solid var(--app-linha);
+  padding-bottom: env(safe-area-inset-bottom); /* barra de gestos do iPhone */
+}
+.menu__lista {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menu__link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: var(--app-altura-abas);
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  text-decoration: none;
+}
+.menu__link:hover {
+  color: var(--app-azul);
+}
+.menu__link:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: inset 0 0 0 3px var(--app-azul);
+}
+
+/* Aba ativa: quem manda é a tela aberta (:target). Rota é parte do Alerta. */
+body:not(:has(.tela:target, .detalhe:target)) .menu__link[href="#alerta"],
+body:has(#alerta:target)     .menu__link[href="#alerta"],
+body:has(#rota:target)       .menu__link[href="#alerta"],
+body:has(#missoes:target, .detalhe:target) .menu__link[href="#missoes"],
+body:has(#ranking:target)    .menu__link[href="#ranking"],
+body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
+  color: var(--app-azul);
+  font-weight: var(--peso-forte);
+  box-shadow: inset 0 3px 0 var(--app-azul);
+}
+
+/* ---------- Telas: só uma aparece. Sem nenhuma aberta, vale o Alerta. ---------- */
+.telas {
+  flex: 1;
+}
+.tela {
+  display: none;
+  scroll-margin-top: 200px; /* maior que o topo: abrir uma tela não esconde o topo */
+  padding-bottom: var(--esp-6);
+}
+.tela:target,
+.tela:has(.detalhe:target),
+body:not(:has(.tela:target, .detalhe:target)) #alerta {
+  display: block;
+}
+
+/* Faixa azul com o título de cada tela */
+.faixa {
+  padding-block: var(--esp-3) var(--esp-5);
+  margin-bottom: var(--esp-5);
+  background: var(--app-topo);
+  color: var(--app-topo-texto);
+}
+.faixa__titulo {
+  margin: 0;
+  font-size: var(--fs-2xl);
+  letter-spacing: -.015em;
+}
+.faixa__apoio {
+  margin: var(--esp-1) 0 0;
+  color: var(--app-topo-suave);
+}
+.faixa__voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-1);
+  min-height: var(--toque-min);
+  margin-bottom: var(--esp-1);
+  padding-right: var(--esp-3);
+  border-radius: var(--app-raio);
+  color: var(--app-topo-texto);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+}
+.faixa__voltar:hover {
+  text-decoration: underline;
+}
+/* No alerta, o selo do nível sobe e fica metade em cima da faixa */
+.faixa--selo {
+  padding-bottom: var(--esp-7);
+  margin-bottom: 0;
+}
+
+/* ---------- Botões ---------- */
+.botao {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--esp-2);
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--esp-5);
+  border: none;
+  border-radius: var(--app-raio);
+  background: var(--app-azul);
+  color: var(--app-sobre-azul);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-md);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color .15s ease;
+}
+.botao:hover {
+  background: var(--app-azul-hover);
+}
+.botao:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+.botao--secundario,
+.botao--secundario:hover {
+  background: transparent;
+  color: var(--app-azul);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+}
+.botao--secundario:hover {
+  box-shadow: inset 0 0 0 3px var(--app-azul);
+}
+.botao--secundario:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--app-azul), var(--app-foco);
+}
+.botao--texto,
+.botao--texto:hover {
+  background: transparent;
+  color: var(--app-azul);
+}
+.botao--texto:hover {
+  text-decoration: underline;
+}
+
+/* ---------- Alerta ---------- */
+.alerta {
+  display: grid;
+  gap: var(--esp-5);
+  margin-top: -28px; /* o selo sobe em cima da faixa azul */
+}
+.selo {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: 56px;
+  margin: 0;
+  padding: var(--esp-2) var(--esp-4);
+  border-radius: var(--app-raio);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-lg);
+  letter-spacing: .05em;
+}
+.selo .icone {
+  stroke-width: 2.5;
+}
+.alerta__abrigo {
+  margin: var(--esp-3) 0 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-left: 5px solid var(--app-azul);
+  border-radius: 0 var(--app-raio) var(--app-raio) 0;
+  background: var(--app-superficie);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.3;
+  overflow-wrap: anywhere;
+}
+.alerta__ordem {
+  margin: var(--esp-4) 0 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-xl);
+  line-height: 1.22;
+  letter-spacing: -.01em;
+  text-wrap: balance; /* evita uma palavra sozinha na última linha */
+}
+.medidor {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--esp-1);
+  margin-top: var(--esp-4);
+}
+.medidor__parte {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--app-linha);
+}
+.medidor__parte--cheia {
+  background: var(--app-azul);
+}
+.medidor__legenda {
+  margin: var(--esp-1) 0 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+.alerta__mapa {
+  margin-bottom: var(--esp-4);
+}
+.destino {
+  display: grid;
+  gap: var(--esp-4);
+}
+.destino__rotulo,
+.destino__nome,
+.destino__info {
+  margin: 0;
+}
+.destino__rotulo,
+.destino__info {
+  color: var(--app-texto-suave);
+}
+.destino__nome {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.25;
+}
+.alerta__ligar {
+  margin-top: var(--esp-1);
+}
+
+/* Lista do que fazer em cada nível */
+.subtitulo {
+  margin: 0 0 var(--esp-3);
+  font-size: var(--fs-lg);
+}
+.niveis {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.niveis__item {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  align-items: center;
+  gap: var(--esp-1) var(--esp-3);
+  padding: var(--esp-3);
+  border-bottom: 1px solid var(--app-linha);
+  color: var(--app-texto-suave);
+}
+.niveis__item > span:last-child {
+  grid-column: 2;
+}
+.niveis__cor {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+.niveis__nome {
+  color: var(--app-texto);
+  font-size: var(--fs-sm);
+  letter-spacing: .04em;
+}
+/* O nível que vale agora: a linha ganha contorno e o texto fica mais forte */
+.niveis__item--agora {
+  border-radius: var(--raio-campo);
+  border-bottom-color: transparent;
+  background: var(--app-superficie);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+  color: var(--app-texto);
+  font-weight: var(--peso-forte);
+}
+
+/* ---------- Mapa: tem tema próprio. Segue o app, e o botão sol/lua (#mapa-tema) inverte. */
+.mapa-caixa {
+  position: relative;
+  --mapa-fundo:   #FFFFFF;
+  --mapa-rua:     #E2E0D8;
+  --mapa-texto:   var(--cor-texto);
+  --mapa-caminho: var(--cor-primaria);
+  --mapa-plantio: #2B6A3F;
+  --mapa-lua: block;
+  --mapa-sol: none;
+}
+:root:not(:has(#tema:checked)):has(#mapa-tema:checked) .rota__mapa,
+:root:has(#tema:checked):not(:has(#mapa-tema:checked)) .mapa-caixa {
+  --mapa-fundo:   var(--cor-escuro-superficie);
+  --mapa-rua:     var(--cor-escuro-linha);
+  --mapa-texto:   var(--cor-escuro-texto);
+  --mapa-caminho: var(--cor-escuro-azul);
+  --mapa-plantio: #86EFAC;
+  --mapa-lua: none;
+  --mapa-sol: block;
+}
+.mapa {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: var(--mapa-fundo);
+  border-radius: var(--app-raio);
+}
+.mapa__rua,
+.mapa__perigo {
+  stroke-width: 14;
+}
+.mapa__rua     { stroke: var(--mapa-rua); }
+.mapa__perigo  { stroke: var(--cor-risco-alerta); }
+.mapa__caminho {
+  fill: none;
+  stroke: var(--mapa-caminho);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.mapa__ponto {
+  fill: var(--mapa-caminho);
+  stroke: var(--mapa-fundo);
+  stroke-width: 3;
+}
+.mapa__rotulo {
+  fill: var(--mapa-texto);
+  font-family: var(--fonte-texto);
+  font-size: 13px;
+  font-weight: var(--peso-forte);
+  paint-order: stroke; /* contorno da cor do mapa, pra ler em cima das ruas */
+  stroke: var(--mapa-fundo);
+  stroke-width: 4;
+  stroke-linejoin: round;
+}
+.mapa-tema {
+  position: absolute;
+  top: var(--esp-2);
+  right: var(--esp-2);
+  display: grid;
+  place-items: center;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: var(--app-raio);
+  background: var(--mapa-fundo);
+  color: var(--mapa-texto);
+  box-shadow: inset 0 0 0 2px var(--mapa-rua);
+  cursor: pointer;
+}
+.mapa-tema:hover {
+  box-shadow: inset 0 0 0 2px var(--mapa-texto);
+}
+#mapa-tema:focus-visible + .mapa-tema {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+.mapa-tema__lua { display: var(--mapa-lua); }
+.mapa-tema__sol { display: var(--mapa-sol); }
+
+/* ---------- Rota segura ---------- */
+.rota {
+  display: grid;
+  gap: var(--esp-4);
+}
+.rota__nome {
+  margin: 0 0 var(--esp-1);
+  font-size: var(--fs-lg);
+}
+.rota__tempo {
+  color: var(--app-texto);
+}
+.rota__evitar {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: var(--esp-3) var(--esp-4);
+  border-radius: var(--app-raio);
+  font-weight: var(--peso-forte);
+}
+.rota__passos {
+  counter-reset: passo;
+  display: grid;
+  gap: var(--esp-3);
+  margin: 0;
+  padding: var(--esp-4) 0;
+  border-block: 1px solid var(--app-linha);
+  list-style: none;
+}
+.rota__passos li {
+  counter-increment: passo;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: var(--esp-3);
+}
+.rota__passos li::before {
+  content: counter(passo);
+  display: grid;
+  place-items: center;
+  width: var(--esp-6);
+  height: var(--esp-6);
+  border-radius: 50%;
+  background: var(--app-azul);
+  color: var(--app-sobre-azul);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-sm);
+}
+.rota__acoes {
+  display: grid;
+  gap: var(--esp-3);
+}
+
+/* ---------- Missões ---------- */
+.missoes {
+  display: grid;
+  gap: var(--esp-4);
+}
+/* Abas Para fazer / Concluídas: cada aba mostra só as suas missões */
+.missoes[data-aba="fazer"] .missao[data-concluida],
+.missoes[data-aba="concluidas"] .missao:not([data-concluida]) {
+  display: none;
+}
+.missoes__vazio {
+  grid-column: 1 / -1;
+}
+.abas-missoes {
+  display: flex;
+  gap: var(--esp-2);
+  margin-bottom: var(--esp-4);
+}
+.aba-missao {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--esp-2);
+  min-height: var(--toque-min, 44px);
+  padding: 0 var(--esp-4);
+  border: 2px solid var(--app-linha);
+  border-radius: 999px;
+  background: var(--app-superficie);
+  color: var(--app-texto);
+  font: inherit;
+  font-weight: var(--peso-forte);
+  cursor: pointer;
+}
+.aba-missao[aria-selected="true"] {
+  border-color: var(--app-azul);
+  background: var(--app-azul);
+  color: #fff;
+}
+.aba-missao:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+.aba-missao__conta {
+  font-variant-numeric: tabular-nums;
+  opacity: .85;
+}
+.missao[data-concluida] .missao__titulo::after {
+  content: " ✓";
+}
+/* Cada tipo de missão tem a sua cor: --tipo pra faixas e botões (texto branco),
+   --tipo-texto pra ícones e textos em cima do cartão */
+.tipo--bueiro { --tipo: #274B7A; --tipo-texto: #274B7A; }           /* branco: 8,9:1 */
+.tipo--abrigo { --tipo: var(--cor-destaque); --tipo-texto: var(--cor-destaque); } /* branco: 5,97:1 */
+.tipo--muda   { --tipo: #2B6A3F; --tipo-texto: #2B6A3F; }           /* branco: 6,5:1 */
+:root:has(#tema:checked) .tipo--bueiro { --tipo-texto: #93C5FD; }
+:root:has(#tema:checked) .tipo--abrigo { --tipo-texto: #22D3EE; }
+:root:has(#tema:checked) .tipo--muda   { --tipo-texto: #86EFAC; }
+
+.missao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--esp-2);
+  padding: var(--esp-4);
+  background: var(--app-superficie);
+  border-radius: var(--app-raio);
+}
+.missao:hover {
+  box-shadow: inset 0 0 0 2px var(--tipo-texto);
+}
+/* O link cobre o cartão inteiro, então clicar em qualquer parte abre os detalhes */
+.missao__abrir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--esp-2);
+  min-height: var(--toque-min);
+  color: var(--tipo-texto);
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  text-decoration: none;
+}
+.missao__abrir::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--app-raio);
+}
+.missao__abrir:focus-visible {
+  outline: none;
+}
+.missao__abrir:focus-visible::after {
+  box-shadow: var(--app-foco);
+}
+.missao__topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--esp-1);
+}
+.missao__icone {
+  width: var(--esp-6);
+  height: var(--esp-6);
+  fill: none;
+  stroke: var(--tipo-texto);
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.missao__pontos {
+  padding: 2px var(--esp-3);
+  border-radius: var(--raio-botao);
+  background: var(--app-destaque);
+  color: var(--app-sobre-azul);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.missao__titulo {
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.missao__texto {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+.progresso {
+  appearance: none;
+  width: 100%;
+  height: var(--esp-2);
+  margin-top: auto;
+  border: none;
+  border-radius: var(--raio-botao);
+  background: var(--app-linha);
+  overflow: hidden;
+}
+.progresso::-webkit-progress-bar   { background: var(--app-linha); }
+.progresso::-webkit-progress-value { background: var(--app-destaque); border-radius: var(--raio-botao); }
+.progresso::-moz-progress-bar      { background: var(--app-destaque); border-radius: var(--raio-botao); }
+.progresso__legenda {
+  margin: 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Detalhes das missões: janela por cima da tela (:target, sem JavaScript).
+   No celular sobe de baixo, no computador fica centralizada. ---------- */
+.detalhe {
+  display: none;
+}
+.detalhe:target {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+body:has(.detalhe:target) {
+  overflow: hidden; /* a tela de trás não rola junto */
+}
+.detalhe__fundo {
+  position: absolute;
+  inset: 0;
+  background: rgb(10 14 30 / .65);
+}
+.detalhe__caixa {
+  position: relative;
+  width: 100%;
+  max-height: 92dvh;
+  overflow-y: auto;
+  border-radius: var(--raio-card) var(--raio-card) 0 0;
+  background: var(--app-fundo);
+  animation: detalhe-sobe .2s ease-out;
+}
+@keyframes detalhe-sobe {
+  from { transform: translateY(24px); opacity: 0; }
+}
+.detalhe__topo {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--esp-8);
+  padding: var(--esp-2) var(--esp-2) var(--esp-2) var(--esp-4);
+  background: var(--tipo);
+  color: #FFFFFF;
+}
+.detalhe__titulo {
+  flex: 1;
+  margin: 0;
+  font-size: var(--fs-lg);
+}
+.detalhe__fechar {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: var(--toque-min);
+  height: var(--toque-min);
+  border-radius: var(--app-raio);
+  color: inherit;
+}
+.detalhe__fechar:hover {
+  box-shadow: inset 0 0 0 2px #FFFFFF;
+}
+.detalhe__fechar:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: 0 0 0 3px #FFFFFF;
+}
+.detalhe__corpo {
+  display: grid;
+  gap: var(--esp-5);
+  padding: var(--esp-4) var(--esp-4) calc(var(--esp-5) + env(safe-area-inset-bottom));
+}
+.detalhe__coluna {
+  display: grid;
+  gap: var(--esp-4);
+  align-content: start;
+  min-width: 0;
+}
+.detalhe__aviso {
+  justify-self: start;
+  margin: 0;
+  padding: 2px var(--esp-3);
+  border-radius: var(--raio-botao);
+  box-shadow: inset 0 0 0 2px var(--tipo-texto);
+  color: var(--tipo-texto);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.detalhe__destaque {
+  margin: 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-forte);
+  font-size: var(--fs-lg);
+  line-height: 1.3;
+}
+.detalhe__subtitulo {
+  margin: 0 0 var(--esp-2);
+  padding: 0;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-md);
+}
+.detalhe__texto {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+.detalhe__lista {
+  display: grid;
+  gap: var(--esp-1);
+  margin: 0;
+  padding-left: var(--esp-5);
+}
+.botao--tipo {
+  background: var(--tipo);
+  color: #FFFFFF;
+}
+.botao--tipo:hover {
+  background: var(--tipo);
+  filter: brightness(.85);
+}
+
+/* Bueiro: marcadores do mapa e legenda usam os estados do Bueiro ALERA */
+.bueiro text {
+  font-family: var(--fonte-titulo);
+  font-size: 12px;
+  font-weight: var(--peso-titulo);
+}
+.bueiro rect { stroke: var(--mapa-fundo); stroke-width: 2; }
+.bueiro--ok rect       { fill: var(--cor-risco-normal); }
+.bueiro--ok text       { fill: var(--cor-risco-normal-texto); }
+.bueiro--atencao rect  { fill: var(--cor-risco-atencao); }
+.bueiro--atencao text  { fill: var(--cor-risco-atencao-texto); }
+.bueiro--limpar rect   { fill: var(--cor-risco-alerta); }
+.bueiro--limpar text   { fill: var(--cor-risco-alerta-texto); }
+.bueiro--entupido rect { fill: var(--cor-risco-perigo); }
+.bueiro--entupido text { fill: var(--cor-risco-perigo-texto); }
+.legenda {
+  display: grid;
+  gap: var(--esp-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--fs-sm);
+}
+.legenda li {
+  display: grid;
+  grid-template-columns: var(--esp-6) 1fr;
+  align-items: center;
+  gap: var(--esp-2);
+}
+.legenda__marca {
+  display: grid;
+  place-items: center;
+  height: var(--esp-5);
+  border-radius: 4px;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: 12px;
+}
+
+/* Muda: curvas de nível e áreas de terra */
+.mapa__curva {
+  fill: none;
+  stroke: var(--mapa-rua);
+  stroke-width: 2;
+}
+.area {
+  fill: var(--mapa-plantio);
+  fill-opacity: .28;
+  stroke: var(--mapa-plantio);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.area--plantada {
+  fill-opacity: 0;
+  stroke-dasharray: 6 5;
+}
+.areas {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.areas__item {
+  display: grid;
+  grid-template-columns: var(--esp-6) 1fr auto;
+  align-items: center;
+  gap: var(--esp-3);
+  padding: var(--esp-2) 0;
+  border-bottom: 1px solid var(--app-linha);
+}
+.areas__letra {
+  display: grid;
+  place-items: center;
+  width: var(--esp-6);
+  height: var(--esp-6);
+  border-radius: var(--raio-campo);
+  background: var(--tipo);
+  color: #FFFFFF;
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+}
+.areas__nome {
+  font-weight: var(--peso-forte);
+  line-height: 1.25;
+}
+.areas__nome small {
+  display: block;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-texto);
+}
+.areas__estado {
+  color: var(--tipo-texto);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+  white-space: nowrap;
+}
+.areas__item--plantada .areas__letra {
+  background: transparent;
+  box-shadow: inset 0 0 0 2px var(--tipo-texto);
+  color: var(--tipo-texto);
+}
+.areas__item--plantada .areas__estado {
+  color: var(--app-texto-suave);
+}
+
+@media (min-width: 900px) {
+  .detalhe:target {
+    align-items: center;
+    padding: var(--esp-5);
+  }
+  .detalhe__caixa {
+    width: min(100%, 980px);
+    max-height: 100%;
+    border-radius: var(--raio-card);
+  }
+  .detalhe__topo {
+    padding-left: var(--esp-5);
+  }
+  .detalhe__corpo {
+    grid-template-columns: 1.1fr 1fr;
+    gap: var(--esp-6);
+    padding: var(--esp-5);
+  }
+}
+
+/* ---------- Ranking ---------- */
+.ranking {
+  max-width: 720px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--app-linha);
+}
+.ranking__item {
+  display: grid;
+  grid-template-columns: var(--esp-6) 1fr auto;
+  align-items: center;
+  gap: var(--esp-3);
+  min-height: var(--esp-8);
+  padding: var(--esp-2) var(--esp-3);
+  border-bottom: 1px solid var(--app-linha);
+}
+.ranking__item--voce {
+  border-radius: var(--raio-campo);
+  border-bottom-color: transparent;
+  background: var(--app-azul-claro);
+  box-shadow: inset 0 0 0 2px var(--app-azul);
+}
+.ranking__posicao {
+  font-family: var(--fonte-titulo);
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-xl);
+  line-height: 1;
+}
+.ranking__nome {
+  font-weight: var(--peso-forte);
+}
+.ranking__sua {
+  display: block;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-texto);
+}
+:root:has(#tema:checked) .ranking__sua {
+  color: var(--app-texto);
+}
+.ranking__pontos {
+  color: var(--app-destaque);
+  font-weight: var(--peso-forte);
+  white-space: nowrap;
+}
+
+/* ---------- Meus dados ---------- */
+.cadastro {
+  display: grid;
+  gap: var(--esp-4);
+  max-width: 560px;
+}
+.cadastro__titulo {
+  margin: 0;
+  font-size: var(--fs-xl);
+}
+.cadastro__texto {
+  margin: 0;
+  color: var(--app-texto-suave);
+}
+.campo {
+  display: grid;
+  gap: var(--esp-1);
+}
+.campo__rotulo {
+  font-weight: var(--peso-forte);
+}
+.campo__entrada {
+  width: 100%;
+  min-height: 52px;
+  padding: 0 var(--esp-3);
+  border: 2px solid var(--app-borda);
+  border-radius: var(--raio-campo);
+  background: var(--app-superficie);
+  color: var(--app-texto);
+  font: inherit;
+}
+.campo__entrada:focus-visible {
+  outline: 2px solid transparent;
+  border-color: var(--app-azul);
+  box-shadow: var(--app-foco);
+}
+/* Erro: aparece só depois que a pessoa mexe no campo (:user-invalid) */
+.campo__entrada:user-invalid {
+  border-color: var(--app-erro);
+}
+.campo__erro {
+  display: none;
+  color: var(--app-erro);
+  font-size: var(--fs-sm);
+  font-weight: var(--peso-forte);
+}
+.campo__entrada:user-invalid + .campo__erro {
+  display: block;
+}
+
+/* ---------- Rodapé ---------- */
+.rodape {
+  padding: var(--esp-4);
+  border-top: 1px solid var(--app-linha);
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
+  text-align: center;
+}
+.rodape__texto {
+  margin: 0;
+}
+.rodape__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--toque-min);
+  border-radius: var(--raio-campo);
+  color: var(--app-azul);
+  font-weight: var(--peso-forte);
+}
+.rodape__link:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: var(--app-foco);
+}
+
+/* ---------- A partir de 600px ---------- */
+@media (min-width: 600px) {
+  .missoes { grid-template-columns: repeat(2, 1fr); }
+  .rota__acoes { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ---------- Computador: menu no topo, conteúdo em duas colunas ---------- */
+@media (min-width: 900px) {
+  body {
+    padding-bottom: 0;
+  }
+  .conteudo,
+  .topo__faixa {
+    width: min(100% - 2 * var(--esp-6), var(--app-largura));
+  }
+  .topo__ligar {
+    display: inline-flex;
+  }
+
+  .menu {
+    position: static;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+  .menu__lista {
+    display: flex;
+    gap: var(--esp-1);
+  }
+  .menu__link {
+    flex-direction: row;
+    gap: var(--esp-2);
+    min-height: var(--toque-min);
+    padding: 0 var(--esp-3);
+    border-radius: var(--app-raio);
+    color: var(--app-topo-suave);
+    font-size: var(--fs-md);
+  }
+  .menu__link:hover {
+    color: var(--app-topo-texto);
+    box-shadow: inset 0 0 0 2px var(--app-topo-suave);
+  }
+  .menu__link:focus-visible {
+    box-shadow: 0 0 0 3px var(--app-topo-texto);
+  }
+  body:not(:has(.tela:target, .detalhe:target)) .menu__link[href="#alerta"],
+  body:has(#alerta:target)     .menu__link[href="#alerta"],
+  body:has(#rota:target)       .menu__link[href="#alerta"],
+  body:has(#missoes:target, .detalhe:target) .menu__link[href="#missoes"],
+  body:has(#ranking:target)    .menu__link[href="#ranking"],
+  body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
+    background: var(--cor-fundo);
+    color: var(--cor-primaria);
+    box-shadow: none;
+  }
+
+  .faixa {
+    padding-block: var(--esp-4) var(--esp-6);
+    margin-bottom: var(--esp-6);
+  }
+  .faixa--selo {
+    padding-bottom: 60px;
+    margin-bottom: 0;
+  }
+  .faixa__titulo {
+    font-size: var(--fs-3xl);
+  }
+
+  .alerta {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-areas:
+      "principal rota"
+      "niveis    rota";
+    grid-template-rows: auto 1fr;
+    gap: var(--esp-5) var(--esp-7);
+  }
+  .alerta__principal { grid-area: principal; }
+  .alerta__niveis    { grid-area: niveis; }
+  .alerta__rota      { grid-area: rota; padding-top: var(--esp-7); }
+  .alerta__ligar     { display: none; } /* já está no topo */
+  .medidor,
+  .medidor__legenda  { display: none; } /* a lista ao lado já mostra o nível atual */
+  .destino {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+  }
+  .destino .botao {
+    width: auto;
+  }
+
+  .rota {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-areas:
+      "mapa destino"
+      "mapa evitar"
+      "mapa passos"
+      "mapa acoes";
+    grid-template-rows: auto auto auto 1fr;
+    gap: var(--esp-4) var(--esp-7);
+  }
+  .rota__mapa    { grid-area: mapa; }
+  .rota__destino { grid-area: destino; }
+  .rota__evitar  { grid-area: evitar; }
+  .rota__passos  { grid-area: passos; }
+  .rota__acoes   { grid-area: acoes; align-content: start; }
+
+  .missoes {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Menos movimento: sem transição nos botões nem animação nas janelas */
+@media (prefers-reduced-motion: reduce) {
+  .botao { transition: none; }
+  .detalhe__caixa { animation: none; }
+}

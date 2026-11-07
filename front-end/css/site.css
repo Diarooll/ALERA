@@ -1,1625 +1,1615 @@
-/* ALERA · site.css
-   Estilos de ../index.html (site). Só var(--token) do tokens.css. Mobile first.
+/* ALERA · site.css (site público, direção "Cartaz de rua")
+   Regras e decisões: docs/redesign/cartaz-de-rua.md
+   Linkar depois de tokens.css, base.css e movimento.css.
+   Cada bloco é UMA cor chapada e o texto em cima dele é UMA outra cor.
+   Blocos se separam por troca de cor ou por espaço, nunca por linha ou sombra. */
 
-   Direção visual, "A mensagem": a peça central do site é o alerta com o nome da rua.
-   Cada seção tem composição própria, em vez do mesmo cartão repetido:
-   - hero: o alerta do app por cima da foto
-   - o problema: faixa de cor com o número 65 enorme, sem caixas
-   - como funciona: passos ligados por uma linha
-   - fase 1: prévia da tela do app; a pessoa escolhe o nível e a tela muda (sem JavaScript)
-   - gamificação: lista de missões e ranking em barras
-   - gadgets: painéis largos, com fluxo do sensor e desenho do bueiro */
+/* ---------- Tokens só do site ---------- */
 
-/* Tamanhos só do site: fluidos para a tela grande ter pontos de peso.
-   Ficam aqui, e não no tokens.css, porque o app não usa. */
 :root {
-  --site-titulo:  clamp(34px, 5.2vw, 64px); /* h1 */
-  --site-secao:   clamp(31px, 3.6vw, 48px); /* h2 */
-  --site-gigante: clamp(112px, 17vw, 220px); /* o 65 */
-  --site-numero:  clamp(28px, 3.6vw, 48px);   /* os outros números */
-  --site-respiro: clamp(64px, 9vw, 120px);  /* distância entre seções */
+  --margem: clamp(16px, 2.2vw, 32px);  /* margem externa igual dos dois lados, em tudo */
+  --vao: clamp(96px, 14vw, 200px);     /* espaço entre seções */
+  --campo-azul: var(--cor-primaria);   /* campo azul-noite com texto branco */
+  --campo-azul-texto: #FFFFFF;
+  --tinta-escura: #1A1D27;             /* = texto dos níveis claros (tokens) */
+
+  /* Cor do nível escolhido na demonstração. Começa em Alerta (o rádio que vem marcado). */
+  --nivel-tinta: var(--cor-risco-alerta-texto);
+  --nivel-cor: var(--cor-risco-alerta);
 }
 
-/* Modo escuro: o botão sol/lua do topo marca o checkbox #tema (mesmo nome do app).
-   Os tokens do site passam a apontar para os --cor-escuro-* do tokens.css,
-   então todo o resto do CSS muda sozinho. As cores de risco não mudam. */
+/* Modo escuro: data-tema vem do tema.js; :has(#tema:checked) cobre quem está sem script */
+:root[data-tema="escuro"],
 :root:has(#tema:checked) {
-  color-scheme: dark;
-  --cor-primaria:    var(--cor-escuro-azul);
-  --cor-destaque:    var(--cor-escuro-destaque);
-  --cor-fundo:       var(--cor-escuro-fundo);
-  --cor-superficie:  var(--cor-escuro-superficie);
-  --cor-texto:       var(--cor-escuro-texto);
+  --cor-fundo: var(--cor-escuro-fundo);
+  --cor-superficie: var(--cor-escuro-superficie);
+  --cor-texto: var(--cor-escuro-texto);
   --cor-texto-suave: var(--cor-escuro-texto-suave);
-  --cor-borda:       var(--cor-escuro-borda);
-  --cor-linha:       var(--cor-escuro-linha);
-  --cor-erro:        var(--cor-escuro-erro);
+  --cor-destaque: var(--cor-escuro-destaque);
+  --cor-linha: var(--cor-escuro-linha);
+  --campo-azul: var(--cor-escuro-azul-fundo);
+  color-scheme: dark;
 }
 
-/* No escuro o rodapé e a faixa do problema não ficam azul claro:
-   usam o azul do topo do app com texto claro (9,4:1) */
-:root:has(#tema:checked) .rodape,
-:root:has(#tema:checked) .rodape a,
-:root:has(#tema:checked) .rodape h2 {
-  color: var(--cor-escuro-texto);
+/* O nível marcado na demonstração muda a tinta do topo e da demonstração */
+body:has(#nivel-normal:checked) { --nivel-tinta: var(--cor-risco-normal-texto); --nivel-cor: var(--cor-risco-normal); }
+body:has(#nivel-atencao:checked) { --nivel-tinta: var(--cor-risco-atencao-texto); --nivel-cor: var(--cor-risco-atencao); }
+body:has(#nivel-alerta:checked) { --nivel-tinta: var(--cor-risco-alerta-texto); --nivel-cor: var(--cor-risco-alerta); }
+body:has(#nivel-perigo:checked) { --nivel-tinta: var(--cor-risco-perigo-texto); --nivel-cor: var(--cor-risco-perigo); }
+
+/* ---------- Base do site ---------- */
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 16px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
-:root:has(#tema:checked) .rodape {
-  background: var(--cor-escuro-azul-fundo);
+body {
+  overflow-x: clip;
 }
 
-/* No escuro a marca e o ícone do tema ficam brancos (texto claro do tema escuro) */
-:root:has(#tema:checked) .logo,
-:root:has(#tema:checked) .tema-botao {
-  color: var(--cor-escuro-texto);
-}
-
-/* Layout */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--esp-4);
-}
-
-.secao {
-  padding: var(--site-respiro) 0;
-}
-
-/* Foco visível em tudo que é clicável */
-a:focus-visible,
-summary:focus-visible {
-  outline: none;
-  box-shadow: var(--foco);
-}
-
-/* Link "pular para o conteúdo": só aparece ao navegar pelo teclado */
-.pular {
-  position: absolute;
-  top: var(--esp-2);
-  left: var(--esp-2);
-  z-index: 20;
-  padding: var(--esp-3) var(--esp-4);
-  border-radius: var(--raio-campo);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-  font-weight: var(--peso-forte);
-  transform: translateY(-200%);
-}
-
-.pular:focus {
-  transform: none;
-}
-
-/* Header */
-/* Header fixo: o botão "Testar o app" fica sempre a um toque */
-.topo {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: var(--cor-superficie);
-  box-shadow: var(--sombra-card);
-}
-
-/* Ao clicar na nav, o título da seção não fica escondido atrás do header */
-[id] {
-  scroll-margin-top: var(--esp-8);
-}
-
-.topo-conteudo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--esp-2);
-  min-height: var(--esp-8);
-}
-
-.logo {
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
-  letter-spacing: .04em; /* igual à marca do app */
-  color: var(--cor-primaria);
-  text-decoration: none;
-}
-
-/* Logo (gota de pixels) ao lado do A.L.E.R.A, no header e no rodapé */
-.logo,
-.rodape-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-2);
-}
-
-.logo-icone {
-  width: var(--esp-6);
-  height: var(--esp-6);
-  fill: currentColor;
-  flex-shrink: 0;
-}
-
-/* Em celular muito estreito só a gota fica: o nome não cabe sem estourar a tela.
-   O link continua com o nome no aria-label. */
-@media (max-width: 359px) {
-  .logo-texto {
-    display: none;
-  }
-}
-
-.nav-lista {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-/* No celular só o botão "Testar o app" fica no header; o resto está no rodapé */
-.nav-item {
-  display: none;
-}
-
-.nav-item a {
-  color: var(--cor-texto);
-  font-weight: var(--peso-forte);
-  text-decoration: none;
-  text-underline-offset: var(--esp-1);
-}
-
-.nav-item a:hover {
-  text-decoration: underline;
-}
-
-.topo .botao {
-  padding: 0 var(--esp-4);
-  font-size: var(--fs-sm);
-}
-
-@media (min-width: 768px) {
-  .nav-item {
-    display: block;
-  }
-
-  .topo-conteudo {
-    gap: var(--esp-4);
-  }
-
-  .logo {
-    font-size: var(--fs-xl);
-  }
-
-  .topo .botao {
-    padding: 0 var(--esp-5);
-    font-size: var(--fs-md);
-  }
-}
-
-/* Botão do modo escuro: lua no claro, sol no escuro */
-.topo-conteudo nav {
-  margin-left: auto;
-}
-
-.tema-input {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Igual ao botão do app: ícone de traço, sem borda, anel só no hover */
-.tema-botao {
-  display: grid;
-  place-items: center;
-  flex-shrink: 0;
-  width: var(--toque-min);
-  height: var(--toque-min);
-  border-radius: var(--raio-botao);
-  color: var(--cor-texto);
-  cursor: pointer;
-}
-
-.tema-botao:hover {
-  box-shadow: inset 0 0 0 2px var(--cor-texto);
-}
-
-.tema-input:focus-visible + .tema-botao {
-  box-shadow: var(--foco);
-}
-
-.tema-icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.tema-icone-sol,
-.tema-input:checked + .tema-botao .tema-icone-lua {
-  display: none;
-}
-
-.tema-input:checked + .tema-botao .tema-icone-sol {
+img {
+  max-width: 100%;
   display: block;
 }
 
-/* Botão */
-.botao {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: var(--toque-min);
-  padding: var(--esp-3) var(--esp-5);
-  border: 2px solid var(--cor-primaria);
-  border-radius: var(--raio-botao);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-md);
-  text-decoration: none;
-  white-space: nowrap;
-  box-sizing: border-box;
-  transition: transform .15s ease, filter .15s ease, background-color .15s ease, color .15s ease;
-}
-
-.botao:active {
-  transform: scale(.97);
-}
-
-.botao-principal {
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-}
-
-.botao-principal:hover {
-  filter: brightness(1.25);
-}
-
-.botao-secundario {
-  background: transparent;
-  color: var(--cor-primaria);
-}
-
-.botao-secundario:hover {
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-}
-
-/* Hero: título largo em cima; embaixo, o texto e a foto com o alerta por cima */
-.hero {
-  padding: var(--esp-6) 0 var(--esp-7);
-}
-
-.hero-grade {
-  display: grid;
-  gap: var(--esp-5);
-}
-
-.hero h1 {
-  margin: 0;
-  font-size: var(--site-titulo);
-  letter-spacing: -.02em;
-}
-
-.hero-botoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--esp-3);
-  margin-top: var(--esp-5);
-}
-
-.hero-botoes .botao {
-  flex: 1 1 100%;
-}
-
-.sobretitulo {
-  margin: 0 0 var(--esp-2);
-  font-size: var(--fs-sm);
-  font-weight: var(--peso-forte);
-  color: var(--cor-texto-suave);
-}
-
-.hero-texto {
-  margin: 0;
-  max-width: 42ch;
-  font-size: var(--fs-lg);
-}
-
-.hero-palco {
-  position: relative;
-}
-
-.hero-imagem img {
-  aspect-ratio: 4 / 3;
-}
-
-/* Cartão do alerta: no celular entra um pouco por cima da foto, sem escondê-la */
-.alerta-hero {
-  position: relative;
-  overflow: hidden;
-  margin: calc(-1 * var(--esp-7)) var(--esp-3) 0;
-  background: var(--cor-fundo);
-  border-radius: var(--raio-card);
-  box-shadow: var(--sombra-forte);
-}
-
-.alerta-hero-faixa {
-  padding: var(--esp-3) var(--esp-4) var(--esp-7);
-  background: var(--previa-topo);
-  color: var(--previa-topo-texto);
-}
-
-.alerta-hero-faixa .previa-rua {
-  font-size: var(--fs-xl);
-}
-
-.alerta-hero-corpo {
-  padding: 0 var(--esp-4) var(--esp-4);
-}
-
-.alerta-hero-corpo .previa-selo {
-  margin-top: -28px; /* o selo sobe em cima da faixa azul, como no app */
-}
-
-.alerta-hero-corpo .previa-ordem {
-  margin-top: var(--esp-3);
-  font-size: var(--fs-lg);
-}
-
-.alerta-hero-abrigo {
-  margin: var(--esp-2) 0 var(--esp-3);
-  color: var(--cor-texto-suave);
-}
-
-.hero-palco .nota {
-  margin: var(--esp-3) 0 0;
-}
-
-@media (min-width: 480px) {
-  .hero-botoes .botao {
-    flex: 0 1 auto;
-  }
-}
-
-@media (min-width: 900px) {
-  .hero {
-    padding-top: var(--esp-7);
-  }
-
-  .hero-grade {
-    grid-template-columns: 5fr 7fr;
-    column-gap: var(--esp-7);
-  }
-
-  .hero h1 {
-    grid-column: 1 / -1;
-  }
-
-}
-
-/* Só com a foto bem grande o cartão fica todo em cima dela, sem escondê-la */
-@media (min-width: 1200px) {
-  .alerta-hero {
-    position: absolute;
-    right: var(--esp-5);
-    bottom: var(--esp-8);
-    width: 360px;
-    margin: 0;
-  }
-}
-
-/* Imagens: nunca passam da largura da tela */
 figure {
   margin: 0;
 }
 
-figure img {
-  display: block;
-  width: 100%;
-  height: auto;
-  object-fit: cover;
-  border-radius: var(--raio-card);
-}
-
-/* Seções */
-.secao h2 {
-  font-size: var(--site-secao);
-  letter-spacing: -.01em;
-  margin: 0 0 var(--esp-3);
-}
-
-.secao-clara {
-  background: var(--cor-superficie);
-}
-
-.secao-intro {
-  margin: 0 0 var(--esp-6);
-  max-width: 60ch;
-  font-size: var(--fs-lg);
-}
-
-.subtitulo {
-  font-size: var(--fs-xl);
-  margin: var(--esp-7) 0 var(--esp-5);
-}
-
-/* Título dentro de uma subseção (ex.: os níveis dentro de "Como funciona") */
-.subtitulo-menor {
-  font-size: var(--fs-lg);
-  margin: var(--esp-7) 0 var(--esp-4);
-}
-
-.nota {
-  font-size: var(--fs-sm);
-  color: var(--cor-texto-suave);
-}
-
-/* O problema: faixa azul com um painel colorido atrás de cada número.
-   Só o 65 tem cor cheia. Depois vêm laranja e amarelo em tom suave,
-   e branco nos dados de contexto. */
-.secao-problema {
-  --campo-fundo: var(--cor-primaria);
-  --campo-texto: var(--cor-superficie);
-  background: var(--campo-fundo);
-  color: var(--campo-texto);
-}
-
-:root:has(#tema:checked) .secao-problema {
-  --campo-fundo: var(--cor-escuro-azul-fundo);
-  --campo-texto: var(--cor-escuro-texto);
-}
-
-.secao-problema .secao-intro {
+a {
   color: inherit;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: 2px;
 }
 
-.numeros {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: var(--esp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.numero {
-  display: flex;
-  flex-direction: column;
-  gap: var(--esp-1);
-  padding: var(--esp-3);
-  border-radius: var(--raio-card);
-  background: var(--cor-superficie);
-  color: var(--cor-texto);
-}
-
-.numero-valor {
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--site-numero);
-  letter-spacing: -.02em;
-  line-height: var(--altura-titulo);
-  white-space: nowrap;
-}
-
-.numero-fonte {
-  margin-top: auto;
-  padding-top: var(--esp-2);
-  font-size: var(--fs-sm);
-}
-
-.numero-fonte a {
-  color: inherit;
-}
-
-/* Tons suaves: 25% da cor sobre o cartão, então se ajustam sozinhos no modo escuro.
-   Texto: 13,09:1 e 14,67:1 no claro; 9,15:1 e 7,53:1 no escuro */
-.numero-alerta {
-  background: color-mix(in srgb, var(--cor-risco-alerta) 25%, var(--cor-superficie));
-}
-
-.numero-atencao {
-  background: color-mix(in srgb, var(--cor-risco-atencao) 25%, var(--cor-superficie));
-}
-
-/* O 65 é o maior painel: linha inteira no celular, altura inteira na tela grande */
-.numero-principal {
-  grid-column: 1 / -1;
-  padding: var(--esp-5);
-  /* Vermelho mais fechado, para pesar menos sobre o azul. Texto branco: 6,67:1 */
-  background: color-mix(in srgb, var(--cor-risco-perigo) 80%, var(--cor-risco-alerta-texto));
-  color: var(--cor-risco-perigo-texto);
-}
-
-.numero-principal .numero-valor {
-  font-size: var(--site-gigante);
-  line-height: 1;
-}
-
-.numero-principal .numero-texto {
-  font-size: var(--fs-lg);
-  font-weight: var(--peso-forte);
-  max-width: 24ch;
-}
-
-@media (min-width: 900px) {
-  .numeros {
-    grid-template-columns: 5fr 3.5fr 3.5fr;
-    gap: var(--esp-4);
-  }
-
-  .numero {
-    padding: var(--esp-5);
-  }
-
-  .numero-principal {
-    grid-column: 1;
-    grid-row: 1 / span 2;
-    justify-content: center;
-    padding: var(--esp-6);
-  }
-}
-
-.destaque-texto {
-  margin: var(--esp-6) 0 0;
-  max-width: 62ch;
-  font-size: var(--fs-xl);
-  font-weight: var(--peso-forte);
-  line-height: 1.3;
-}
-
-/* Como funciona: passos ligados por uma linha, sem caixas */
-.passos {
-  display: grid;
-  gap: var(--esp-6);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.passo {
-  position: relative;
-  min-height: var(--toque-min);
-  padding-left: calc(var(--toque-min) + var(--esp-4));
-}
-
-.passo h4 {
-  font-size: var(--fs-lg);
-  margin: 0 0 var(--esp-2);
-}
-
-.passo p {
+h1, h2, h3, p, ul, ol, dl, dd {
   margin: 0;
 }
 
-.passo-numero {
+/* Títulos de seção: Bebas grande, no máximo 2 linhas */
+.titulo-secao {
+  font-size: var(--fs-secao);
+  line-height: 0.88;
+  text-transform: uppercase;
+}
+
+.pular {
   position: absolute;
-  top: 0;
-  left: 0;
+  z-index: 50;
+  top: 8px;
+  left: 8px;
+  padding: 12px 16px;
+  background: var(--cor-risco-atencao);
+  color: var(--cor-risco-atencao-texto);
+  font-weight: 700;
+  border-radius: var(--raio);
+  translate: 0 -200%;
+}
+.pular:focus-visible {
+  translate: 0 0;
+}
+
+/* ---------- Botão: um formato só no site inteiro ---------- */
+
+.botao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 60px;
+  padding: 14px 28px;
+  border-radius: var(--raio);
+  background: var(--cor-risco-atencao);
+  color: var(--cor-risco-atencao-texto);
+  font-size: 20px;
+  font-weight: 700;
+  text-decoration: none;
+  transition:
+    transform var(--dur-curta) var(--curva-mola),
+    translate var(--dur-curta) var(--curva-saida),
+    background-color var(--dur-curta) ease,
+    color var(--dur-curta) ease;
+}
+.botao--branco {
+  background: #FFFFFF;
+  color: var(--tinta-escura);
+}
+@media (hover: hover) and (pointer: fine) {
+  .botao:hover { background: #FFFFFF; color: var(--tinta-escura); }
+  .botao--branco:hover { background: var(--cor-risco-atencao); }
+}
+
+/* ---------- Campo de cor que "enche" de baixo para cima ----------
+   Quatro camadas empilhadas (verde embaixo, vermelho em cima). Uma camada fica
+   aberta quando o nível marcado é ela ou um mais alto. Subir de nível = a cor nova
+   sobe como água; descer = a camada de cima escoa. Só clip-path anima. */
+
+.campo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+}
+.camada {
+  position: absolute;
+  inset: 0;
+  clip-path: inset(100% 0 0 0);
+  transition: clip-path var(--dur-longa) var(--curva-saida);
+}
+.camada--normal { background: var(--cor-risco-normal); clip-path: inset(0); }
+.camada--atencao { background: var(--cor-risco-atencao); }
+.camada--alerta { background: var(--cor-risco-alerta); }
+.camada--perigo { background: var(--cor-risco-perigo); }
+
+body:has(#nivel-atencao:checked, #nivel-alerta:checked, #nivel-perigo:checked) .camada--atencao,
+body:has(#nivel-alerta:checked, #nivel-perigo:checked) .camada--alerta,
+body:has(#nivel-perigo:checked) .camada--perigo {
+  clip-path: inset(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .camada { transition: none; }
+}
+
+/* ---------- Topo (herói): manchete encostada à esquerda, foto na costura ---------- */
+
+.heroi {
+  --faixa-altura: 18svh;
+  position: relative;
+  isolation: isolate;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  /* O fundo é a cor do nível; as camadas por cima só fazem a troca animada */
+  background: var(--nivel-cor);
+  color: var(--nivel-tinta);
+  transition: color var(--dur-media) ease;
+  overflow: clip;
+}
+
+.topo {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 20px var(--margem);
+}
+
+.marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+  text-decoration: none;
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
+  line-height: 1;
+}
+.marca-icone {
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+  flex: none;
+}
+
+.topo-nav {
+  display: flex;
+  gap: 28px;
+}
+.topo-nav a {
+  font-size: 18px;
+  font-weight: 600;
+  text-decoration-color: transparent;
+  transition: text-decoration-color var(--dur-curta) ease;
+}
+.topo-nav a:hover,
+.topo-nav a:focus-visible {
+  text-decoration-color: currentColor;
+}
+
+/* Botão do modo escuro: lua no claro, sol no escuro */
+.tema-caixa {
+  position: absolute;
+  opacity: 0;
+  width: 1px; /* taste-skill-ignore: campo escondido, não é linha */
+  height: 1px; /* taste-skill-ignore */
+}
+.tema-botao {
+  display: grid;
+  place-items: center;
   width: var(--toque-min);
   height: var(--toque-min);
-  border-radius: var(--raio-botao);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
+  border-radius: var(--raio);
+  cursor: pointer;
+  transition: transform var(--dur-curta) var(--curva-mola);
 }
-
-/* A linha que liga um passo ao próximo */
-.passo:not(:last-child)::before {
-  content: "";
-  position: absolute;
-  top: var(--toque-min);
-  bottom: calc(-1 * var(--esp-6));
-  left: calc(var(--toque-min) / 2 - 2px);
-  width: var(--esp-1);
-  background: var(--cor-primaria);
+.tema-botao:hover { transform: rotate(-12deg); }
+.tema-botao:active { transform: scale(0.9); }
+.tema-caixa:focus-visible + .tema-botao {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
 }
-
-@media (min-width: 768px) {
-  .passos {
-    grid-template-columns: repeat(3, 1fr);
-  }
-
-  .passo {
-    padding: calc(var(--toque-min) + var(--esp-4)) 0 0;
-  }
-
-  .passo:not(:last-child)::before {
-    top: calc(var(--toque-min) / 2 - 2px);
-    right: calc(-1 * var(--esp-6));
-    bottom: auto;
-    left: var(--toque-min);
-    width: auto;
-    height: var(--esp-1);
-  }
-}
-
-/* Componente: selo de risco (sempre cor + palavra) */
-.selo-risco {
-  display: inline-block;
-  padding: var(--esp-1) var(--esp-3);
-  border-radius: var(--raio-campo);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-sm);
-}
-
-.selo-normal     { background: var(--cor-risco-normal);     color: var(--cor-risco-normal-texto); }
-.selo-atencao    { background: var(--cor-risco-atencao);    color: var(--cor-risco-atencao-texto); }
-.selo-alerta     { background: var(--cor-risco-alerta);     color: var(--cor-risco-alerta-texto); }
-.selo-perigo     { background: var(--cor-risco-perigo);     color: var(--cor-risco-perigo-texto); }
-
-/* Prévia do app na Fase 1: a tela de Alerta, com o mesmo desenho de app.css.
-   Os valores seguem o app (raio de 10px, botão de 52px, selo de 56px) e as cores vêm dos tokens.
-   Ela não carrega o app.css porque os nomes de classe dos dois arquivos colidem. */
-.previa-intro {
-  margin: 0 0 var(--esp-4);
-}
-
-.previa,
-.alerta-hero {
-  --previa-raio: 10px;
-  --previa-topo: var(--cor-primaria);
-  --previa-topo-texto: var(--cor-superficie);
-  --mapa-fundo: var(--cor-superficie);
-  --mapa-rua: var(--cor-linha);
-}
-
-.previa {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  grid-template-areas:
-    "marca"
-    "faixa"
-    "corpo"
-    "menu";
-  overflow: hidden;
-  background: var(--previa-topo);
-  border-radius: var(--raio-card);
-}
-
-/* No escuro a faixa continua azul e com texto claro, como na seção do problema */
-:root:has(#tema:checked) .previa,
-:root:has(#tema:checked) .alerta-hero {
-  --previa-topo: var(--cor-escuro-azul-fundo);
-  --previa-topo-texto: var(--cor-escuro-texto);
-}
-
-.previa-icone {
-  display: block;
-  flex-shrink: 0;
-  width: 22px;
-  height: 22px;
+.tema-icone {
+  width: 26px;
+  height: 26px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.tema-sol,
+.tema-caixa:checked + .tema-botao .tema-lua { display: none; }
+.tema-caixa:checked + .tema-botao .tema-sol { display: block; }
 
-.previa-marca {
-  grid-area: marca;
-  display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  min-height: var(--esp-8);
-  padding: 0 var(--esp-4);
-  background: var(--previa-topo);
-  color: var(--previa-topo-texto);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
-  letter-spacing: .04em;
-  text-decoration: none;
+.manchete {
+  position: relative;
+  z-index: 2;
+  align-self: flex-start;
+  margin-top: 9svh;
+  padding-inline: var(--margem);
+  font-size: var(--fs-cartaz);
+  line-height: 0.84;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-wrap: nowrap;
 }
-
-/* Menu: abas embaixo no celular, como no app */
-.previa-menu {
-  grid-area: menu;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  background: var(--cor-superficie);
-  border-top: 1px solid var(--cor-linha);
-}
-
-.previa-aba {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  min-height: var(--esp-8);
-  color: var(--cor-texto-suave);
-  font-size: var(--fs-sm);
-  text-align: center;
-  text-decoration: none;
-}
-
-.previa-aba:hover {
-  color: var(--cor-primaria);
-}
-
-.previa-aba-ativa {
-  color: var(--cor-primaria);
-  font-weight: var(--peso-forte);
-  box-shadow: inset 0 3px 0 var(--cor-primaria);
-}
-
-/* O Ligar 199 do topo só existe na tela grande; no celular fica abaixo da rota */
-.previa-ligar {
-  display: none;
-}
-
-.previa-faixa {
-  grid-area: faixa;
-  padding: var(--esp-3) var(--esp-4) var(--esp-7);
-  background: var(--previa-topo);
-  color: var(--previa-topo-texto);
-}
-
-.previa-rua {
-  margin: 0;
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-2xl);
-  line-height: var(--altura-titulo);
-  letter-spacing: -.015em;
-}
-
-.previa-apoio {
-  margin: var(--esp-1) 0 0;
-}
-
-.previa-corpo {
-  grid-area: corpo;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--esp-5);
-  padding: 0 var(--esp-4) var(--esp-5);
-  background: var(--cor-fundo);
-}
-
-.previa-estados {
-  margin-top: -28px; /* o selo sobe em cima da faixa azul */
-}
-
-/* Só o estado do nível escolhido aparece */
-.previa-estado {
-  display: none;
-}
-
-.previa:has(#nivel-normal:checked)  .previa-estado-normal,
-.previa:has(#nivel-atencao:checked) .previa-estado-atencao,
-.previa:has(#nivel-alerta:checked)  .previa-estado-alerta,
-.previa:has(#nivel-perigo:checked)  .previa-estado-perigo {
+.manchete-linha {
   display: block;
 }
 
-/* Navegador sem :has(): mostra os quatro estados, nada se perde */
-@supports not selector(:has(*)) {
-  .previa-estado {
-    display: block;
-    margin-bottom: var(--esp-5);
-  }
+/* A foto: arco, inclinada 5 graus, por cima das letras e da costura */
+.heroi-foto {
+  --foto-largura: min(27vw, 480px);
+  position: absolute;
+  z-index: 3;
+  left: 58%;
+  top: 13svh;
+  bottom: calc(var(--faixa-altura) - 7svh);
+  width: var(--foto-largura);
+  border-radius: calc(var(--foto-largura) / 2) calc(var(--foto-largura) / 2) var(--raio) var(--raio);
+  overflow: hidden;
+  rotate: 5deg;
+}
+.heroi-foto-quadro {
+  width: 100%;
+  height: 100%;
+}
+.heroi-foto img {
+  object-position: 40% 50%;
 }
 
-.previa-selo {
+/* A faixa de baixo: frase de apoio à esquerda, ação à direita */
+.faixa {
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+  min-height: var(--faixa-altura);
   display: flex;
-  align-items: center;
-  gap: var(--esp-2);
-  min-height: 56px;
-  margin: 0;
-  padding: var(--esp-2) var(--esp-4);
-  box-sizing: border-box;
-  border-radius: var(--previa-raio);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
-  letter-spacing: .05em;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 28px var(--margem);
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
 }
-
-.previa-selo .previa-icone {
-  stroke-width: 2.5;
+.faixa-texto {
+  max-width: 34ch;
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.4;
 }
-
-.previa-ordem {
-  margin: var(--esp-4) 0 0;
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-xl);
-  line-height: 1.22;
-  letter-spacing: -.01em;
-  text-wrap: balance;
-}
-
-.previa-medidor {
+.faixa-acao {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--esp-1);
-  margin-top: var(--esp-4);
+  justify-items: end;
+  gap: 10px;
+}
+.faixa-legenda {
+  font-size: 14px;
+  max-width: 30ch;
+  text-align: right;
 }
 
-.previa-medidor span {
-  height: 6px;
-  border-radius: 3px;
-  background: var(--cor-linha);
-}
+/* ---------- A coisa viva: sua rua no WhatsApp ---------- */
 
-.previa-medidor .previa-cheia {
-  background: var(--cor-primaria);
+.sua-rua {
+  position: relative;
+  isolation: isolate;
+  background: var(--nivel-cor);
+  color: var(--nivel-tinta);
+  transition: color var(--dur-media) ease;
+  padding: clamp(88px, 10vw, 140px) var(--margem);
 }
-
-.previa-legenda {
-  margin: var(--esp-1) 0 0;
+.chuva {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.sua-rua-grade {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px var(--margem);
+  align-items: center;
+}
+.teste {
+  grid-column: 1 / 7;
+  display: grid;
+  gap: 28px;
+}
+.teste-apoio {
+  font-size: 20px;
+  max-width: 40ch;
+}
+.teste-campo {
+  display: grid;
+  gap: 8px;
+}
+.teste-rotulo {
+  font-size: 18px;
+  font-weight: 700;
+  padding: 0;
+  margin-bottom: 8px;
+}
+.teste-entrada {
+  width: 100%;
+  min-height: 68px;
+  padding: 12px 20px;
+  border: 3px solid var(--tinta-escura);
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
+  font: 600 clamp(22px, 2.2vw, 30px) / 1.2 var(--fonte-texto);
+  box-sizing: border-box;
+  transition: transform var(--dur-curta) var(--curva-saida);
+}
+.teste-entrada::placeholder {
   color: var(--cor-texto-suave);
-  font-size: var(--fs-sm);
+}
+.teste-entrada:focus-visible {
+  outline: 4px solid var(--cor-texto);
+  outline-offset: 2px;
+  transform: translateY(-2px);
 }
 
-/* Lista dos níveis: cada linha é o rótulo de um botão de opção */
-.niveis-risco {
-  position: relative; /* segura os botões de opção escondidos aqui, sem pulo de rolagem */
-  min-width: 0;
+.niveis-escolha {
+  border: 0;
   margin: 0;
   padding: 0;
-  border: 0;
-  border-top: 1px solid var(--cor-linha);
-}
-
-.nivel {
   display: grid;
-  grid-template-columns: 14px 1fr;
-  align-items: center;
-  gap: var(--esp-1) var(--esp-3);
-  min-height: var(--toque-min);
-  padding: var(--esp-3);
-  border-bottom: 1px solid var(--cor-linha);
-  color: var(--cor-texto-suave);
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.niveis-escolha legend {
+  grid-column: 1 / -1;
+}
+.nivel-radio {
+  position: absolute;
+  opacity: 0;
+  width: 1px; /* taste-skill-ignore: campo escondido, não é linha */
+  height: 1px; /* taste-skill-ignore */
+}
+.nivel-opcao {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  min-height: 96px;
+  padding: 14px 14px 16px;
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
   cursor: pointer;
-  transition: background-color .15s ease;
+  transition:
+    transform var(--dur-curta) var(--curva-mola),
+    background-color var(--dur-curta) ease,
+    color var(--dur-curta) ease;
 }
-
-.nivel:hover {
-  background: var(--cor-superficie);
+/* Quadradinho com a cor do nível */
+.nivel-opcao::before {
+  content: "";
+  width: 22px;
+  height: 22px;
+  border-radius: 2px;
+  margin-bottom: 6px;
 }
-
-.nivel-cor {
-  width: 14px;
-  height: 14px;
-  border-radius: 3px;
-}
-
-.nivel-nome {
-  color: var(--cor-texto);
-  font-size: var(--fs-sm);
-  letter-spacing: .04em;
-}
-
-.nivel-regra {
-  grid-column: 2;
-}
-
-/* O nível escolhido: contorno e texto mais forte, como o nível atual no app */
-.nivel-input:checked + .nivel {
-  border-bottom-color: transparent;
-  border-radius: var(--raio-campo);
-  background: var(--cor-superficie);
-  box-shadow: inset 0 0 0 2px var(--cor-primaria);
-  color: var(--cor-texto);
-  font-weight: var(--peso-forte);
-}
-
-.nivel-input:focus-visible + .nivel {
-  box-shadow: var(--foco);
-}
-
-/* Mapa: a rua só aparece alagada em ALERTA e PERIGO, na cor do nível */
-.previa-mapa {
-  display: block;
-  width: 100%;
-  height: auto;
-  margin-bottom: var(--esp-4);
-  background: var(--mapa-fundo);
-  border-radius: var(--previa-raio);
-}
-
-.previa-mapa-risco,
-.previa:has(#nivel-alerta:checked) .previa-mapa-livre,
-.previa:has(#nivel-perigo:checked) .previa-mapa-livre {
-  display: none;
-}
-
-.previa:has(#nivel-alerta:checked) .previa-mapa-risco,
-.previa:has(#nivel-perigo:checked) .previa-mapa-risco {
-  display: block;
-}
-
-.mapa-rua,
-.mapa-perigo   { stroke-width: 14; }
-.mapa-rua      { stroke: var(--mapa-rua); }
-.mapa-perigo   { stroke: var(--cor-risco-alerta); }
-.previa:has(#nivel-perigo:checked) .mapa-perigo { stroke: var(--cor-risco-perigo); }
-.mapa-caminho  { fill: none; stroke: var(--cor-primaria); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
-.mapa-ponto    { fill: var(--cor-primaria); stroke: var(--mapa-fundo); stroke-width: 3; }
-
-.mapa-rotulo {
-  fill: var(--cor-texto);
-  font-family: var(--fonte-texto);
-  font-size: 13px;
-  font-weight: var(--peso-forte);
-  paint-order: stroke; /* contorno da cor do mapa, pra ler em cima das ruas */
-  stroke: var(--mapa-fundo);
-  stroke-width: 4;
-  stroke-linejoin: round;
-}
-
-.previa-destino {
-  display: grid;
-  gap: var(--esp-4);
-}
-
-.previa-destino p {
-  margin: 0;
-}
-
-.previa-destino-rotulo {
-  color: var(--cor-texto-suave);
-}
-
-.previa-destino-nome {
+.nivel-opcao--normal::before { background: var(--cor-risco-normal); }
+.nivel-opcao--atencao::before { background: var(--cor-risco-atencao); }
+.nivel-opcao--alerta::before { background: var(--cor-risco-alerta); }
+.nivel-opcao--perigo::before { background: var(--cor-risco-perigo); }
+.nivel-opcao-nome {
   font-family: var(--fonte-titulo);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-lg);
+  font-size: 32px;
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.nivel-opcao-regra {
+  font-size: 16px;
   line-height: 1.25;
 }
-
-/* Botão do app: menos arredondado que o do site, de propósito, para mostrar como ele é */
-.previa-botao {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--esp-2);
-  width: 100%;
-  min-height: 52px;
-  padding: 0 var(--esp-5);
-  box-sizing: border-box;
-  border-radius: var(--previa-raio);
-  background: var(--cor-primaria);
+@media (hover: hover) and (pointer: fine) {
+  .nivel-opcao:hover { transform: translateY(-4px); }
+}
+.nivel-radio:checked + .nivel-opcao {
+  background: var(--cor-texto);
   color: var(--cor-superficie);
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-md);
-  text-align: center;
-  text-decoration: none;
-  transition: background-color .15s ease, transform .15s ease;
+}
+.nivel-radio:focus-visible + .nivel-opcao {
+  outline: 4px solid var(--cor-texto);
+  outline-offset: 3px;
 }
 
-.previa-botao:hover {
-  background: color-mix(in srgb, var(--cor-primaria) 75%, var(--cor-texto));
+/* A conversa (pedaço de interface: pode ter as próprias bordas) */
+.conversa {
+  grid-column: 8 / 13;
+  width: 100%;
+  max-width: 460px;
+  justify-self: end;
+  border-radius: var(--raio);
+  overflow: hidden;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
 }
-
-.previa-botao:active {
-  transform: scale(.98);
-}
-
-.previa-botao-texto,
-.previa-botao-texto:hover {
-  margin-top: var(--esp-1);
-  background: transparent;
-  color: var(--cor-primaria);
-}
-
-.previa-botao-texto:hover {
-  text-decoration: underline;
-}
-
-.previa a:focus-visible {
-  box-shadow: var(--foco);
-}
-
-/* Na faixa azul o anel de foco é claro, para aparecer nos dois temas */
-.previa-marca:focus-visible,
-.previa-ligar:focus-visible {
-  box-shadow: inset 0 0 0 3px var(--previa-topo-texto);
-}
-
-/* Tela grande: menu no topo e duas colunas, como o app a partir de 900px */
-@media (min-width: 900px) {
-  .previa {
-    grid-template-columns: auto 1fr auto;
-    grid-template-areas:
-      "marca menu  ligar"
-      "faixa faixa faixa"
-      "corpo corpo corpo";
-  }
-
-  .previa-marca {
-    padding: 0 var(--esp-5) 0 var(--esp-6);
-  }
-
-  .previa-menu {
-    display: flex;
-    align-items: center;
-    gap: var(--esp-1);
-    background: transparent;
-    border-top: 0;
-  }
-
-  .previa-aba {
-    flex-direction: row;
-    gap: var(--esp-2);
-    min-height: var(--toque-min);
-    padding: 0 var(--esp-3);
-    border-radius: var(--previa-raio);
-    color: var(--previa-topo-texto);
-    font-size: var(--fs-md);
-  }
-
-  .previa-aba:hover {
-    color: var(--previa-topo-texto);
-    box-shadow: inset 0 0 0 2px var(--previa-topo-texto);
-  }
-
-  .previa-aba-ativa,
-  .previa-aba-ativa:hover {
-    background: var(--cor-fundo);
-    color: var(--cor-texto);
-    box-shadow: none;
-  }
-
-  .previa-ligar {
-    grid-area: ligar;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--esp-2);
-    align-self: center;
-    min-height: var(--toque-min);
-    margin-right: var(--esp-6);
-    padding: 0 var(--esp-4);
-    border-radius: var(--previa-raio);
-    box-shadow: inset 0 0 0 2px var(--previa-topo-texto);
-    color: var(--previa-topo-texto);
-    font-weight: var(--peso-forte);
-    text-decoration: none;
-  }
-
-  .previa-ligar:hover {
-    background: var(--previa-topo-texto);
-    color: var(--previa-topo);
-  }
-
-  .previa-faixa {
-    padding: var(--esp-3) var(--esp-6) var(--esp-7);
-  }
-
-  .previa-corpo {
-    grid-template-columns: 11fr 10fr;
-    grid-template-rows: auto 1fr;
-    gap: var(--esp-5) var(--esp-7);
-    padding: 0 var(--esp-6) var(--esp-6);
-  }
-
-  .previa-rota {
-    grid-column: 2;
-    grid-row: 1 / -1;
-    padding-top: var(--esp-5); /* o mapa começa abaixo da faixa azul */
-  }
-
-  .previa-destino {
-    grid-template-columns: 1fr auto;
-    align-items: center;
-  }
-
-  .previa-destino .previa-botao {
-    width: auto;
-  }
-}
-
-/* Gamificação (único lugar com --cor-destaque): lista de missões + ranking em barras */
-.gamificacao-grade {
-  display: grid;
-  gap: var(--esp-6);
-}
-
-.missoes {
-  display: grid;
-  gap: var(--esp-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.missao {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  column-gap: var(--esp-4);
+.conversa-topo {
+  display: flex;
   align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+}
+.conversa-nome {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+}
+.conversa-nome span {
+  display: block;
+  font-weight: 400;
+  font-size: 15px;
+}
+.conversa-corpo {
+  display: grid;
+  gap: 12px;
+  padding: 18px;
+  min-height: 330px;
+  align-content: start;
+}
+.conversa-hora {
+  justify-self: center;
+  padding: 2px 12px;
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+  font-size: 14px;
+}
+.msg {
+  display: none;
+  max-width: 92%;
+  padding: 14px 16px 10px;
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+/* Só a mensagem do nível marcado aparece */
+body:has(#nivel-normal:checked) .msg--normal,
+body:has(#nivel-atencao:checked) .msg--atencao,
+body:has(#nivel-alerta:checked) .msg--alerta,
+body:has(#nivel-perigo:checked) .msg--perigo {
+  display: block;
+}
+.msg-selo {
+  display: inline-block;
+  margin-bottom: 8px;
+  padding: 4px 10px 2px;
+  border-radius: 2px;
+  font-family: var(--fonte-titulo);
+  font-size: 24px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.msg--normal .msg-selo { background: var(--cor-risco-normal); color: var(--cor-risco-normal-texto); }
+.msg--atencao .msg-selo { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
+.msg--alerta .msg-selo { background: var(--cor-risco-alerta); color: var(--cor-risco-alerta-texto); }
+.msg--perigo .msg-selo { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
+.msg-texto {
+  font-size: 18px;
+  line-height: 1.45;
+  white-space: pre-line; /* quebra de linha da mensagem vem do texto, nunca de <br> */
+  overflow-wrap: anywhere;
+}
+.msg-hora {
+  margin-top: 4px;
+  text-align: right;
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+.conversa-nota {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
 }
 
-.missao h3 {
-  font-size: var(--fs-lg);
-  margin: 0 0 var(--esp-1);
+@media (prefers-reduced-motion: no-preference) {
+  /* A mensagem nova "chega" quando o nível muda (display none → block reinicia a animação) */
+  .msg {
+    animation: msg-chega var(--dur-media) var(--curva-saida) both;
+  }
+}
+@keyframes msg-chega {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
 }
 
-.missao p {
-  grid-column: 1;
-  margin: 0;
+/* ---------- O problema: quadros de cartaz ---------- */
+
+.problema {
+  padding: var(--vao) var(--margem) 0;
+}
+.quadros {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(2, minmax(300px, 38svh));
+  gap: 8px;
+}
+.quadro {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--raio);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+.quadro--slogan {
+  grid-column: 1 / 9;
+  grid-row: 1 / 3;
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+}
+.quadro-slogan {
+  font-size: clamp(64px, 9vw, 140px);
+  line-height: 0.86;
+  text-transform: uppercase;
+}
+.quadro--numero {
+  grid-column: 9 / 13;
+  grid-row: 1;
+  background: var(--cor-superficie);
+  gap: 8px;
+}
+.quadro-numero {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(96px, 9vw, 140px);
+  line-height: 0.82;
+}
+.quadro-legenda {
+  font-size: 17px;
+  line-height: 1.35;
+}
+.quadro--foto {
+  grid-column: 9 / 13;
+  grid-row: 2;
+  padding: 0;
+}
+.quadro--foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--curva-saida);
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .quadro--foto:hover img { transform: scale(1.04); }
+}
+.quadro--foto figcaption,
+.numeros-foto figcaption,
+.painel-foto figcaption,
+.rodape-foto figcaption {
+  font-size: 14px;
+  line-height: 1.35;
+}
+.quadro--foto figcaption {
+  position: relative;
+  align-self: flex-start;
+  margin: 0 0 10px 10px;
+  padding: 6px 10px;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  border-radius: 2px;
+}
+.problema-texto {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--margem);
+  padding: 48px 0 0;
+}
+.problema-texto p {
+  font-size: clamp(20px, 1.7vw, 24px);
+  line-height: 1.4;
+  max-width: 34em;
 }
 
-.pontos {
-  font-weight: var(--peso-forte);
-  color: var(--cor-destaque);
+/* ---------- 65: um número que ocupa a tela, PARADO ---------- */
+
+.mortes {
+  margin-top: var(--vao);
+  min-height: 90svh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18vh;
+  padding: 72px var(--margem) 56px;
+  background: var(--cor-risco-perigo);
+  color: var(--cor-risco-perigo-texto);
+  box-sizing: border-box;
+}
+.mortes-titulo {
+  font-size: clamp(36px, 3.2vw, 48px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.mortes-base {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--margem);
+  align-items: end;
+}
+.mortes-numero {
+  grid-column: 1 / 7;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(220px, 36vw, 560px);
+  line-height: 0.78;
+  letter-spacing: -0.03em;
+  margin-bottom: -0.04em;
+}
+.mortes-texto {
+  grid-column: 7 / 13;
+  display: grid;
+  gap: 20px;
+}
+.mortes-legenda {
+  font-size: clamp(24px, 2.4vw, 34px);
+  line-height: 1.2;
+  font-weight: 600;
+  max-width: 22ch;
+}
+.mortes-fonte {
+  font-size: 16px;
+}
+
+/* ---------- Os outros números: lista grande e foto ---------- */
+
+.numeros {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 48px var(--margem);
+  padding: var(--vao) var(--margem);
+  align-items: start;
+}
+.numeros-lista {
+  grid-column: 1 / 8;
+  display: grid;
+  gap: 48px;
+}
+.contas {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 40px;
+}
+.conta {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 5fr);
+  gap: var(--margem);
+  align-items: end;
+}
+.conta-numero {
+  font-family: var(--fonte-titulo);
+  font-size: clamp(76px, 8.4vw, 136px);
+  line-height: 0.82;
+  white-space: nowrap;
+}
+.conta-texto {
+  font-size: 20px;
+  line-height: 1.35;
+  padding-bottom: 6px;
+}
+.conta-fonte {
+  margin-left: 4px;
+  font-size: 16px;
+  color: var(--cor-texto-suave);
+}
+.numeros-foto {
+  grid-column: 8 / 13;
+  position: sticky;
+  top: 32px;
+  display: grid;
+  gap: 10px;
+}
+.numeros-foto-quadro {
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--raio);
+}
+.numeros-foto-quadro img {
+  width: 100%;
+  height: 116%;
+  margin-top: -8%;
+  object-fit: cover;
+}
+
+/* ---------- A cidade x a sua rua: duas palavras gigantes ---------- */
+
+.comparar {
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+  padding: clamp(80px, 9vw, 140px) var(--margem) 0;
+  overflow: hidden;
+}
+.comparar-topo {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px var(--margem);
+  align-items: start;
+}
+.comparar-titulo {
+  grid-column: 1 / 6;
+  font-size: clamp(40px, 4vw, 60px);
+  line-height: 0.9;
+  text-transform: uppercase;
+}
+.comparar-topo p {
+  grid-column: 7 / 13;
+  font-size: 20px;
+  line-height: 1.45;
+  max-width: 44ch;
+}
+.comparar-pares {
+  --palavra: clamp(120px, 16vw, 260px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--margem);
+  margin-top: 12vh;
+  height: calc(var(--palavra) * 0.66 + 40px); /* a borda de baixo corta as palavras */
+}
+.comparar-palavra {
+  font-family: var(--fonte-titulo);
+  font-size: var(--palavra);
+  line-height: 0.8;
+  text-transform: uppercase;
   white-space: nowrap;
 }
 
-.missao .pontos {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-lg);
+/* ---------- Como funciona: painéis tingidos que abrem ---------- */
+
+.como {
+  padding: var(--vao) var(--margem);
 }
-
-.ranking {
-  padding: var(--esp-5);
-  background: var(--cor-superficie);
-  border-radius: var(--raio-card);
-}
-
-.ranking h3 {
-  font-size: var(--fs-lg);
-  margin: 0 0 var(--esp-3);
-}
-
-.ranking-lista {
-  margin: 0;
-  padding-left: var(--esp-5);
-}
-
-.ranking-lista li {
-  padding: var(--esp-2) 0;
-}
-
-.ranking-lista .pontos {
-  float: right;
-}
-
-/* Barra proporcional aos pontos: 1.240 = 100%, 980 = 79%, 760 = 61% */
-.ranking-lista li::after {
-  content: "";
-  display: block;
-  clear: both;
-  width: 100%;
-  height: var(--esp-2);
-  margin-top: var(--esp-1);
-  border-radius: var(--raio-botao);
-  background: var(--cor-destaque);
-}
-
-.ranking-lista li:nth-child(2)::after { width: 79%; }
-.ranking-lista li:nth-child(3)::after { width: 61%; }
-
-.link-app {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--toque-min);
-  margin-top: var(--esp-4);
-  font-weight: var(--peso-forte);
-  color: var(--cor-primaria);
-}
-
-@media (min-width: 900px) {
-  .gamificacao-grade {
-    grid-template-columns: 7fr 5fr;
-    align-items: start;
-    gap: var(--esp-7);
-  }
-}
-
-/* Hardware: painéis largos, um para cada gadget */
-.dispositivos {
+.como-topo {
   display: grid;
-  gap: var(--esp-5);
-  margin: 0;
-  padding: 0;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px var(--margem);
+  align-items: end;
+}
+.como-topo h2 { grid-column: 1 / 7; }
+.como-topo p {
+  grid-column: 8 / 13;
+  font-size: 20px;
+  line-height: 1.45;
+}
+.paineis {
   list-style: none;
+  padding: 0;
+  margin-top: 64px;
+  display: flex;
+  height: 540px;
+  border-radius: var(--raio);
+  overflow: hidden;
+}
+.painel {
+  flex: 1 1 0;
+  min-width: 0;
+  transition: flex-grow 450ms var(--curva-saida); /* exceção aceita: acordeão */
+}
+.painel:has(details[open]) { flex-grow: 4; }
+
+/* Do escuro para o claro: a ordem está na cor */
+.painel--1 { background: var(--campo-azul); color: #FFFFFF; }
+.painel--2 { background: color-mix(in srgb, var(--campo-azul) 70%, var(--cor-fundo)); color: #FFFFFF; }
+.painel--3 { background: color-mix(in srgb, var(--campo-azul) 40%, var(--cor-fundo)); color: var(--tinta-escura); }
+:root[data-tema="escuro"] .painel--3,
+:root:has(#tema:checked) .painel--3 {
+  background: color-mix(in srgb, var(--cor-escuro-azul) 70%, var(--cor-fundo));
+  color: var(--tinta-escura);
 }
 
-.dispositivo {
-  padding: var(--esp-5);
-  background: var(--cor-fundo);
-  border-radius: var(--raio-card);
+.painel details {
+  position: relative;
+  height: 100%;
 }
-
-.dispositivo h3 {
-  font-size: var(--fs-xl);
-  margin: 0 0 var(--esp-2);
-}
-
-.dispositivo p {
-  margin: 0;
-}
-
-.dispositivo-itens {
-  margin: var(--esp-3) 0 0;
-  padding-left: var(--esp-5);
-}
-
-/* Bueiro na tela grande: desenho à esquerda, explicação à direita */
-@media (min-width: 900px) {
-  .dispositivo {
-    padding: var(--esp-6);
-  }
-
-  .dispositivo-bueiro {
-    display: grid;
-    grid-template-columns: 6fr 5fr;
-    grid-template-rows: auto auto auto 1fr;
-    column-gap: var(--esp-7);
-  }
-
-  .dispositivo-bueiro > * {
-    grid-column: 2;
-  }
-
-  .dispositivo-bueiro .ilustracao-bueiro {
-    grid-column: 1;
-    grid-row: 1 / -1;
-    align-self: center;
-    margin: 0;
-  }
-
-  .dispositivo-bueiro .legenda-numerada {
-    margin-top: var(--esp-4);
-  }
-}
-
-/* Fluxo do Sensor ALERA: o que mede → ESP32 → como avisa (slide 16 do PowerPoint) */
-.fluxo-sensor {
-  display: grid;
-  gap: var(--esp-2);
-  margin: var(--esp-4) 0;
-}
-
-.fluxo-titulo {
-  margin: var(--esp-4) 0 var(--esp-2);
-  font-size: var(--fs-md);
-}
-
-.fluxo-grupo .fluxo-titulo {
-  margin-top: 0;
-}
-
-/* Lista compacta: "Nome: descrição" */
-.fluxo-lista {
-  display: grid;
-  gap: var(--esp-1);
-  margin: 0;
-  padding-left: var(--esp-5);
-}
-
-.fluxo-lista strong::after {
-  content: ":";
-}
-
-.fluxo-seta {
-  justify-self: center;
-  font-size: var(--fs-lg);
-  color: var(--cor-texto-suave);
+.painel-nome {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 28px 24px;
+  list-style: none;
+  cursor: pointer;
+  font-family: var(--fonte-titulo);
+  font-size: 34px;
   line-height: 1;
+  text-transform: uppercase;
+  writing-mode: sideways-lr; /* lê de baixo para cima, sem inclinar */
+  transition: translate var(--dur-curta) var(--curva-saida);
+}
+.painel-nome::-webkit-details-marker { display: none; }
+@media (hover: hover) and (pointer: fine) {
+  .painel details:not([open]) .painel-nome:hover { translate: 0 -8px; }
+}
+.painel-nome:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: -8px;
+}
+.painel details[open] .painel-nome {
+  position: static;
+  writing-mode: horizontal-tb;
+  font-size: clamp(44px, 4.4vw, 64px);
+  padding: 32px 32px 0;
+  cursor: default;
+}
+.painel-corpo {
+  position: absolute;
+  inset: auto 32px 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 32px;
+  align-items: end;
+}
+.painel-corpo > p {
+  font-size: 20px;
+  line-height: 1.45;
+  max-width: 36ch;
+}
+.painel-foto {
+  display: grid;
+  gap: 8px;
+}
+.painel-foto img {
+  aspect-ratio: 4 / 3;
+  width: 100%;
+  object-fit: cover;
+  border-radius: var(--raio);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .painel details[open] .painel-corpo {
+    animation: painel-abre var(--dur-media) var(--curva-saida) 120ms both;
+  }
+  .painel details[open] .painel-nome {
+    animation: painel-abre var(--dur-media) var(--curva-saida) both;
+  }
+}
+@keyframes painel-abre {
+  from { opacity: 0; transform: translateY(20px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .painel { transition: none; }
 }
 
-/* O ESP32 é o centro do fluxo: bloco escuro como no PowerPoint */
-.fluxo-esp {
+/* ---------- Os 4 níveis: campos inteiros que sobem um sobre o outro ---------- */
+
+.niveis-topo {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px var(--margem);
+  align-items: end;
+  padding: 0 var(--margem) 64px;
+}
+.niveis-topo h2 { grid-column: 1 / 8; }
+.niveis-topo p {
+  grid-column: 8 / 13;
+  font-size: 20px;
+  line-height: 1.45;
+}
+
+.nivel {
+  min-height: 82svh;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  gap: var(--esp-1);
-  padding: var(--esp-3);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-  border-radius: var(--raio-campo);
-  font-size: var(--fs-sm);
-  text-align: center;
+  justify-content: space-between;
+  gap: 40px;
+  /* 100px no topo: o texto pequeno do nível de cima não fica "colado" no nome do próximo */
+  padding: 100px var(--margem) 56px;
 }
+.nivel--normal { background: var(--cor-risco-normal); color: var(--cor-risco-normal-texto); }
+.nivel--atencao { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
+.nivel--alerta { background: var(--cor-risco-alerta); color: var(--cor-risco-alerta-texto); }
+.nivel--perigo { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
 
-.fluxo-esp strong {
-  font-family: var(--fonte-titulo);
-  font-size: var(--fs-lg);
+.nivel-nome {
+  font-size: clamp(120px, 21vw, 340px);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
 }
-
-/* Na tela grande o fluxo corre de lado, e as setas giram junto */
-@media (min-width: 900px) {
-  .fluxo-sensor {
-    grid-template-columns: 1fr auto 220px auto 1fr;
-    align-items: center;
-    gap: var(--esp-4);
-    margin: var(--esp-5) 0;
+/* O nome do nível sobe de dentro de uma máscara, como água enchendo (só com script e sem pedido de menos movimento) */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  /* O campo em si não some nem anda (é cor de fundo inteira): só o nome é revelado */
+  .nivel[data-revelar]:not(.revelado) {
+    opacity: 1;
+    transform: none;
   }
-
-  .fluxo-seta {
-    transform: rotate(-90deg);
+  .nivel[data-revelar]:not(.revelado) .nivel-nome {
+    clip-path: inset(100% 0 0 0);
+  }
+  .nivel .nivel-nome {
+    transition: clip-path var(--dur-longa) var(--curva-saida);
+  }
+  html:not(.movimento-pronto) .nivel .nivel-nome {
+    animation: abrir-por-seguranca 0s 2.5s forwards;
   }
 }
 
-/* Limites: selo numa coluna e regra na outra, para todos alinharem */
-.limites-sensor {
+.nivel-corpo {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  align-items: center;
-  gap: var(--esp-2) var(--esp-3);
-  margin: 0;
-  padding: 0;
-  list-style: none;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 32px var(--margem);
+  align-items: end;
 }
-
-.limites-sensor li {
-  display: contents;
+.nivel-ordem {
+  grid-column: 1 / 7;
+  font-size: clamp(26px, 2.5vw, 36px);
+  line-height: 1.2;
+  font-weight: 600;
+  max-width: 32ch;
 }
-
-.limites-sensor .selo-risco {
-  justify-self: start;
+.nivel-regras {
+  grid-column: 8 / 13;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px 20px;
+  font-size: 18px;
+  line-height: 1.35;
 }
-
-/* Na tela grande os 4 limites ficam em duas colunas, sem sobrar meio painel vazio */
-@media (min-width: 900px) {
-  .limites-sensor {
-    grid-template-columns: max-content 1fr max-content 1fr;
-  }
+.nivel-regras dt { font-weight: 700; }
+.nivel-conta {
+  grid-column: 1 / -1;
+  font-size: 18px;
+  font-weight: 700;
 }
-
-/* Ilustração do Bueiro ALERA (SVG). Só tokens: muda sozinha no modo escuro.
-   Os números usam o azul da marca, não o laranja do PowerPoint,
-   para não confundir com o nível ALERTA. */
-.ilustracao-bueiro {
-  margin: var(--esp-4) 0 var(--esp-3);
+.nivel-corpo--app { align-items: center; }
+.nivel-perigo-texto {
+  grid-column: 1 / 7;
+  display: grid;
+  gap: 32px;
 }
+.nivel-perigo-texto .nivel-regras { grid-column: auto; }
 
-.ilustracao-bueiro svg {
-  display: block;
+/* Prévia do app no nível Perigo (pedaço de interface) */
+.app {
+  grid-column: 8 / 13;
   width: 100%;
-  height: auto;
-  font-family: var(--fonte-texto);
+  max-width: 440px;
+  justify-self: end;
+  border-radius: var(--raio);
+  overflow: hidden;
+  background: var(--cor-superficie);
+  color: var(--cor-texto);
 }
-
-.ib-rua,
-.ib-galeria     { fill: var(--cor-texto-suave); }
-.ib-grade       { fill: var(--cor-texto); }
-.ib-fenda       { fill: var(--cor-superficie); }
-.ib-caixa       { fill: var(--cor-superficie); stroke: var(--cor-texto); stroke-width: 3; }
-.ib-agua        { fill: color-mix(in srgb, var(--cor-primaria) 60%, var(--cor-superficie)); } /* no branco: 3,94:1 · no escuro: 3,02:1 */
-.ib-cesto       { fill: none; stroke: var(--cor-texto-suave); stroke-width: 2; stroke-dasharray: 6 4; }
-.ib-lixo        { fill: color-mix(in srgb, var(--cor-texto-suave) 70%, var(--cor-superficie)); } /* no branco: 3,39:1 · no escuro: 3,60:1 */
-.ib-sensor      { fill: var(--cor-primaria); }
-.ib-ligacao     { stroke: var(--cor-primaria); stroke-width: 2; stroke-dasharray: 4 4; }
-.ib-fio         { stroke: var(--cor-texto-suave); stroke-width: 1.5; stroke-dasharray: 2 3; }
-.ib-boia        { fill: var(--cor-superficie); stroke: var(--cor-primaria); stroke-width: 3; }
-.ib-esp         { fill: var(--cor-primaria); }
-.ib-whats       { fill: var(--cor-superficie); stroke: var(--cor-primaria); stroke-width: 2; }
-.ib-seta        { stroke: var(--cor-texto-suave); stroke-width: 2; }
-.ib-ponta       { fill: var(--cor-texto-suave); }
-
-.ib-rotulo {
-  fill: var(--cor-texto-suave);
-  font-size: var(--fs-sm);
-}
-
-.ib-esp-texto,
-.ib-esp-sub,
-.ib-whats-texto,
-.ib-whats-sub,
-.ib-numero text {
-  text-anchor: middle;
-}
-
-.ib-esp-texto,
-.ib-whats-texto {
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-md);
-}
-
-.ib-esp-sub,
-.ib-whats-sub {
-  font-size: var(--fs-sm);
-}
-
-.ib-esp-texto,
-.ib-esp-sub     { fill: var(--cor-superficie); }
-.ib-whats-texto,
-.ib-whats-sub   { fill: var(--cor-primaria); }
-
-.ib-numero circle { fill: var(--cor-primaria); stroke: var(--cor-superficie); stroke-width: 2; }
-.ib-numero text {
-  fill: var(--cor-superficie);
-  font-weight: var(--peso-forte);
-  font-size: var(--fs-sm);
-}
-
-/* No celular o desenho encolhe: os valores abaixo são em unidades do desenho
-   (480 de largura), maiores para o texto ficar com uns 13px na tela.
-   As legendas menores saem, porque não cabem e a lista logo abaixo já explica. */
-@media (max-width: 599px) {
-  .ib-rotulo { font-size: 22px; }
-  .ib-esp-sub,
-  .ib-whats-sub { display: none; }
-  .ib-esp-texto,
-  .ib-whats-texto { font-size: 24px; transform: translateY(8px); }
-  .ib-numero circle { r: 15px; }
-  .ib-numero text { font-size: 20px; transform: translateY(3px); }
-}
-
-.legenda-numerada {
-  margin: 0;
-  padding-left: var(--esp-5);
-}
-
-.legenda-numerada li {
-  padding: var(--esp-1) 0;
-}
-
-/* Chamada final */
-.chamada-final {
-  text-align: center;
-}
-
-/* Quem somos */
-.equipe {
-  display: grid;
-  gap: var(--esp-4);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-@media (min-width: 600px) {
-  .equipe {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .equipe {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-.integrante {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-  font-weight: var(--peso-forte);
-}
-
-.integrante-iniciais {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  width: var(--toque-min);
-  height: var(--toque-min);
-  border-radius: var(--raio-botao);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-  font-family: var(--fonte-titulo);
-  font-size: var(--fs-sm);
-}
-
-/* Rodapé */
-.rodape {
-  padding: var(--esp-7) 0 var(--esp-6);
-  background: var(--cor-primaria);
-  color: var(--cor-superficie);
-}
-
-/* A marca volta bem grande para fechar a página */
-.rodape-logo {
-  font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: clamp(38px, 12vw, 144px);
-  letter-spacing: .04em;
-  line-height: 1;
-  margin: 0 0 var(--esp-4);
-}
-
-.rodape-logo .logo-icone {
-  width: 1em;
-  height: 1em;
-}
-
-.rodape-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 var(--esp-5);
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.rodape a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--toque-min);
-  color: var(--cor-superficie);
-}
-
-/* Referências recolhidas: abre ao tocar, sem JavaScript */
-.referencias {
-  margin: var(--esp-5) 0;
-}
-
-.referencias summary {
+.app-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--esp-3);
-  max-width: 320px;
-  min-height: var(--toque-min);
-  border-radius: var(--raio-campo);
-  list-style: none;
-  cursor: pointer;
+  padding: 12px 16px;
+  background: var(--campo-azul);
+  color: #FFFFFF;
 }
-
-.referencias summary::-webkit-details-marker {
-  display: none;
-}
-
-.referencias summary::after {
-  content: "+";
+.app-marca {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
   font-family: var(--fonte-titulo);
-  font-weight: var(--peso-titulo);
-  font-size: var(--fs-xl);
+  font-size: 24px;
+}
+.app-marca .marca-icone { width: 26px; height: 26px; }
+.app-ligar {
+  padding: 8px 12px;
+  border-radius: var(--raio);
+  background: var(--cor-risco-perigo);
+  color: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+}
+.app-abas {
+  display: flex;
+  background: var(--cor-superficie);
+}
+.app-aba {
+  flex: 1;
+  padding: 10px 4px;
+  text-align: center;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--cor-texto-suave);
+  transition: color var(--dur-curta) ease;
+}
+.app-aba:hover { color: var(--cor-texto); }
+.app-aba--ativa {
+  color: var(--cor-texto);
+  background: var(--cor-fundo);
+}
+.app-faixa {
+  padding: 12px 16px;
+  background: var(--cor-fundo);
+}
+.app-rua {
+  font-weight: 700;
+  font-size: 20px;
+}
+.app-apoio {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
+}
+.app-corpo {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+.app-selo {
+  justify-self: start;
+  padding: 4px 12px 2px;
+  border-radius: 2px;
+  background: var(--cor-risco-perigo);
+  color: #FFFFFF;
+  font-family: var(--fonte-titulo);
+  font-size: 30px;
   line-height: 1;
 }
-
-.referencias details[open] summary::after {
-  content: "\2212"; /* sinal de menos */
+.app-ordem {
+  font-size: 18px;
+  font-weight: 600;
 }
-
-.referencias h2 {
-  font-size: var(--fs-lg);
-  margin: 0;
+.app-mapa {
+  width: 100%;
+  height: auto;
+  border-radius: var(--raio);
 }
+.mapa-chao { fill: var(--cor-fundo); }
+.mapa-rua { stroke: var(--cor-borda); stroke-width: 10; }
+.mapa-perigo { stroke: var(--cor-risco-perigo); stroke-width: 12; stroke-dasharray: 14 8; }
+.mapa-caminho { fill: none; stroke: var(--cor-risco-normal); stroke-width: 6; stroke-linejoin: round; }
+.mapa-ponto { fill: var(--campo-azul); }
+.mapa-rotulo { fill: var(--cor-texto); font: 600 13px var(--fonte-texto); }
+.app-destino {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.app-destino-nome { font-weight: 700; }
+.app-botao {
+  flex: none;
+  padding: 10px 14px;
+  border-radius: var(--raio);
+  background: var(--campo-azul);
+  color: #FFFFFF;
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform var(--dur-curta) var(--curva-mola);
+}
+.app-botao:active,
+.app-ligar:active { transform: scale(0.96); }
 
-.referencias-lista {
+/* ---------- Gamificação: título parado, missões passando ---------- */
+
+.jogo {
   display: grid;
-  gap: var(--esp-3);
-  margin: var(--esp-3) 0 0;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 48px var(--margem);
+  padding: var(--vao) var(--margem);
+  align-items: start;
+}
+.jogo-topo {
+  grid-column: 1 / 6;
+  position: sticky;
+  top: 48px;
+  display: grid;
+  gap: 24px;
+}
+.jogo-topo p {
+  font-size: 20px;
+  line-height: 1.45;
+  max-width: 34ch;
+}
+.link-seta {
+  justify-self: start;
+  font-size: 20px;
+  font-weight: 700;
+  transition: translate var(--dur-curta) var(--curva-saida);
+}
+.link-seta::after { content: " →"; }
+.link-seta:hover { translate: 6px 0; }
+.jogo-lista {
+  grid-column: 6 / 13;
+  display: grid;
+  gap: 8px;
+}
+.missoes {
+  list-style: none;
   padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.missao {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 24px;
+  align-items: baseline;
+  padding: 28px;
+  border-radius: var(--raio);
+  background: var(--cor-superficie);
+}
+.missao-nome {
+  font-family: var(--fonte-texto);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.missao p:not(.pontos) {
+  grid-column: 1;
+  font-size: 18px;
+}
+.missao .pontos {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  align-self: center;
+  font-family: var(--fonte-titulo);
+  font-size: 40px;
+  line-height: 1;
+}
+.pontos { color: var(--cor-destaque); }
+.ranking {
+  padding: 28px;
+  border-radius: var(--raio);
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+  display: grid;
+  gap: 16px;
+}
+.ranking-titulo {
+  font-family: var(--fonte-texto);
+  font-weight: 700;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+.ranking-lista {
+  padding-left: 1.4em;
+  display: grid;
+  gap: 8px;
+  font-size: 22px;
+  font-weight: 600;
+}
+.ranking-lista li::marker { font-weight: 700; }
+.ranking-lista li span:first-child { margin-right: 12px; }
+.ranking .pontos { color: var(--campo-azul-texto); font-weight: 400; }
+.ranking-nota { font-size: 16px; }
+
+/* ---------- Gadgets: capacidades em tamanho de cartaz ---------- */
+
+.gadgets {
+  padding: var(--vao) var(--margem);
+}
+.gadgets-lista {
+  list-style: none;
+  padding: 0;
+}
+.gadget {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 8px var(--margem);
+  align-items: baseline;
+  padding-block: 0.3em;
+}
+.gadget-nome {
+  grid-column: 1 / 9;
+  font-size: clamp(44px, 5.6vw, 88px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  transition: translate var(--dur-curta) var(--curva-saida);
+}
+.gadget p {
+  grid-column: 9 / 13;
+  font-size: 18px;
+  line-height: 1.4;
+}
+.gadget--titulo .gadget-nome { color: var(--cor-texto-suave); }
+@media (hover: hover) and (pointer: fine) {
+  .gadgets-lista .gadget:hover .gadget-nome { translate: 12px 0; }
+}
+
+/* ---------- Chamada: a pergunta nas duas pontas ---------- */
+
+.chamada {
+  position: relative;
+  min-height: max(86svh, 640px);
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding: 0 var(--margem);
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+  text-align: center;
+}
+.chamada-titulo {
+  font-size: clamp(96px, 11vw, 176px);
+  line-height: 1;
+  text-transform: uppercase;
+}
+.chamada-titulo span {
+  position: absolute;
+  left: var(--margem);
+  right: var(--margem);
+}
+.chamada-titulo span:first-child { top: 32px; }
+.chamada-titulo span:last-child { bottom: 24px; }
+.chamada-meio {
+  display: grid;
+  justify-items: center;
+  gap: 18px;
+}
+.chamada-botoes {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+.chamada-ou {
+  font-size: 18px;
+}
+.chamada-nota {
+  font-size: 16px;
+}
+
+/* ---------- Equipe: quadros nas cores dos níveis ---------- */
+
+.equipe {
+  padding: var(--vao) var(--margem);
+}
+.equipe-topo {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 16px var(--margem);
+  align-items: end;
+  margin-bottom: 40px;
+}
+.equipe-topo h2 { grid-column: 1 / 7; }
+.equipe-topo p {
+  grid-column: 7 / 13;
+  font-size: 20px;
+}
+.equipe-lista {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.pessoa {
+  display: grid;
+  gap: 10px;
+}
+.pessoa-iniciais {
+  display: flex;
+  align-items: flex-end;
+  aspect-ratio: 4 / 5;
+  padding: 16px 20px;
+  border-radius: var(--raio);
+  font-family: var(--fonte-titulo);
+  font-size: clamp(96px, 12vw, 200px);
+  line-height: 0.8;
+  box-sizing: border-box;
+}
+.pessoa--normal .pessoa-iniciais { background: var(--cor-risco-normal); color: var(--cor-risco-normal-texto); }
+.pessoa--atencao .pessoa-iniciais { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
+.pessoa--alerta .pessoa-iniciais { background: var(--cor-risco-alerta); color: var(--cor-risco-alerta-texto); }
+.pessoa--perigo .pessoa-iniciais { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
+.pessoa-nome {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ---------- Rodapé: foto de um lado, menu do outro ---------- */
+
+.rodape-divisao {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 90svh;
+}
+.rodape-foto {
+  position: relative;
+  overflow: hidden;
+}
+.rodape-foto img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.rodape-foto figcaption {
+  position: absolute;
+  left: var(--margem);
+  bottom: 20px;
+  padding: 6px 10px;
+  background: var(--cor-fundo);
+  color: var(--cor-texto);
+  border-radius: 2px;
+}
+.rodape-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 72px var(--margem) 56px;
+  background: var(--campo-azul);
+  color: var(--campo-azul-texto);
+}
+.rodape-marca {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+.rodape-links {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.rodape-links a {
+  display: inline-block;
+  font-family: var(--fonte-titulo);
+  font-size: clamp(40px, 3.6vw, 60px);
+  line-height: 0.95;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: translate var(--dur-curta) var(--curva-saida);
+}
+@media (hover: hover) and (pointer: fine) {
+  .rodape-links a:hover { translate: 12px 0; }
+}
+.rodape-links a:focus-visible { translate: 12px 0; }
+.rodape-blocos {
+  margin-top: auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--margem);
+  font-size: 16px;
+  line-height: 1.45;
+}
+
+.rodape-fontes {
+  display: grid;
+  gap: 28px;
+  padding: 64px var(--margem) 40px;
+}
+.fontes summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  cursor: pointer;
   list-style: none;
 }
-
-/* Links das referências ficam no meio do texto: não viram bloco de 48px */
-.referencias-lista a {
-  display: inline;
-  min-height: 0;
+.fontes summary::-webkit-details-marker { display: none; }
+/* Sinal de mais que vira menos ao abrir */
+.fontes summary::after {
+  content: "+";
+  font-family: var(--fonte-titulo);
+  font-size: 48px;
+  line-height: 1;
+  transition: transform var(--dur-curta) var(--curva-saida);
+}
+.fontes[open] summary::after {
+  content: "\2212";
+  transform: rotate(180deg);
+}
+.fontes-titulo {
+  font-size: clamp(40px, 4vw, 60px);
+  text-transform: uppercase;
+}
+.fontes-lista {
+  margin-top: 24px;
+  padding-left: 1.2em;
+  display: grid;
+  gap: 10px;
+  font-size: 16px;
+  line-height: 1.45;
+  columns: 2;
+  max-width: 1200px;
+}
+.creditos {
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 90ch;
+}
+.rodape-legal {
+  font-size: 14px;
+  color: var(--cor-texto-suave);
 }
 
-/* Movimento: só quem aceita animação, e nada depende dele para aparecer */
-@media (prefers-reduced-motion: no-preference) {
-  /* O alerta chega ao abrir a página, e a tela da prévia ao trocar de nível */
-  @keyframes chegar {
-    from { opacity: 0; transform: translateY(var(--esp-3)); }
-  }
+/* ---------- Tablet ---------- */
 
-  .alerta-hero,
-  .previa-estado {
-    animation: chegar .35s ease-out;
+@media (max-width: 1000px) {
+  .topo-nav { display: none; }
+  .heroi-foto {
+    --foto-largura: 40vw;
+    left: auto;
+    right: 7vw;
+    top: 34svh;
   }
+  .faixa { flex-direction: column; align-items: flex-start; }
+  .faixa-acao { justify-items: start; }
+  .faixa-legenda { text-align: left; }
+  .mortes { min-height: 0; gap: 72px; }
+  .chamada { min-height: 72svh; }
+  .teste,
+  .conversa { grid-column: 1 / -1; }
+  .conversa { justify-self: start; }
+  .niveis-escolha { grid-template-columns: repeat(2, 1fr); }
+  .numeros-lista { grid-column: 1 / -1; }
+  .numeros-foto { grid-column: 1 / -1; position: static; }
+  .numeros-foto-quadro { aspect-ratio: 16 / 9; }
+  .nivel-ordem,
+  .nivel-regras,
+  .nivel-perigo-texto,
+  .app { grid-column: 1 / -1; }
+  .app { justify-self: start; }
+  .jogo-topo,
+  .jogo-lista { grid-column: 1 / -1; position: static; }
+  .gadget-nome,
+  .gadget p { grid-column: 1 / -1; }
+  .gadget { padding-block: 0 20px; }
+  .gadget p { padding-left: var(--margem); }
+}
 
-  /* As partes de cada seção sobem ao entrar na tela (só em navegador que suporta) */
-  @supports (animation-timeline: view()) {
-    .numero,
-    .passo,
-    .missao,
-    .ranking,
-    .dispositivo,
-    .integrante {
-      animation: chegar linear both;
-      animation-timeline: view();
-      animation-range: entry 0% entry 40%;
-    }
+/* ---------- Celular ---------- */
+
+@media (max-width: 640px) {
+  .heroi { min-height: 0; }
+  .marca { font-size: 26px; }
+  .manchete {
+    margin-top: 6svh;
+    font-size: 19.5vw;
   }
+  /* A foto sai da posição solta e entra no fluxo, encostada na direita */
+  .heroi-foto {
+    --foto-largura: 58vw;
+    position: relative;
+    left: auto;
+    top: auto;
+    bottom: auto;
+    align-self: flex-end;
+    margin: 24px -5vw -22vw 0;
+    height: 74vw;
+  }
+  .faixa {
+    flex-direction: column;
+    align-items: stretch;
+    padding-top: calc(22vw + 24px);
+  }
+  .faixa-acao { justify-items: stretch; }
+  .faixa-legenda { text-align: left; }
+  .botao { width: 100%; box-sizing: border-box; }
+
+  .titulo-secao { font-size: clamp(48px, 15vw, 72px); }
+
+  .teste-apoio { font-size: 18px; }
+  .nivel-opcao { min-height: 84px; }
+  .conversa-corpo { min-height: 0; }
+
+  .quadros {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 46svh auto;
+    gap: 6px;
+  }
+  .quadro--slogan { grid-column: 1 / -1; grid-row: 1; }
+  .quadro-slogan { font-size: 16vw; }
+  .quadro--numero,
+  .quadro--foto { grid-column: auto; grid-row: 2; aspect-ratio: 1; padding: 14px; }
+  .quadro--foto { padding: 0; }
+  .quadro-numero { font-size: 22vw; }
+  .quadro-legenda { font-size: 15px; }
+  .problema-texto { grid-template-columns: 1fr; padding-top: 28px; }
+  .problema-texto p { font-size: 19px; }
+
+  .mortes { min-height: 80svh; gap: 10vh; padding-top: 48px; }
+  .mortes-titulo { font-size: 28px; }
+  .mortes-base { grid-template-columns: 1fr; }
+  .mortes-numero,
+  .mortes-texto { grid-column: 1; }
+  .mortes-numero { font-size: 60vw; }
+  .mortes-legenda { font-size: 22px; }
+
+  .conta { grid-template-columns: 1fr; gap: 8px; }
+  .conta-numero { font-size: 22vw; }
+
+  .comparar-titulo,
+  .comparar-topo p { grid-column: 1 / -1; }
+  .comparar-titulo { font-size: 40px; }
+  .comparar-topo p { font-size: 18px; }
+  .comparar { padding-bottom: 0; }
+  .comparar-pares {
+    --palavra: 30vw;
+    grid-template-columns: 1fr;
+    height: auto;
+    margin-inline: calc(var(--margem) * -1);
+  }
+  .comparar-par {
+    height: 38svh;
+    max-height: 300px;
+    overflow: hidden;
+    padding: 20px var(--margem) 0;
+    box-sizing: border-box;
+  }
+  .comparar-par--rua { background: var(--cor-fundo); color: var(--cor-texto); }
+
+  .como-topo h2,
+  .como-topo p { grid-column: 1 / -1; }
+  .como-topo p { font-size: 18px; }
+  .paineis { flex-direction: column; height: auto; margin-top: 40px; }
+  .painel { flex: none; }
+  .painel-nome,
+  .painel details[open] .painel-nome {
+    position: static;
+    writing-mode: horizontal-tb;
+    min-height: 64px;
+    align-items: center;
+    padding: 16px 20px;
+    font-size: 30px;
+  }
+  .painel details[open] .painel-nome { font-size: 40px; padding: 24px 20px 0; }
+  .painel-corpo {
+    position: static;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 16px 20px 24px;
+  }
+  .painel-corpo > p { font-size: 17px; }
+
+  .niveis-topo h2,
+  .niveis-topo p { grid-column: 1 / -1; }
+  .niveis-topo p { font-size: 18px; }
+  .nivel { min-height: 92svh; padding-top: 72px; padding-bottom: 48px; }
+  .nivel-nome { font-size: 25vw; }
+  .nivel-ordem { font-size: 24px; }
+  .nivel-regras { grid-template-columns: 1fr; gap: 2px; font-size: 17px; }
+  .nivel-regras dd { margin-bottom: 10px; }
+
+  .missao { padding: 20px; grid-template-columns: 1fr; }
+  .missao .pontos { grid-column: 1; grid-row: auto; font-size: 32px; }
+  .missao-nome { font-size: 21px; }
+
+  .chamada { min-height: 88svh; }
+  .chamada-titulo { font-size: 17vw; }
+  .chamada-botoes { flex-direction: column; width: 72vw; gap: 12px; }
+
+  .equipe-topo h2,
+  .equipe-topo p { grid-column: 1 / -1; }
+  .equipe-lista { grid-template-columns: 1fr 1fr; gap: 28px 8px; }
+  .pessoa-iniciais { font-size: 18vw; }
+  .pessoa-nome { font-size: 16px; }
+
+  .rodape-divisao { grid-template-columns: 1fr; }
+  .rodape-foto { height: 50svh; }
+  .rodape-menu { padding-top: 40px; }
+  .rodape-links a { font-size: 11vw; }
+  .rodape-blocos { grid-template-columns: 1fr; }
+  .fontes-lista { columns: 1; }
 }

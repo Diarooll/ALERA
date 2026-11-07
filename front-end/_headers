@@ -1,0 +1,190 @@
+# =====================================================================
+# _headers do ALERA (Cloudflare Pages)
+# =====================================================================
+# O que é: o Cloudflare Pages lê este arquivo e coloca estes "cabeçalhos"
+# nas respostas do site. Cabeçalho é um recado que vai junto com a
+# página e diz ao navegador o que ele pode ou não fazer com ela.
+#
+# Onde fica: na raiz da pasta publicada. No projeto do Pages, a pasta de
+# saída ("Build output directory") é "front-end", sem comando de build.
+# Só vale no site publicado. Abrindo pelo computador (arquivo direto ou
+# python -m http.server) nada disto é aplicado.
+#
+# Como ler: a linha que começa com "/" (ou com "https://") é o caminho.
+# As linhas logo abaixo, recuadas, são os cabeçalhos desse caminho.
+# Linha que começa com "#" é comentário: o Pages ignora.
+#
+# Regras do formato (documentação do Cloudflare Pages):
+# - no máximo 100 regras e 2.000 caracteres por linha;
+# - "*" pega qualquer coisa, e só pode aparecer uma vez por caminho;
+# - quando duas regras valem para o mesmo endereço, os cabeçalhos se
+#   somam; o mesmo cabeçalho em duas regras vira um valor só, separado
+#   por vírgula. Por isso o Cache-Control não fica no "/*": cada grupo de
+#   arquivos tem a sua regra, sem sobrepor;
+# - "! Nome" apaga um cabeçalho que uma regra de cima colocou. As regras
+#   valem na ordem do arquivo, então exceções ficam DEPOIS do "/*".
+#
+# Para testar: publique numa prévia do Pages, abra o site com o DevTools
+# (F12), aba Console, e procure erros "Content Security Policy".
+# Guia completo: docs/seguranca/cloudflare.md
+# =====================================================================
+
+
+# ---------------------------------------------------------------------
+# Todas as páginas e arquivos do site
+# ---------------------------------------------------------------------
+/*
+  # CSP (Content-Security-Policy): a lista de lugares de onde a página
+  # pode carregar coisas. Se alguém conseguir enfiar um <script> na
+  # página, o navegador recusa, porque o endereço não está na lista.
+  # Peça por peça:
+  #   default-src 'self'     por padrão, só o nosso próprio site.
+  #   script-src             JavaScript: nossos arquivos .js e o Leaflet
+  #                          1.9.4 do cdnjs. Só a pasta do Leaflet, não o
+  #                          cdnjs inteiro: lá tem bibliotecas que servem
+  #                          para driblar a CSP. Sem 'unsafe-inline':
+  #                          <script> escrito dentro do HTML e onclick="..."
+  #                          NÃO rodam. Todo JavaScript fica em arquivo .js.
+  #   style-src              CSS: nossos .css, o CSS do Google Fonts e o do
+  #                          Leaflet. Bloco <style> dentro do HTML não vale.
+  #   style-src-attr         libera só o atributo style="..." (o index.html
+  #                          usa um, e o redesenho pode usar). Ele muda só a
+  #                          aparência do próprio elemento e não lê nada da
+  #                          página. O Leaflet muda estilos pelo JavaScript
+  #                          (el.style), e isso a CSP não bloqueia.
+  #   font-src               os arquivos de fonte do Google Fonts.
+  #   img-src                nossas imagens, data: (imagem embutida no CSS),
+  #                          os quadradinhos do mapa (OpenStreetMap) e as
+  #                          imagens do Leaflet.
+  #   connect-src            para onde o JavaScript pode fazer fetch():
+  #                          o ViaCEP (busca do CEP) e a NOSSA API.
+  #                          >>> TROQUE https://api.SEU-DOMINIO.com.br pelo
+  #                          >>> endereço da API publicada (só https://nome,
+  #                          >>> sem o /api do fim). Troque junto o API_URL
+  #                          >>> em front-end/js/api.js. Enquanto estiver o
+  #                          >>> texto de exemplo, o app não acha a API.
+  #   frame-src 'none'       a página não abre nenhum iframe.
+  #   object-src 'none'      nada de plugin (<object>, <embed>).
+  #   base-uri 'none'        ninguém muda o endereço-base dos links (<base>).
+  #   form-action 'self'     formulário só envia para o nosso site.
+  #   frame-ancestors 'none' nenhum outro site põe o ALERA dentro de um
+  #                          iframe (protege do "clickjacking": um site falso
+  #                          por cima, fazendo a pessoa clicar sem ver).
+  #   upgrade-insecure-requests  o que pedir http:// vira https://.
+  #
+  # ATENÇÃO: app/app.html e app/admin.html têm hoje um <script> curto no
+  # <head> (a "guarda" que manda quem não entrou para o login). Com esta
+  # CSP ele não roda. Ele precisa ir para um arquivo .js, carregado com
+  # <script src="..."> no mesmo lugar do <head>.
+  #
+  # Para liberar um domínio novo, ele tem que entrar na diretiva certa
+  # (script-src, img-src...). Combine antes com quem cuida da segurança.
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; connect-src 'self' https://viacep.com.br https://api.SEU-DOMINIO.com.br; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests
+
+  # HSTS: diz ao navegador "este site só abre com https" por 180 dias.
+  # Depois da primeira visita, mesmo que alguém digite http:// ou um Wi-Fi
+  # tente desviar para http, o navegador vai direto no https.
+  # includeSubDomains vale também para api. e outros subdomínios: só
+  # mantenha se TODOS tiverem https (com a nuvem laranja da Cloudflare,
+  # têm). Sem "preload" de propósito: é difícil de desfazer.
+  # Use o mesmo valor no painel (SSL/TLS > Edge Certificates > HSTS).
+  Strict-Transport-Security: max-age=15552000; includeSubDomains
+
+  # O navegador não "adivinha" o tipo do arquivo: um arquivo de texto
+  # com código dentro não vira script nem página.
+  X-Content-Type-Options: nosniff
+
+  # Quando a página chama outro site (mapa, ViaCEP, API), vai só o
+  # endereço principal do ALERA, nunca o caminho completo da página.
+  # Não use "no-referrer": o OpenStreetMap exige saber de qual site vêm
+  # os pedidos do mapa (regra de uso deles) e pode cortar o mapa.
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Desliga recursos do aparelho que o ALERA não usa: câmera, microfone,
+  # pagamento, USB, sensores de movimento e localização (GPS).
+  # Hoje nenhuma página pede a localização: a casa é marcada no mapa ou
+  # achada pelo endereço. Se o app ganhar "usar minha localização", use o
+  # modelo GEOLOCALIZAÇÃO no fim do arquivo (libera só no app).
+  Permissions-Policy: accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+  # A versão antiga do frame-ancestors, para navegadores velhos:
+  # nenhum site pode abrir o ALERA dentro de um iframe.
+  X-Frame-Options: DENY
+
+  # Uma aba aberta por outro site não consegue mexer na aba do ALERA
+  # (e vice-versa). Os links externos já usam rel="noopener"; isto
+  # garante o mesmo para todos.
+  Cross-Origin-Opener-Policy: same-origin
+
+  # Não incluído de propósito: X-XSS-Protection (os navegadores já
+  # aposentaram, e a CSP faz o trabalho).
+
+
+# ---------------------------------------------------------------------
+# Cache: quanto tempo o navegador guarda cada arquivo
+# ---------------------------------------------------------------------
+# HTML: curto. O navegador guarda, mas sempre pergunta se mudou (a
+# resposta "não mudou" é rapidinha). Assim, uma versão nova do site
+# chega na hora para todo mundo.
+/
+  Cache-Control: public, max-age=0, must-revalidate
+
+/app/*
+  Cache-Control: public, max-age=0, must-revalidate
+  # As páginas do app (login, app do morador, painel) não precisam
+  # aparecer no Google. Isto não protege nada sozinho: só evita listar.
+  X-Robots-Tag: noindex
+
+# Imagens e ícones: 30 dias. Se trocar uma imagem, troque também o nome
+# do arquivo (ex.: casa-alagada-2.jpg); senão quem já visitou continua
+# vendo a antiga por até 30 dias.
+/assets/*
+  Cache-Control: public, max-age=2592000
+
+# CSS e JavaScript: 1 hora. Não é o "cache de 1 ano" de propósito: os
+# nomes dos arquivos (app.js, site.css...) não mudam entre versões. Com
+# cache longo, quem já visitou ficaria dias com o JavaScript velho junto
+# de um HTML novo, e uma correção de segurança demoraria a chegar.
+# Quando o HTML passar a chamar os arquivos com versão no nome (ex.:
+# js/app.js?v=2026-11-06 ou js/app.20261106.js, trocando a cada versão),
+# troque as duas linhas abaixo por:
+#   Cache-Control: public, max-age=31536000, immutable
+/css/*
+  Cache-Control: public, max-age=3600
+
+/js/*
+  Cache-Control: public, max-age=3600
+
+
+# ---------------------------------------------------------------------
+# Endereço *.pages.dev
+# ---------------------------------------------------------------------
+# O Pages também publica o site em NOME-DO-PROJETO.pages.dev. O endereço
+# oficial é o seu domínio; este pede ao Google para não listar o
+# pages.dev, para ninguém cair numa cópia "paralela" do site.
+https://:project.pages.dev/*
+  X-Robots-Tag: noindex
+
+
+# =====================================================================
+# MODELOS PRONTOS (desligados). Para usar, tire o "#" do começo das
+# linhas do bloco. Eles ficam aqui no fim de propósito: precisam vir
+# depois do "/*" para substituir o cabeçalho dele.
+# =====================================================================
+
+# --- GEOLOCALIZAÇÃO: só quando o app do morador usar "minha localização"
+# Libera o GPS só no app do morador (/app/app). As outras páginas
+# continuam com geolocation=() da regra "/*".
+#
+# /app/app*
+#   ! Permissions-Policy
+#   Permissions-Policy: accelerometer=(), camera=(), geolocation=(self), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()
+
+# --- TURNSTILE: só quando o "não sou robô" entrar no login e no cadastro
+# É a mesma CSP do "/*" com https://challenges.cloudflare.com a mais em
+# script-src e em frame-src (o Turnstile é um script + um iframe). Vale só
+# para a página de login. Se mudar a CSP do "/*", mude aqui também.
+#
+# /app/login*
+#   ! Content-Security-Policy
+#   Content-Security-Policy: default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/ https://challenges.cloudflare.com; style-src 'self' https://fonts.googleapis.com https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; style-src-attr 'unsafe-inline'; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://tile.openstreetmap.org https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/; connect-src 'self' https://viacep.com.br https://api.SEU-DOMINIO.com.br; frame-src https://challenges.cloudflare.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests

@@ -1,0 +1,199 @@
+/* ALERA · movimento.css
+   Animações comuns ao site, ao login, ao app e ao painel. Linkar depois de base.css.
+   Funciona junto com js/movimento.js. Como usar: docs/redesign/cartaz-de-rua.md
+
+   Regra de ouro: se o JavaScript não rodar, NADA fica escondido.
+   - Só escondemos algo para animar quando o navegador tem script ligado (scripting: enabled)
+     e a pessoa não pediu menos movimento.
+   - Se o movimento.js não carregar (arquivo faltando, erro), uma animação de segurança
+     mostra tudo depois de 2,5 s. Quando o movimento.js roda, ele põe .movimento-pronto
+     no <html> e essa segurança sai de cena. */
+
+/* Troca suave entre páginas do próprio ALERA (Chrome e Edge; os outros só trocam) */
+@view-transition {
+  navigation: auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html:not(.trocando-tema)::view-transition-old(root) {
+    animation: 260ms var(--curva-entra) both sair-pagina;
+  }
+  html:not(.trocando-tema)::view-transition-new(root) {
+    animation: 420ms var(--curva-saida) both entrar-pagina;
+  }
+}
+
+/* Troca de tema (js/tema.js): a cor nova abre em círculo por cima da antiga */
+html.trocando-tema::view-transition-old(root),
+html.trocando-tema::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+@keyframes sair-pagina {
+  to { opacity: 0; transform: translateY(-12px); }
+}
+@keyframes entrar-pagina {
+  from { opacity: 0; transform: translateY(18px); }
+}
+
+/* ---------- Entrada ao rolar: [data-revelar] e [data-revelar-grupo] ---------- */
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-revelar]:not(.revelado),
+  [data-revelar-grupo]:not(.revelado) > * {
+    opacity: 0;
+    transform: translateY(var(--revelar-distancia, 28px));
+  }
+
+  [data-revelar],
+  [data-revelar-grupo] > * {
+    transition:
+      opacity var(--dur-media) var(--curva-saida),
+      transform var(--dur-media) var(--curva-saida);
+    transition-delay: calc(var(--ordem, 0) * var(--escalonar));
+  }
+
+  /* Variações: entra da esquerda, da direita ou crescendo */
+  [data-revelar="esquerda"]:not(.revelado) { transform: translateX(-40px); }
+  [data-revelar="direita"]:not(.revelado)  { transform: translateX(40px); }
+  [data-revelar="crescer"]:not(.revelado)  { transform: scale(.94); }
+
+  /* Segurança: sem o movimento.js, tudo aparece sozinho depois de 2,5 s */
+  html:not(.movimento-pronto) [data-revelar],
+  html:not(.movimento-pronto) [data-revelar-grupo] > * {
+    animation: aparecer-por-seguranca 0s 2.5s forwards;
+  }
+}
+
+@keyframes aparecer-por-seguranca {
+  to { opacity: 1; transform: none; }
+}
+
+/* ---------- Obturador: [data-obturador] em volta de uma <img> ----------
+   A foto abre de baixo para cima e "assenta" de 1,12x para 1x.
+   Usar uma vez por página, na foto que mais importa. */
+
+[data-obturador] {
+  overflow: hidden;
+}
+[data-obturador] img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  [data-obturador] {
+    clip-path: inset(100% 0 0 0);
+    transition: clip-path var(--dur-longa) var(--curva-saida);
+  }
+  [data-obturador] img {
+    transform: scale(1.12);
+    transition: transform calc(var(--dur-longa) * 1.4) var(--curva-saida);
+  }
+  [data-obturador].revelado {
+    clip-path: inset(0 0 0 0);
+  }
+  [data-obturador].revelado img {
+    transform: scale(1);
+  }
+  html:not(.movimento-pronto) [data-obturador] {
+    animation: abrir-por-seguranca 0s 2.5s forwards;
+  }
+}
+
+@keyframes abrir-por-seguranca {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+/* ---------- Toque: .pressionavel (botões, cartões clicáveis) ----------
+   Afunda um pouco ao apertar e volta com mola. */
+
+.pressionavel {
+  transition: transform var(--dur-curta) var(--curva-mola);
+}
+.pressionavel:active {
+  transform: scale(.96);
+  transition-duration: var(--dur-toque);
+  transition-timing-function: var(--curva-saida);
+}
+
+/* ---------- Ímã: [data-ima] (só com mouse) ----------
+   O js/movimento.js escreve --ima-x e --ima-y; aqui só aplicamos. */
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  [data-ima] {
+    translate: var(--ima-x, 0) var(--ima-y, 0);
+    transition: translate var(--dur-curta) var(--curva-saida);
+  }
+}
+
+/* ---------- Deriva: [data-deriva] (foto que anda devagar com a rolagem) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-deriva] {
+    translate: 0 var(--deriva, 0);
+    will-change: translate;
+  }
+}
+
+/* ---------- Avisos rápidos (toast): Movimento.aviso('Salvo') ---------- */
+
+.avisos {
+  position: fixed;
+  z-index: 1000;
+  left: 50%;
+  bottom: max(16px, env(safe-area-inset-bottom));
+  translate: -50% 0;
+  display: grid;
+  gap: 8px;
+  width: min(92vw, 420px);
+  pointer-events: none;
+}
+
+.aviso {
+  padding: 14px 18px;
+  border-radius: var(--raio);
+  background: var(--cor-primaria);
+  color: #fff;
+  font-family: var(--fonte-texto);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  box-shadow: var(--sombra-flutua);
+  pointer-events: auto;
+}
+.aviso[data-tipo="ok"]   { background: var(--cor-risco-normal); color: var(--cor-risco-normal-texto); }
+.aviso[data-tipo="erro"] { background: var(--cor-risco-perigo); color: var(--cor-risco-perigo-texto); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .aviso {
+    animation: aviso-entra var(--dur-media) var(--curva-mola) both;
+  }
+  .aviso.saindo {
+    animation: aviso-sai var(--dur-curta) var(--curva-entra) both;
+  }
+}
+
+@keyframes aviso-entra {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+}
+@keyframes aviso-sai {
+  to { opacity: 0; transform: translateY(12px); }
+}
+
+/* ---------- Tremidinha para erro: Movimento.tremer(elemento) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .tremendo {
+    animation: tremer 360ms var(--curva-saida);
+  }
+}
+
+@keyframes tremer {
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}

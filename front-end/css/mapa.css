@@ -1,58 +1,108 @@
-/* ALERA · mapa.css: mapa Leaflet e lista de abrigos (app e painel).
-   Usa os tokens de tokens.css e as variáveis --app-* de app.css. */
+/* ALERA · mapa.css: mapa Leaflet, pinos e lista de abrigos (app e painel).
+   Usa os tokens de tokens.css e, quando existem, as variáveis --app-* da página. */
 
 .mapa-leaflet {
   position: relative;
   z-index: 0; /* o Leaflet usa z-index alto: aqui ele não passa por cima do menu */
   width: 100%;
   height: 320px;
-  border-radius: var(--app-raio, 10px);
-  background: var(--cor-linha);
+  border-radius: var(--app-raio, var(--raio, 4px));
+  background: var(--app-linha, var(--cor-linha));
 }
 .mapa-leaflet--alto {
   height: 420px;
 }
 .mapa-leaflet:focus-visible {
-  outline: 3px solid var(--app-foco, var(--cor-primaria));
+  outline: 3px solid var(--app-azul, var(--cor-primaria));
   outline-offset: 2px;
 }
+/* O Leaflet traz Helvetica: aqui ele usa a fonte do projeto */
+.mapa-leaflet.leaflet-container,
+.mapa-leaflet .leaflet-control-attribution {
+  font-family: var(--fonte-texto);
+}
+/* Tooltip do Leaflet no estilo da casa: caixa chapada, sem seta nem sombra */
+.mapa-leaflet .leaflet-tooltip {
+  padding: 4px 8px;
+  border: none;
+  border-radius: var(--raio, 4px);
+  background: var(--cor-texto);
+  color: #FFFFFF;
+  font: 600 14px/1.3 var(--fonte-texto);
+  box-shadow: none;
+}
+.mapa-leaflet .leaflet-tooltip-top::before {
+  display: none;
+}
 
-/* Tema escuro do app: escurece só os mapas, não os pinos */
+/* Tema escuro: escurece só os mapas, não os pinos */
+:root[data-tema="escuro"] .mapa-leaflet .leaflet-tile-pane,
 :root:has(#tema:checked) .mapa-leaflet .leaflet-tile-pane {
   filter: invert(1) hue-rotate(180deg) brightness(0.9) contrast(0.9);
 }
 
-/* ---------- pinos ---------- */
+/* ---------- pinos ----------
+   O ícone do Leaflet tem tamanho zero no ponto exato; a placa sobe e centraliza
+   por cima dele, com a ponta encostando no ponto (iconePin em mapa.js) */
 .pin-caixa {
   background: none;
   border: 0;
 }
 .pin {
+  position: absolute;
+  left: 0;
+  top: 0;
   display: grid;
   place-items: center;
-  width: 36px;
-  height: 36px;
-  border: 3px solid #fff;
-  border-radius: 50% 50% 50% 4px;
-  transform: rotate(-45deg);
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  border-radius: var(--raio, 4px);
   background: var(--cor-primaria);
-  color: #fff;
-  font: var(--peso-forte, 700) 14px/1 var(--fonte-titulo);
-  box-shadow: var(--sombra-card);
+  color: #FFFFFF;
+  font: 700 14px/1 var(--fonte-texto);
+  white-space: nowrap;
+  translate: -50% calc(-100% - 8px);
 }
-.pin > * {
-  transform: rotate(45deg);
+/* A ponta da placa, apontando para o lugar */
+.pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  width: 14px;
+  height: 8px;
+  background: inherit;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  translate: -50% 0;
 }
+@media (prefers-reduced-motion: no-preference) {
+  .pin {
+    animation: pin-cai 420ms cubic-bezier(.16, 1, .3, 1) both;
+  }
+}
+@keyframes pin-cai {
+  from { opacity: 0; transform: translateY(-10px); }
+}
+/* A casa: placa branca com texto escuro, para não confundir com abrigo */
 .pin--voce {
-  background: var(--cor-destaque);
-  border-radius: 50%;
-  transform: none;
+  background: #FFFFFF;
+  color: var(--cor-texto);
+  outline: 3px solid var(--cor-texto);
+  outline-offset: -3px;
 }
+.pin--voce::after {
+  background: var(--cor-texto);
+}
+/* O abrigo para onde ir: maior e na cor do texto da página */
 .pin--salvo {
-  background: var(--cor-destaque);
+  height: 36px;
+  padding: 0 12px;
+  background: var(--cor-texto);
+  font-size: 15px;
 }
 .pin--fechado {
-  background: #6b7280;
+  background: var(--cor-texto-suave);
 }
 .pin--novo {
   background: var(--cor-risco-alerta);
@@ -62,7 +112,7 @@
 /* ---------- lista de abrigos (também serve a quem usa teclado ou leitor de tela) ---------- */
 .lista-abrigos-app {
   display: grid;
-  gap: var(--esp-2);
+  gap: 2px;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -70,27 +120,56 @@
 .abrigo-cartao {
   display: grid;
   gap: var(--esp-2);
-  padding: var(--esp-3) var(--esp-4);
-  border: 2px solid var(--app-linha, var(--cor-linha));
-  border-radius: var(--app-raio, 10px);
+  padding: var(--esp-4);
+  border-radius: var(--app-raio, var(--raio, 4px));
   background: var(--app-superficie, var(--cor-superficie));
   color: var(--app-texto, var(--cor-texto));
+  scroll-margin: var(--esp-8);
+  transition: box-shadow var(--dur-curta, 240ms) ease;
 }
 .abrigo-cartao--ativo {
-  border-color: var(--app-azul, var(--cor-primaria));
+  box-shadow: inset 4px 0 0 var(--app-azul, var(--cor-primaria));
 }
-.abrigo-cartao--fechado {
-  opacity: 0.65;
+.abrigo-cartao--fechado .abrigo-cartao__nome,
+.abrigo-cartao--fechado .abrigo-cartao__numero {
+  color: var(--app-texto-suave, var(--cor-texto-suave));
+}
+.abrigo-cartao__cabeca {
+  display: flex;
+  align-items: center;
+  gap: var(--esp-3);
+}
+.abrigo-cartao__numero {
+  display: grid;
+  place-items: center;
+  flex: none;
+  min-width: 30px;
+  height: 30px;
+  border-radius: var(--raio, 4px);
+  background: var(--cor-primaria);
+  color: #FFFFFF;
+  font-weight: 700;
+}
+.abrigo-cartao--salvo .abrigo-cartao__numero {
+  background: var(--cor-texto);
+}
+.abrigo-cartao--fechado .abrigo-cartao__numero {
+  background: var(--cor-texto-suave);
+  color: #FFFFFF;
 }
 .abrigo-cartao__nome {
   margin: 0;
+  font-family: var(--fonte-texto);
   font-size: var(--fs-md);
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: 0;
 }
 .abrigo-cartao__info,
 .mapa-aviso {
   margin: 0;
   color: var(--app-texto-suave, var(--cor-texto-suave));
-  font-size: var(--fs-sm);
+  font-size: var(--fs-md);
 }
 .abrigo-cartao__acoes {
   display: flex;
@@ -123,8 +202,7 @@
   display: grid;
   gap: var(--esp-3);
   padding: var(--esp-4);
-  border: 2px solid var(--app-linha, var(--cor-linha));
-  border-radius: var(--app-raio, 10px);
+  border-radius: var(--app-raio, var(--raio, 4px));
   background: var(--app-superficie, var(--cor-superficie));
 }
 .form-abrigo__novo-tipo {

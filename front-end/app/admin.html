@@ -8,16 +8,10 @@
     <!-- Aqui em cima para o painel nem aparecer a quem não entrou como administrador.
          Quem confirma de verdade é o servidor, na conferência que está em admin.js. -->
     <noscript><meta http-equiv="refresh" content="0; url=login.html" /></noscript>
-    <script>
-      try {
-        if (localStorage.getItem('papel') !== 'admin') location.replace('login.html')
-      } catch {
-        location.replace('login.html')
-      }
-    </script>
+    <script src="../js/guarda.js"></script>
     <link rel="stylesheet" href="../css/tokens.css" />
     <link rel="stylesheet" href="../css/base.css" />
-    <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="../css/painel-base.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"

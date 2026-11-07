@@ -5,7 +5,7 @@
 const CENTRO_MAPA = [-21.7642, -43.3503] // Juiz de Fora (MG)
 const ENDERECO_TILES = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
 const ATRIBUICAO =
-  '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
+  '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>'
 
 const SITUACOES = {
   aberto: 'aberto agora',
@@ -16,18 +16,28 @@ const SITUACOES = {
 // Situações em que o abrigo recebe gente agora
 const ESTADOS_ABERTOS = ['aberto', 'poucas']
 
+// O abrigo recebe gente no nível de risco de quem consulta? O "só em alerta" abre
+// quando o nível chega a alerta ou perigo; antes disso não conta como aberto
+function abrigoRecebe(abrigo, nivel) {
+  if (ESTADOS_ABERTOS.includes(abrigo.situacao)) return true
+  return abrigo.situacao === 'so-alerta' && (nivel === 'alerta' || nivel === 'perigo')
+}
+
 function criarMapa(elemento, { centro = CENTRO_MAPA, zoom = 14 } = {}) {
   const mapa = L.map(elemento).setView(centro, zoom)
   L.tileLayer(ENDERECO_TILES, { maxZoom: 19, attribution: ATRIBUICAO }).addTo(mapa)
   return mapa
 }
 
-// Pino redondo com um número ou emoji. "classes" muda a cor (pin--fechado, pin--salvo, pin--voce)
+// Pino de cartaz: uma plaquinha com um número ou uma palavra curta e uma ponta embaixo.
+// "classes" muda a cor (pin--fechado, pin--salvo, pin--voce, pin--novo).
+// O ícone tem tamanho zero e a plaquinha se posiciona pelo CSS com a ponta no ponto exato,
+// assim a placa pode ter a largura do texto ("Casa", "12") sem errar a âncora
 function iconePin(texto, classes = '') {
   const pin = document.createElement('span')
   pin.className = `pin ${classes}`.trim()
-  pin.append(elemento('span', '', texto)) // dentro de um span, para o CSS desvirar o texto
-  return L.divIcon({ html: pin, className: 'pin-caixa', iconSize: [36, 36], iconAnchor: [18, 34] })
+  pin.append(elemento('span', 'pin__texto', texto))
+  return L.divIcon({ html: pin, className: 'pin-caixa', iconSize: [0, 0], iconAnchor: [0, 0] })
 }
 
 function formatarDistancia(metros) {

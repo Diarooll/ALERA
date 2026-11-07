@@ -1,5 +1,5 @@
 /* ALERA · base.css
-   Estilos globais comuns ao site, ao login e ao app. Linkar logo depois de tokens.css. */
+   Estilos globais comuns ao site, ao login, ao app e ao painel. Linkar logo depois de tokens.css. */
 
 body {
   margin: 0;
@@ -8,11 +8,33 @@ body {
   font-family: var(--fonte-texto);
   font-size: var(--fs-md);
   line-height: var(--altura-texto);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 h1, h2, h3, h4 {
   font-family: var(--fonte-titulo);
   font-weight: var(--peso-titulo);
   line-height: var(--altura-titulo);
+  letter-spacing: var(--tracking-titulo);
+  text-wrap: balance;
+}
+p { text-wrap: pretty; }
+
+::selection {
+  background: var(--cor-risco-atencao);
+  color: var(--cor-risco-atencao-texto);
+}
+
+/* Foco visível e igual em tudo: só aparece para quem navega pelo teclado */
+:focus-visible {
+  outline: 3px solid var(--cor-risco-atencao);
+  outline-offset: 3px;
+}
+
+/* O <svg> escondido que guarda os desenhos reusados com <use>.
+   Classe em vez de style="" no HTML: a política de segurança (CSP) bloqueia estilo inline. */
+.desenhos {
+  position: absolute;
 }
 
 /* Some da tela, mas o leitor de tela lê (usado no site e no app) */
