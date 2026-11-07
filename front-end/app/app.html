@@ -161,11 +161,13 @@
     </header>
 
     <main class="telas">
-      <!-- ALERTA: tela inicial. O topo é um campo inteiro na cor do nível, com o nome dele enorme.
-           data-nivel troca o texto na hora; data-fundo só troca quando a cortina termina de descer -->
+      <!-- ALERTA: tela inicial. O topo é um cartão compacto: o nível vai num selo na cor dele
+           e uma faixa da mesma cor marca a borda esquerda.
+           data-nivel troca o selo na hora; data-fundo (a faixa) só troca quando a cortina termina de descer -->
       <section class="tela" id="alerta" aria-labelledby="alerta-titulo">
+        <div class="conteudo">
         <div class="campo-nivel" id="campo-nivel" data-nivel="carregando" data-fundo="carregando">
-          <div class="conteudo campo-nivel__grade">
+          <div class="campo-nivel__grade">
             <div class="campo-nivel__nome">
               <p class="campo-nivel__rua" id="alerta-rua"><span class="esqueleto">Carregando sua rua</span></p>
               <h1 class="campo-nivel__nivel" id="alerta-titulo">
@@ -197,6 +199,7 @@
               </div>
             </div>
           </div>
+        </div>
         </div>
 
         <div class="conteudo alerta">

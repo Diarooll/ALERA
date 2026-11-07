@@ -26,7 +26,74 @@ function abrigoRecebe(abrigo, nivel) {
 function criarMapa(elemento, { centro = CENTRO_MAPA, zoom = 14 } = {}) {
   const mapa = L.map(elemento).setView(centro, zoom)
   L.tileLayer(ENDERECO_TILES, { maxZoom: 19, attribution: ATRIBUICAO }).addTo(mapa)
+  adicionarBotaoTemaMapa(mapa)
   return mapa
+}
+
+// ---------- Mapa claro ou escuro, separado do tema da página ----------
+// Cada mapa ganha um botão no canto. A escolha vale para todos os mapas abertos
+// e fica guardada em localStorage.temaMapa ('claro' ou 'escuro'). Sem escolha, claro.
+const mapasComTema = []
+
+function lerTemaMapa() {
+  try {
+    return localStorage.getItem('temaMapa') === 'escuro' ? 'escuro' : 'claro'
+  } catch {
+    return 'claro'
+  }
+}
+
+function aplicarTemaMapa(tema) {
+  const escuro = tema === 'escuro'
+  mapasComTema.forEach(({ mapa, botao }) => {
+    mapa.getContainer().classList.toggle('mapa--escuro', escuro)
+    botao.setAttribute('aria-pressed', String(escuro))
+  })
+}
+
+function trocarTemaMapa() {
+  const novo = temaMapaAtual === 'escuro' ? 'claro' : 'escuro'
+  try {
+    localStorage.setItem('temaMapa', novo)
+  } catch {
+    // Sem armazenamento (aba anônima): troca só nesta visita
+  }
+  temaMapaAtual = novo
+  aplicarTemaMapa(novo)
+}
+
+let temaMapaAtual = lerTemaMapa()
+
+// Desenho do botão: lua (mapa escuro). Feito com createElementNS, sem innerHTML
+function desenhoLua() {
+  const ns = 'http://www.w3.org/2000/svg'
+  const svg = document.createElementNS(ns, 'svg')
+  svg.setAttribute('viewBox', '0 0 24 24')
+  svg.setAttribute('aria-hidden', 'true')
+  svg.setAttribute('focusable', 'false')
+  svg.setAttribute('class', 'mapa-cor__icone')
+  const caminho = document.createElementNS(ns, 'path')
+  caminho.setAttribute('d', 'M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z')
+  svg.append(caminho)
+  return svg
+}
+
+function adicionarBotaoTemaMapa(mapa) {
+  const ControleTema = L.Control.extend({
+    options: { position: 'topright' },
+    onAdd() {
+      const botao = elemento('button', 'mapa-cor')
+      botao.type = 'button'
+      botao.title = 'Alternar o mapa entre claro e escuro'
+      botao.append(desenhoLua(), elemento('span', 'mapa-cor__texto', 'Mapa escuro'))
+      L.DomEvent.disableClickPropagation(botao)
+      L.DomEvent.on(botao, 'click', trocarTemaMapa)
+      mapasComTema.push({ mapa, botao })
+      return botao
+    },
+  })
+  mapa.addControl(new ControleTema())
+  aplicarTemaMapa(temaMapaAtual)
 }
 
 // Pino de cartaz: uma plaquinha com um número ou uma palavra curta e uma ponta embaixo.

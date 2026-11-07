@@ -1,6 +1,7 @@
 /* ALERA · app.css (app do morador)
-   Direção "Cartaz de rua", versão calma: docs/redesign/cartaz-de-rua.md
-   O topo do Alerta é um campo inteiro na cor do nível; o resto é organizado para trabalhar.
+   Direção "Software calmo": docs/redesign/software-calmo.md
+   O topo do Alerta é um cartão compacto com o nível num selo colorido; o resto são cartões
+   arredondados com sombra suave, num espaçamento só.
    As cores vêm do tokens.css; os --app-* só escolhem qual usar em cada tema.
    As abas funcionam sem JavaScript: cada uma é uma tela aberta por :target. */
 
@@ -30,6 +31,9 @@
   --app-erro:          var(--cor-erro);
   --app-foco: 0 0 0 3px var(--app-superficie), 0 0 0 6px var(--app-azul);
   --app-raio: var(--raio);                    /* mapa.css também usa */
+  --app-raio-card: var(--raio-card);
+  --app-sombra: var(--sombra-card);
+  --app-bege:  var(--cor-bege);               /* bloco claro dentro de cartão */
   --app-largura: 1120px;
   --app-margem: 16px;
   --app-vao: 16px;                            /* um vão só, na horizontal e na vertical */
@@ -55,6 +59,8 @@
   --app-linha:       var(--cor-escuro-linha);
   --app-esqueleto:   var(--cor-escuro-linha);
   --app-erro:        var(--cor-escuro-erro);
+  --app-bege:        var(--cor-escuro-fundo);
+  --app-sombra:      0 1px 2px rgb(0 0 0 / .3), 0 4px 16px rgb(0 0 0 / .2);
 }
 
 /* Níveis de risco: fundo e texto sempre juntos, iguais nos dois temas */
@@ -91,19 +97,20 @@ a {
   width: min(100% - 2 * var(--app-margem), var(--app-largura));
   margin-inline: auto;
 }
-/* Títulos pequenos de cartão e formulário: Source Sans 700 (a Bebas fica pequena demais para ler) */
+/* Títulos pequenos de cartão e formulário: Source Sans 700 */
 .bloco-titulo {
   margin: 0;
   font-family: var(--fonte-texto);
   font-weight: 700;
-  font-size: var(--fs-lg);
+  font-size: 18px;
   line-height: 1.25;
   letter-spacing: 0;
 }
 .painel {
   padding: var(--esp-5);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
   background: var(--app-superficie);
+  box-shadow: var(--app-sombra);
 }
 .nota {
   margin: 0;
@@ -132,7 +139,7 @@ a {
 }
 .esqueleto-linha--grande { height: 28px; width: 80%; }
 .esqueleto-linha--curta  { width: 45%; }
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .esqueleto,
   .esqueleto-linha {
     animation: respirar 1.6s ease-in-out infinite alternate;
@@ -142,16 +149,16 @@ a {
   to { opacity: .55; }
 }
 
-/* ---------- Botões: um formato só, chapado, canto de 4px ---------- */
+/* ---------- Botões: um formato só, em pílula ---------- */
 .botao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--esp-2);
-  min-height: var(--toque-min);
+  min-height: 44px;
   padding: 0 var(--esp-5);
   border: none;
-  border-radius: var(--raio);
+  border-radius: var(--raio-botao);
   background: var(--app-azul);
   color: var(--app-sobre-azul);
   font-family: var(--fonte-texto);
@@ -203,7 +210,7 @@ a {
   border-right-color: transparent;
   border-radius: 50%;
 }
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .botao--carregando::before {
     animation: girar .7s linear infinite;
   }
@@ -235,7 +242,8 @@ a {
   border-radius: var(--raio);
   color: inherit;
   font-family: var(--fonte-titulo);
-  font-size: 24px;
+  font-weight: var(--peso-titulo);
+  font-size: 20px;
   letter-spacing: .02em;
   text-decoration: none;
 }
@@ -256,9 +264,9 @@ a {
   display: inline-flex;
   align-items: center;
   gap: var(--esp-2);
-  min-height: 40px;
-  padding: 0 var(--esp-3);
-  border-radius: var(--raio);
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: var(--raio-botao);
   background: var(--app-topo-texto);
   color: var(--cor-primaria);
   font-weight: 700;
@@ -391,28 +399,46 @@ body:has(#cadastro:target)   .menu__link[href="#cadastro"] {
 body:not(:has(.tela:target, .detalhe:target)) #alerta {
   display: block;
 }
-/* Troca de aba: a tela nova chega do lado da aba clicada (app.js escolhe o lado) */
-@media (prefers-reduced-motion: no-preference) {
-  .tela--entra-frente { animation: tela-entra-frente var(--dur-curta) var(--curva-saida); }
-  .tela--entra-tras   { animation: tela-entra-tras var(--dur-curta) var(--curva-saida); }
+/* Troca de aba: a tela nova desliza do lado da aba clicada (app.js escolhe o lado)
+   e o conteúdo dela entra em seguida, um bloco depois do outro */
+.tela {
+  --lado: 1;
 }
-@keyframes tela-entra-frente {
-  from { opacity: 0; transform: translateX(28px); }
+.tela--entra-tras {
+  --lado: -1;
 }
-@keyframes tela-entra-tras {
-  from { opacity: 0; transform: translateX(-28px); }
+@media all {
+  .tela--entra-frente,
+  .tela--entra-tras {
+    animation: tela-entra 420ms var(--curva-saida) both;
+  }
+  .tela--entra-frente :is(.tela > *, .alerta > *, .rota > *, .ranking-grade > *, .dados-grade > *, .missoes > .missao),
+  .tela--entra-tras :is(.tela > *, .alerta > *, .rota > *, .ranking-grade > *, .dados-grade > *, .missoes > .missao) {
+    animation: bloco-entra 520ms var(--curva-saida) both;
+    animation-delay: calc(80ms + var(--i, 0) * var(--escalonar));
+  }
+}
+.tela > :nth-child(2), .alerta > :nth-child(2), .rota > :nth-child(2), .ranking-grade > :nth-child(2), .dados-grade > :nth-child(2), .missoes > :nth-child(2) { --i: 1; }
+.tela > :nth-child(3), .alerta > :nth-child(3), .rota > :nth-child(3), .ranking-grade > :nth-child(3), .dados-grade > :nth-child(3), .missoes > :nth-child(3) { --i: 2; }
+.tela > :nth-child(4), .alerta > :nth-child(4), .missoes > :nth-child(4) { --i: 3; }
+.tela > :nth-child(n + 5), .missoes > :nth-child(n + 5) { --i: 4; }
+@keyframes tela-entra {
+  from { opacity: 0; transform: translateX(calc(var(--lado) * 24px)); }
+}
+@keyframes bloco-entra {
+  from { opacity: 0; transform: translate(calc(var(--lado) * 12px), 8px); }
 }
 
-/* Faixa azul com o título de cada aba. Bebas grande: é o cartaz da aba */
+/* Faixa azul com o título de cada aba: compacta, título de app */
 .faixa {
-  padding-block: var(--esp-4) var(--esp-6);
+  padding-block: var(--esp-4) var(--esp-5);
   background: var(--app-topo);
   color: var(--app-topo-texto);
 }
 .faixa__titulo {
   margin: 0;
-  font-size: clamp(48px, 7vw, 80px);
-  line-height: .9;
+  font-size: clamp(24px, 2.6vw, 30px);
+  line-height: 1.15;
 }
 .faixa__apoio {
   margin: var(--esp-2) 0 0;
@@ -435,37 +461,51 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   .faixa__voltar:hover { text-decoration: underline; text-underline-offset: .2em; }
 }
 
-/* ---------- Alerta: o campo do nível ---------- */
+/* ---------- Alerta: o cartão do nível ----------
+   Um cartão branco. A cor do nível aparece em duas coisas só: a faixa da borda esquerda
+   (data-fundo, que espera a cortina) e o selo com o nome do nível (data-nivel, na hora) */
 .campo-nivel {
   position: relative;
   isolation: isolate;
   overflow: clip;
-  padding-block: var(--esp-6) var(--esp-7);
-  transition: color var(--dur-media) ease;
+  margin-top: var(--app-vao);
+  padding: var(--esp-5) var(--esp-5) var(--esp-5) calc(var(--esp-5) + 6px);
+  border-radius: var(--app-raio-card);
+  background: color-mix(in srgb, var(--fundo-faixa) 7%, var(--app-superficie));
+  color: var(--app-texto);
+  box-shadow: var(--app-sombra);
+  transition: background-color var(--dur-media) ease;
 }
-/* Fundo (data-fundo) e texto (data-nivel) andam separados por causa da cortina */
-[data-fundo="normal"]  { background: var(--cor-risco-normal); }
-[data-fundo="atencao"] { background: var(--cor-risco-atencao); }
-[data-fundo="alerta"]  { background: var(--cor-risco-alerta); }
-[data-fundo="perigo"]  { background: var(--cor-risco-perigo); }
+/* A faixa colorida da borda esquerda */
+.campo-nivel::before,
+.campo-nivel__cortina {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: var(--fundo-faixa);
+  pointer-events: none;
+}
+[data-fundo="normal"]  { --fundo-faixa: var(--cor-risco-normal); }
+[data-fundo="atencao"] { --fundo-faixa: var(--cor-risco-atencao); }
+[data-fundo="alerta"]  { --fundo-faixa: var(--cor-risco-alerta); }
+[data-fundo="perigo"]  { --fundo-faixa: var(--cor-risco-perigo); }
 [data-fundo="carregando"],
 [data-fundo="sem-local"],
-[data-fundo="erro"]    { background: var(--cor-primaria); }
+[data-fundo="erro"]    { --fundo-faixa: var(--app-azul); }
 
-.campo-nivel[data-nivel="normal"]  { color: var(--cor-risco-normal-texto); }
-.campo-nivel[data-nivel="atencao"] { color: var(--cor-risco-atencao-texto); }
-.campo-nivel[data-nivel="alerta"]  { color: var(--cor-risco-alerta-texto); }
-.campo-nivel[data-nivel="perigo"]  { color: var(--cor-risco-perigo-texto); }
+/* O selo: fundo e texto do nível sempre juntos */
+.campo-nivel[data-nivel="normal"]  { --selo: var(--cor-risco-normal);  --selo-texto: var(--cor-risco-normal-texto); }
+.campo-nivel[data-nivel="atencao"] { --selo: var(--cor-risco-atencao); --selo-texto: var(--cor-risco-atencao-texto); }
+.campo-nivel[data-nivel="alerta"]  { --selo: var(--cor-risco-alerta);  --selo-texto: var(--cor-risco-alerta-texto); }
+.campo-nivel[data-nivel="perigo"]  { --selo: var(--cor-risco-perigo);  --selo-texto: var(--cor-risco-perigo-texto); }
 .campo-nivel[data-nivel="carregando"],
 .campo-nivel[data-nivel="sem-local"],
-.campo-nivel[data-nivel="erro"]    { color: #FFFFFF; }
+.campo-nivel[data-nivel="erro"]    { --selo: var(--app-azul); --selo-texto: var(--app-sobre-azul); }
 
-/* A cortina: a cor nova desce por cima da antiga (clip-path, não anima o fundo) */
+/* A cortina: a cor nova desce pela faixa (clip-path, não anima o fundo) */
 .campo-nivel__cortina {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+  z-index: 1;
   animation: cortina-desce 900ms var(--curva-saida) both;
 }
 @keyframes cortina-desce {
@@ -473,57 +513,61 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   to   { clip-path: inset(0 0 0 0); }
 }
 
-/* Perigo: um pulso lento escurece e clareia o campo (uma camada com opacidade) */
-.campo-nivel::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: rgb(0 0 0 / .18);
-  opacity: 0;
-  pointer-events: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .campo-nivel[data-nivel="perigo"]::after {
-    animation: pulso-perigo 2.6s ease-in-out infinite;
-  }
-}
-@keyframes pulso-perigo {
-  50% { opacity: 1; }
-}
-
 .campo-nivel__grade {
   display: grid;
-  gap: var(--esp-5);
+  gap: var(--esp-4);
 }
 .campo-nivel__rua {
-  margin: 0 0 var(--esp-2);
-  font-size: var(--fs-lg);
-  font-weight: 700;
-  line-height: 1.25;
+  margin: 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-md);
+  font-weight: 600;
+  line-height: 1.3;
   overflow-wrap: anywhere;
 }
 .campo-nivel__nivel {
-  margin: 0;
-  font-size: clamp(104px, 15vw, 208px);
-  line-height: .84;
-  letter-spacing: -.01em;
+  margin: var(--esp-2) 0 0;
+  font-size: clamp(24px, 2.4vw, 30px);
+  line-height: 1.1;
   overflow-wrap: anywhere;
 }
 .campo-nivel__palavra {
+  position: relative;
   display: inline-block;
+  padding: 6px 18px 7px;
+  border-radius: var(--raio-botao);
+  background: var(--selo);
+  color: var(--selo-texto);
+  transition: background-color var(--dur-curta) ease, color var(--dur-curta) ease;
 }
-@media (prefers-reduced-motion: no-preference) {
+.campo-nivel__palavra .esqueleto {
+  background: transparent;
+}
+@media all {
   .campo-nivel__palavra--sobe {
-    animation: palavra-sobe 700ms var(--curva-saida) both;
+    animation: palavra-sobe 600ms var(--curva-saida) both;
+  }
+  /* Perigo: um anel vermelho pulsa devagar em volta do selo */
+  .campo-nivel[data-nivel="perigo"] .campo-nivel__palavra::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: pulso-perigo 2.4s ease-out infinite;
   }
 }
 @keyframes palavra-sobe {
-  from { opacity: 0; transform: translateY(24px); }
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+}
+@keyframes pulso-perigo {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--cor-risco-perigo) 55%, transparent); }
+  to   { box-shadow: 0 0 0 12px transparent; }
 }
 .campo-nivel__onde {
-  margin: var(--esp-3) 0 0;
-  font-size: var(--fs-md);
+  margin: var(--esp-2) 0 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
 .campo-nivel__ordem {
@@ -533,26 +577,27 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .campo-nivel__fazer {
   margin: 0;
-  font-size: clamp(20px, 2.2vw, 26px);
+  font-size: 18px;
   font-weight: 700;
-  line-height: 1.3;
+  line-height: 1.35;
   text-wrap: pretty;
 }
 .campo-nivel__abrigo {
   margin: 0;
   padding: var(--esp-3) var(--esp-4);
   border-radius: var(--raio);
-  background: var(--app-superficie);
+  background: var(--app-bege);
   color: var(--app-texto);
-  font-size: var(--fs-lg);
+  font-size: var(--fs-md);
   font-weight: 600;
-  line-height: 1.35;
+  line-height: 1.4;
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
 .campo-nivel__hora {
   margin: 0;
-  font-size: var(--fs-md);
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
 }
 .campo-nivel__hora:empty {
   display: none;
@@ -565,38 +610,31 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .campo-nivel__acoes:not(:has(:not([hidden]))) {
   display: none;
 }
-/* No campo colorido o botão é branco com texto escuro: lê bem nas cinco cores */
+/* Botões dentro do cartão do nível: o mesmo do secundário */
 .botao--campo {
-  background: #FFFFFF;
-  color: var(--cor-texto);
+  background: var(--app-tom);
+  color: var(--app-sobre-tom);
 }
 @media (hover: hover) {
-  .botao--campo:hover { background: #FFFFFF; color: var(--cor-primaria); }
-}
-.campo-nivel :focus-visible {
-  outline-color: currentColor;
-}
-/* Esqueleto dentro do campo: um tom do próprio campo */
-.campo-nivel .esqueleto {
-  background: rgb(255 255 255 / .2);
+  .botao--campo:hover { background: var(--app-tom); filter: brightness(.94); }
 }
 
-/* Medidor: os 4 níveis, cheio até o atual */
+/* Medidor: os 4 níveis, cheio até o atual, na cor do selo */
 .medidor {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: var(--esp-1);
-  max-width: 320px;
+  max-width: 280px;
 }
 .medidor__parte {
-  height: 8px;
-  border-radius: 2px;
-  background: currentColor;
-  opacity: .25;
+  height: 6px;
+  border-radius: 999px;
+  background: var(--app-linha);
   transform-origin: left;
+  transition: background-color var(--dur-curta) ease;
 }
 .medidor__parte--cheia {
-  opacity: 1;
+  background: var(--selo);
 }
 
 /* ---------- Alerta: a parte calma, embaixo do campo ---------- */
@@ -607,6 +645,8 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .alerta__mapa .mapa-leaflet {
   height: 300px;
+  border-radius: var(--app-raio-card);
+  box-shadow: var(--app-sombra);
 }
 .alerta__lado {
   display: grid;
@@ -623,7 +663,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .destino__nome {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -631,7 +671,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .destino__figuras {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--esp-6);
+  gap: var(--esp-5);
 }
 .figura {
   display: flex;
@@ -641,8 +681,9 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .figura__numero {
   font-family: var(--fonte-titulo);
-  font-size: 56px;
-  line-height: .9;
+  font-weight: var(--peso-titulo);
+  font-size: 32px;
+  line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 .figura__unidade {
@@ -670,15 +711,16 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   flex: 1 1 180px;
 }
 
-/* Ligar 199: o número grande em Bebas, o resto em texto */
+/* Ligar 199: o número em destaque, o resto em texto */
 .ligar {
   display: grid;
   grid-template-columns: auto auto 1fr;
   align-items: center;
   gap: var(--esp-3);
-  min-height: 80px;
+  min-height: 64px;
   padding: var(--esp-3) var(--esp-5);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
+  box-shadow: var(--app-sombra);
   background: var(--cor-texto);
   color: #FFFFFF;
   text-decoration: none;
@@ -692,8 +734,9 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .ligar__numero {
   font-family: var(--fonte-titulo);
-  font-size: 56px;
-  line-height: .9;
+  font-weight: var(--peso-titulo);
+  font-size: 30px;
+  line-height: 1;
 }
 .ligar__texto {
   display: grid;
@@ -714,11 +757,11 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .alerta__niveis {
   display: grid;
   gap: var(--esp-3);
-  margin-top: var(--esp-5);
+  margin-top: var(--esp-3);
 }
 .niveis {
   display: grid;
-  gap: 2px;
+  gap: var(--esp-2);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -729,13 +772,15 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   align-items: center;
   gap: var(--esp-1) var(--esp-3);
   padding: var(--esp-4);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
   background: var(--app-superficie);
+  box-shadow: var(--app-sombra);
+  font-size: 15px;
 }
 .niveis__cor {
-  width: 16px;
-  height: 16px;
-  border-radius: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
 }
 .niveis__nome {
   font-size: var(--fs-md);
@@ -745,8 +790,8 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .niveis__agora {
   display: none;
-  padding: 2px var(--esp-2);
-  border-radius: var(--raio);
+  padding: 2px 10px;
+  border-radius: var(--raio-botao);
   background: var(--tinta-nivel);
   color: var(--fundo-nivel);
   font-size: var(--fs-sm);
@@ -788,7 +833,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   width: 100%;
   height: auto;
   background: var(--mapa-fundo);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
 }
 .mapa__rua {
   stroke: var(--mapa-rua);
@@ -830,7 +875,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   gap: var(--esp-2);
   margin: 0;
   padding: var(--esp-3) var(--esp-4);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
   font-weight: 700;
 }
 .rota__acoes {
@@ -838,21 +883,28 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   gap: var(--app-vao);
 }
 
-/* ---------- Missões: os pontos ---------- */
+/* ---------- Missões: os pontos (cartão compacto na cor da gamificação) ---------- */
 .pontos {
-  padding-block: var(--esp-5) var(--esp-6);
+  width: min(100% - 2 * var(--app-margem), var(--app-largura));
+  margin: var(--app-vao) auto 0;
+  padding: var(--esp-4) var(--esp-5);
+  border-radius: var(--app-raio-card);
   background: var(--cor-destaque);
   color: #FFFFFF;
+  box-shadow: var(--app-sombra);
+}
+.pontos .pontos__grade {
+  width: auto;
 }
 .pontos__grade {
   display: grid;
-  gap: var(--esp-4);
-  align-items: end;
+  gap: var(--esp-3);
+  align-items: center;
 }
 .pontos__rotulo {
   margin: 0;
   font-family: var(--fonte-texto);
-  font-size: var(--fs-lg);
+  font-size: var(--fs-md);
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: 0;
@@ -866,17 +918,19 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .pontos__numero {
   display: inline-block;
   font-family: var(--fonte-titulo);
-  font-size: clamp(96px, 13vw, 168px);
-  line-height: .85;
+  font-weight: var(--peso-titulo);
+  font-size: clamp(32px, 3.4vw, 40px);
+  line-height: 1;
   font-variant-numeric: tabular-nums;
   transform-origin: left bottom;
 }
 .pontos__unidade {
   font-family: var(--fonte-titulo);
-  font-size: 40px;
+  font-weight: 700;
+  font-size: 18px;
   line-height: 1;
 }
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .pontos__numero--pulo {
     animation: pulo 520ms var(--curva-mola);
   }
@@ -897,9 +951,9 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .progresso {
   appearance: none;
   width: 100%;
-  height: 10px;
+  height: 8px;
   border: none;
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--app-linha);
   color: var(--app-destaque);
   overflow: hidden;
@@ -927,7 +981,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   display: inline-grid;
   grid-template-columns: 1fr 1fr;
   padding: 4px;
-  border-radius: var(--raio);
+  border-radius: var(--raio-botao);
   background: var(--app-linha);
 }
 .abas-missoes[data-aba="concluidas"] {
@@ -939,8 +993,9 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   bottom: 4px;
   left: 4px;
   width: calc(50% - 4px);
-  border-radius: 2px;
+  border-radius: var(--raio-botao);
   background: var(--app-superficie);
+  box-shadow: 0 1px 3px rgb(20 32 43 / .14);
   translate: calc(var(--aba) * 100%) 0;
   transition: translate var(--dur-curta) var(--curva-saida);
 }
@@ -969,7 +1024,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .aba-missao__conta {
   min-width: 24px;
   padding: 0 6px;
-  border-radius: 2px;
+  border-radius: var(--raio-botao);
   background: var(--app-fundo);
   font-variant-numeric: tabular-nums;
   font-size: var(--fs-sm);
@@ -987,15 +1042,16 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .missao {
   position: relative;
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
+  grid-template-columns: 56px minmax(0, 1fr);
   grid-template-areas:
     "pontos corpo"
     "pontos andamento"
     "abrir  abrir";
   gap: var(--esp-2) var(--esp-4);
   padding: var(--esp-4) var(--esp-5);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
   background: var(--app-superficie);
+  box-shadow: var(--app-sombra);
   transition: transform var(--dur-curta) var(--curva-mola);
 }
 .missao:has(.missao__abrir:active) {
@@ -1010,14 +1066,15 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .missao__valor {
   display: inline-block;
   font-family: var(--fonte-titulo);
-  font-size: 48px;
-  line-height: .9;
+  font-weight: var(--peso-titulo);
+  font-size: 24px;
+  line-height: 1;
 }
 /* Visto: um traço que se desenha (stroke-dashoffset) */
 .missao__visto {
   display: none;
-  width: 40px;
-  height: 40px;
+  width: 28px;
+  height: 28px;
   fill: none;
   stroke: currentColor;
   stroke-width: 3;
@@ -1030,7 +1087,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   display: block;
 }
 .missao[data-concluida] .missao__valor {
-  font-size: 28px;
+  font-size: 18px;
 }
 .missao__corpo {
   grid-area: corpo;
@@ -1038,7 +1095,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .missao__titulo {
   margin: 0;
   font-family: var(--fonte-texto);
-  font-size: var(--fs-lg);
+  font-size: 18px;
   font-weight: 700;
   line-height: 1.25;
   letter-spacing: 0;
@@ -1067,7 +1124,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   content: "";
   position: absolute;
   inset: 0;
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
 }
 .missao__abrir:focus-visible {
   outline: none;
@@ -1083,7 +1140,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 
 /* A festa da missão concluída */
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .missao--comemorando .missao__visto path {
     animation: visto-desenha 520ms var(--curva-saida) both;
   }
@@ -1104,12 +1161,13 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .ficha-pontos {
   position: fixed;
   z-index: 50;
-  padding: 2px var(--esp-2);
-  border-radius: var(--raio);
+  padding: 2px 10px;
+  border-radius: var(--raio-botao);
   background: var(--cor-destaque);
   color: #FFFFFF;
   font-family: var(--fonte-titulo);
-  font-size: 40px;
+  font-weight: var(--peso-titulo);
+  font-size: 22px;
   line-height: 1;
   pointer-events: none;
   box-shadow: var(--sombra-flutua);
@@ -1141,11 +1199,11 @@ body:has(.detalhe:target) {
   width: 100%;
   max-height: 92dvh;
   overflow-y: auto;
-  border-radius: var(--raio) var(--raio) 0 0;
+  border-radius: var(--app-raio-card) var(--app-raio-card) 0 0;
   background: var(--app-fundo);
   box-shadow: var(--sombra-flutua);
 }
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .detalhe:target .detalhe__fundo { animation: aparecer var(--dur-curta) ease both; }
   .detalhe:target .detalhe__caixa { animation: janela-sobe var(--dur-media) var(--curva-saida) both; }
 }
@@ -1359,12 +1417,13 @@ body:has(.detalhe:target) {
   margin: 0;
   color: var(--app-destaque);
   font-family: var(--fonte-titulo);
-  font-size: clamp(96px, 10vw, 140px);
-  line-height: .85;
+  font-weight: var(--peso-titulo);
+  font-size: var(--fs-numero);
+  line-height: 1;
 }
 .sua-rua__nome {
   margin: 0;
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 700;
   line-height: 1.2;
   overflow-wrap: anywhere;
@@ -1392,17 +1451,19 @@ body:has(.detalhe:target) {
     "posicao barra  barra";
   align-items: center;
   gap: var(--esp-2) var(--esp-3);
-  min-height: 72px;
+  min-height: 64px;
   padding: var(--esp-3) var(--esp-4);
-  border-radius: var(--raio);
+  border-radius: var(--app-raio-card);
 }
 .ranking__item--sua {
   background: var(--app-superficie);
+  box-shadow: var(--app-sombra);
 }
 .ranking__posicao {
   grid-area: posicao;
   font-family: var(--fonte-titulo);
-  font-size: 36px;
+  font-weight: var(--peso-titulo);
+  font-size: 24px;
   line-height: 1;
 }
 .ranking__nome {
@@ -1420,7 +1481,7 @@ body:has(.detalhe:target) {
 .ranking__sua {
   flex: none;
   padding: 0 var(--esp-2);
-  border-radius: var(--raio);
+  border-radius: var(--raio-botao);
   background: var(--cor-destaque);
   color: #FFFFFF;
   font-size: var(--fs-sm);
@@ -1441,7 +1502,7 @@ body:has(.detalhe:target) {
 .ranking__cheio {
   display: block;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 999px;
   background: var(--app-borda);
   transform: scaleX(var(--parte, 1));
   transform-origin: left;
@@ -1450,7 +1511,7 @@ body:has(.detalhe:target) {
   background: var(--app-destaque);
 }
 /* As barras crescem quando a lista aparece (só com o movimento.js rodando) */
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   html.movimento-pronto .ranking:not(.revelado) .ranking__cheio {
     transform: scaleX(0);
   }
@@ -1494,7 +1555,7 @@ body:has(.detalhe:target) {
   min-height: var(--toque-min);
   padding: 0 var(--esp-3);
   border: 1px solid var(--app-borda);
-  border-radius: var(--raio);
+  border-radius: var(--raio-campo);
   background: var(--app-superficie);
   color: var(--app-texto);
   font: inherit;
@@ -1540,7 +1601,7 @@ body:has(.detalhe:target) {
   accent-color: var(--app-azul);
 }
 /* CEP achado: os campos preenchidos entram com uma passada da esquerda, um depois do outro */
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .campo--preenchido .campo__entrada {
     animation: campo-preenche 520ms var(--curva-saida) both;
     animation-delay: calc(var(--ordem, 0) * var(--escalonar));
@@ -1673,17 +1734,18 @@ body:has(.detalhe:target) {
   }
 
   .faixa {
-    padding-block: var(--esp-6) var(--esp-7);
+    padding-block: var(--esp-5) var(--esp-6);
   }
 
-  /* Campo do nível: o nome do nível à esquerda, o que fazer à direita */
+  /* Cartão do nível: rua e selo à esquerda, o que fazer à direita */
   .campo-nivel {
-    padding-block: var(--esp-7) var(--esp-8);
+    margin-top: var(--esp-5);
+    padding: var(--esp-5) var(--esp-6) var(--esp-5) calc(var(--esp-6) + 6px);
   }
   .campo-nivel__grade {
     grid-template-columns: repeat(12, minmax(0, 1fr));
     gap: var(--app-vao);
-    align-items: end;
+    align-items: center;
   }
   .campo-nivel__nome  { grid-column: 1 / span 7; }
   .campo-nivel__ordem { grid-column: 8 / span 5; }
@@ -1691,14 +1753,14 @@ body:has(.detalhe:target) {
   /* Embaixo: mapa em 7 colunas, abrigo e 199 em 5; os níveis na largura toda */
   .alerta {
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    margin-top: var(--esp-6);
+    margin-top: var(--app-vao);
   }
   .alerta__mapa {
     grid-column: 1 / span 7;
   }
   .alerta__mapa .mapa-leaflet {
     height: 100%;
-    min-height: 400px;
+    min-height: 340px;
   }
   .alerta__lado   { grid-column: 8 / span 5; }
   .alerta__niveis { grid-column: 1 / -1; }
@@ -1708,7 +1770,7 @@ body:has(.detalhe:target) {
   .niveis__item {
     grid-template-columns: 16px 1fr auto;
     align-content: start;
-    padding: var(--esp-5);
+    padding: var(--esp-4);
   }
 
   .rota {
@@ -1719,7 +1781,8 @@ body:has(.detalhe:target) {
   .rota__lado { grid-column: 8 / span 5; }
 
   .pontos {
-    padding-block: var(--esp-6) var(--esp-7);
+    margin-top: var(--esp-5);
+    padding: var(--esp-4) var(--esp-6);
   }
   .pontos__grade {
     grid-template-columns: repeat(12, minmax(0, 1fr));
@@ -1730,11 +1793,11 @@ body:has(.detalhe:target) {
 
   /* Missão em uma linha: pontos, texto, andamento, link */
   .missao {
-    grid-template-columns: 96px minmax(0, 1fr) 260px 220px;
+    grid-template-columns: 72px minmax(0, 1fr) 240px 200px;
     grid-template-areas: "pontos corpo andamento abrir";
     align-items: center;
     gap: var(--esp-5);
-    padding: var(--esp-5);
+    padding: var(--esp-4) var(--esp-5);
   }
   .missao__abrir {
     justify-content: flex-end;
@@ -1765,7 +1828,7 @@ body:has(.detalhe:target) {
   .detalhe__caixa {
     width: min(100%, 980px);
     max-height: 100%;
-    border-radius: var(--raio);
+    border-radius: var(--app-raio-card);
   }
   @keyframes janela-sobe {
     from { transform: translateY(16px) scale(.98); opacity: 0; }
@@ -1773,17 +1836,5 @@ body:has(.detalhe:target) {
   .detalhe__corpo {
     grid-template-columns: 1.1fr 1fr;
     gap: var(--esp-6);
-  }
-}
-
-/* Menos movimento: o conteúdo aparece igual, só não viaja */
-@media (prefers-reduced-motion: reduce) {
-  .botao,
-  .ligar,
-  .missao,
-  .menu__marcador,
-  .abas-missoes__marcador,
-  .campo-nivel {
-    transition: none;
   }
 }

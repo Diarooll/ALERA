@@ -1208,9 +1208,3 @@ body:has(.detalhe:target) {
     grid-template-columns: repeat(4, 1fr);
   }
 }
-
-/* Menos movimento: sem transição nos botões nem animação nas janelas */
-@media (prefers-reduced-motion: reduce) {
-  .botao { transition: none; }
-  .detalhe__caixa { animation: none; }
-}

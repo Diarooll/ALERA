@@ -1174,14 +1174,20 @@ function lugarDaTela(hash) {
   return { '#alerta': 0, '#rota': 0.5, '#missoes': 1, '#ranking': 2, '#cadastro': 3 }[hash] ?? 0
 }
 
+// A tela desliza e os blocos dela entram escalonados (app.css). A classe sai por tempo,
+// e não no primeiro animationend: o fim da animação de um bloco filho também sobe até a tela
+let fimEntrada = 0
 function animarEntrada(hash, lado) {
   if (mov.reduzido()) return
   const tela = document.querySelector(hash)?.closest('.tela')
   if (!tela) return
-  tela.classList.remove('tela--entra-frente', 'tela--entra-tras')
+  clearTimeout(fimEntrada)
+  document.querySelectorAll('.tela--entra-frente, .tela--entra-tras').forEach((t) => {
+    t.classList.remove('tela--entra-frente', 'tela--entra-tras')
+  })
   void tela.offsetWidth
   tela.classList.add(`tela--entra-${lado}`)
-  tela.addEventListener('animationend', () => tela.classList.remove(`tela--entra-${lado}`), { once: true })
+  fimEntrada = setTimeout(() => tela.classList.remove(`tela--entra-${lado}`), 1100)
 }
 
 let telaAnterior = telaAtual()

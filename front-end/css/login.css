@@ -1,16 +1,16 @@
 /* ALERA · login.css
-   Tela de login e cadastro (app/login.html), na direção "Cartaz de rua".
-   Um lado é o cartaz: campo azul-noite chapado, manchete enorme em Bebas e a foto em arco.
-   O outro é o formulário no fundo claro. No celular o cartaz vira uma faixa no topo.
+   Tela de login e cadastro (app/login.html), na direção "Software calmo".
+   Um cartão branco centralizado no fundo bege: marca no topo, frase curta e o formulário.
+   Azul-noite é a cor principal; o laranja (--cor-brilho) aparece só num traço e num ponto.
    Só tokens do tokens.css; as fontes também vêm de lá. Mobile first. */
 
 :root {
-  --cartaz-fundo: var(--cor-primaria);
-  --cartaz-texto: #fff;
+  --pagina-fundo: var(--cor-bege);
   --botao-fundo: var(--cor-primaria);
   --botao-texto: #fff;
   --titulo-cor: var(--cor-primaria);
   --trilho: color-mix(in srgb, var(--cor-borda) 30%, transparent);
+  --campo-fundo: var(--cor-superficie);
 }
 
 /* Modo escuro: data-tema vem do js/tema.js; o :has() vale para quem está sem script */
@@ -25,11 +25,11 @@
   --cor-borda: var(--cor-escuro-borda);
   --cor-linha: var(--cor-escuro-linha);
   --cor-erro: var(--cor-escuro-erro);
-  --cartaz-fundo: var(--cor-escuro-azul-fundo);
-  --cartaz-texto: var(--cor-escuro-texto);
+  --pagina-fundo: var(--cor-escuro-fundo);
   --botao-fundo: var(--cor-escuro-azul);
   --botao-texto: var(--cor-escuro-sobre-azul);
   --titulo-cor: var(--cor-escuro-texto);
+  --campo-fundo: var(--cor-escuro-fundo);
 }
 
 [hidden] {
@@ -44,6 +44,7 @@
 
 body {
   min-height: 100svh;
+  background: var(--pagina-fundo);
 }
 
 button,
@@ -55,123 +56,133 @@ a {
   color: var(--cor-primaria);
   font-weight: 600;
   text-decoration: underline;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
 }
 
-/* ---------- Página: cartaz + formulário ---------- */
+/* No fundo claro o anel amarelo do base.css some: aqui o foco é azul-noite */
+:focus-visible {
+  outline: 3px solid var(--cor-primaria);
+  outline-offset: 2px;
+}
+
+/* ---------- Página: um cartão no meio ---------- */
 
 .pagina {
-  position: relative;
   display: grid;
+  place-items: center;
   min-height: 100svh;
+  padding: var(--esp-5) var(--esp-4);
 }
 
-.cartaz {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  column-gap: var(--esp-3);
-  padding: var(--esp-3) var(--esp-4) 0;
-  overflow: clip;
-  background: var(--cartaz-fundo);
-  color: var(--cartaz-texto);
-  container-type: inline-size;
+.cartao {
+  width: 100%;
+  max-width: 28rem;
+  padding: var(--esp-5) 20px var(--esp-6);
+  background: var(--cor-superficie);
+  border: 1px solid var(--cor-linha);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
 }
 
-.cartaz-topo {
-  grid-column: 1 / -1;
+@media all {
+  .cartao {
+    animation: cartao-entra var(--dur-media) var(--curva-saida) both;
+  }
+}
+
+@keyframes cartao-entra {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.cartao-topo {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-5);
 }
 
 .marca {
   display: inline-flex;
   align-items: center;
-  gap: var(--esp-3);
+  gap: 10px;
   min-height: var(--toque-min);
-  color: inherit;
+  color: var(--titulo-cor);
   text-decoration: none;
 }
 
 .marca-icone {
-  width: 36px;
-  height: 34px;
+  width: 32px;
+  height: 30px;
   fill: currentColor;
 }
 
 .marca-texto {
+  position: relative;
   font-family: var(--fonte-titulo);
-  font-size: 28px;
+  font-size: 20px;
   font-weight: var(--peso-titulo);
   line-height: 1;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
 }
 
-.cartaz-texto {
-  align-self: end;
-  padding: var(--esp-2) 0 var(--esp-5);
+/* O ponto laranja depois da marca: o brilho do ALERA, só um detalhe */
+.marca-texto::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-left: 4px;
+  background: var(--cor-brilho);
+  border-radius: 50%;
 }
 
-/* A manchete. No cadastro ela vira o nome da rua (login.js põe a classe pelo tamanho) */
+/* Cabeça do cartão: frase curta. No cadastro a manchete vira o nome da rua */
+.cartao-cabeca {
+  margin-bottom: var(--esp-5);
+  padding-bottom: var(--esp-5);
+  border-bottom: 1px solid var(--cor-linha);
+}
+
 .manchete {
   margin: 0;
-  font-size: clamp(40px, 12.5vw, 88px);
-  line-height: 0.88;
-  letter-spacing: var(--tracking-titulo);
-  text-transform: uppercase;
+  font-size: 24px;
+  font-weight: var(--peso-titulo);
+  color: var(--titulo-cor);
   overflow-wrap: anywhere;
 }
 .manchete--longa {
-  font-size: clamp(32px, 9vw, 64px);
+  font-size: 21px;
 }
 .manchete--muito-longa {
-  font-size: clamp(28px, 7vw, 48px);
+  font-size: 19px;
+}
+
+/* O traço laranja embaixo da frase */
+.manchete::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 3px;
+  margin-top: var(--esp-3);
+  background: var(--cor-brilho);
+  border-radius: 2px;
 }
 
 .cartaz-frase {
-  display: none;
-  margin: var(--esp-4) 0 0;
-  max-width: 34ch;
-  font-size: var(--fs-lg);
-  line-height: 1.4;
+  margin: var(--esp-3) 0 0;
+  font-size: var(--fs-md);
+  color: var(--cor-texto-suave);
 }
 
-/* A foto colada no cartaz: arco, inclinada, cortada pela borda de baixo */
-.cartaz-foto {
-  align-self: end;
-  width: clamp(96px, 26vw, 200px);
-  aspect-ratio: 3 / 4;
-  margin: 0 0 -18%;
-  rotate: 5deg;
-  /* gira pelo canto de cima: a inclinação não passa da margem direita */
-  transform-origin: top right;
-}
-
-.cartaz-foto-arco {
-  height: 100%;
-  overflow: hidden;
-  /* topo em meio círculo: o raio vertical é metade da largura (3:4 → 37,5% da altura) */
-  border-radius: 50% 50% 0 0 / 37.5% 37.5% 0 0;
-}
-
-.cartaz-foto [data-obturador] {
-  height: 100%;
-}
-
-.cartaz-foto img {
-  object-position: 44% 50%;
-}
-
-/* Botão do tema (mesmo checkbox #tema do site e do app).
-   No celular fica por cima da faixa do cartaz; no computador, no canto direito da página */
+/* Botão do tema (mesmo checkbox #tema do site e do app) */
 .tema {
-  position: absolute;
-  z-index: 2;
-  top: var(--esp-3);
-  right: var(--esp-4);
-  color: var(--cartaz-texto);
+  position: relative;
+  color: var(--cor-texto-suave);
 }
 
 .tema-input {
@@ -183,24 +194,28 @@ a {
 .tema-botao {
   display: grid;
   place-items: center;
-  width: var(--toque-min);
-  height: var(--toque-min);
-  border-radius: var(--raio);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
   color: inherit;
-  border: 2px solid transparent;
+  border: 1px solid var(--cor-linha);
   cursor: pointer;
+  transition:
+    color var(--dur-curta) ease,
+    border-color var(--dur-curta) ease;
 }
 .tema-botao:hover {
-  border-color: currentColor;
+  color: var(--cor-texto);
+  border-color: var(--cor-borda);
 }
 .tema-input:focus-visible + .tema-botao {
-  outline: 3px solid var(--cor-risco-atencao);
+  outline: 3px solid var(--cor-primaria);
   outline-offset: 2px;
 }
 
 .tema-icone {
-  width: var(--esp-5);
-  height: var(--esp-5);
+  width: 20px;
+  height: 20px;
   fill: none;
   stroke: currentColor;
   stroke-width: 2;
@@ -217,32 +232,32 @@ a {
   display: block;
 }
 
-/* ---------- Lado do formulário ---------- */
-
-.lado-form {
-  padding: var(--esp-6) var(--esp-4) var(--esp-7);
-}
+/* ---------- Formulário ---------- */
 
 .tela {
   width: 100%;
-  max-width: 30rem;
 }
 
 .tela-topo {
-  display: grid;
-  gap: var(--esp-2);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--esp-1) var(--esp-3);
   margin-bottom: var(--esp-5);
 }
 
 .tela-titulo {
   margin: 0;
-  font-size: clamp(48px, 6vw, 72px);
+  font-size: var(--fs-lg);
+  font-weight: 700;
   color: var(--titulo-cor);
 }
 
 .tela-troca {
   margin: 0;
-  font-size: 17px;
+  font-size: 15px;
+  color: var(--cor-texto-suave);
 }
 
 .tela-titulo:focus,
@@ -257,7 +272,7 @@ a {
 
 .campos {
   display: grid;
-  gap: 20px;
+  gap: var(--esp-4);
 }
 
 .campo {
@@ -266,6 +281,7 @@ a {
 }
 
 .campo > label {
+  font-size: 15px;
   font-weight: 600;
 }
 
@@ -275,14 +291,16 @@ a {
 
 .caixa input {
   width: 100%;
-  height: 56px;
-  padding: 0 var(--esp-4);
-  font-size: 17px;
+  height: var(--toque-min);
+  padding: 0 14px;
+  font-size: var(--fs-md);
   color: var(--cor-texto);
-  background: var(--cor-superficie);
-  border: 2px solid var(--cor-borda);
-  border-radius: var(--raio);
-  transition: border-color var(--dur-curta) ease;
+  background: var(--campo-fundo);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: var(--raio-campo);
+  transition:
+    border-color var(--dur-curta) ease,
+    box-shadow var(--dur-curta) ease;
 }
 .caixa input::placeholder {
   color: var(--cor-texto-suave);
@@ -292,6 +310,8 @@ a {
 }
 .caixa input:focus {
   border-color: var(--cor-primaria);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--cor-primaria) 18%, transparent);
+  outline: none;
 }
 .caixa input[aria-invalid='true'] {
   border-color: var(--cor-erro);
@@ -305,7 +325,7 @@ a {
 
 .caixa--senha input,
 .caixa--cep input {
-  padding-right: 56px;
+  padding-right: 52px;
 }
 
 /* Campo que o CEP acabou de preencher: pisca de leve em amarelo e apaga */
@@ -313,13 +333,13 @@ a {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: var(--raio);
+  border-radius: var(--raio-campo);
   background: var(--cor-risco-atencao);
   opacity: 0;
   pointer-events: none;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .caixa.preenchido::after {
     animation: piscar 900ms var(--curva-saida);
   }
@@ -327,7 +347,7 @@ a {
 
 @keyframes piscar {
   from {
-    opacity: 0.4;
+    opacity: 0.35;
   }
   to {
     opacity: 0;
@@ -336,6 +356,7 @@ a {
 
 .erro {
   margin: 0;
+  font-size: 15px;
   font-weight: 600;
   color: var(--cor-erro);
 }
@@ -349,7 +370,7 @@ a {
 
 .dica {
   margin: 0;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--cor-texto-suave);
 }
 
@@ -357,17 +378,17 @@ a {
 
 .olho {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 2px;
+  right: 2px;
   display: grid;
   place-items: center;
-  width: var(--toque-min);
-  height: var(--toque-min);
+  width: 44px;
+  height: 44px;
   padding: 0;
   color: var(--cor-texto-suave);
   background: none;
   border: none;
-  border-radius: var(--raio);
+  border-radius: 50%;
   cursor: pointer;
 }
 .olho:hover {
@@ -375,8 +396,8 @@ a {
 }
 
 .olho-desenho {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -416,7 +437,7 @@ a {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
-  height: 6px;
+  height: 5px;
   margin-top: 2px;
 }
 
@@ -424,7 +445,7 @@ a {
   position: relative;
   overflow: hidden;
   background: var(--trilho);
-  border-radius: 2px;
+  border-radius: 999px;
 }
 
 .forca-barra::after {
@@ -459,16 +480,17 @@ a {
   display: flex;
   align-items: flex-start;
   gap: var(--esp-3);
-  padding: var(--esp-3) 0;
+  padding: var(--esp-1) 0;
+  font-size: 15px;
   cursor: pointer;
 }
 
 .marcar input {
   position: absolute;
-  top: var(--esp-3);
+  top: var(--esp-1);
   left: 0;
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   margin: 0;
   opacity: 0;
   cursor: pointer;
@@ -478,19 +500,19 @@ a {
   flex: none;
   display: grid;
   place-items: center;
-  width: 26px;
-  height: 26px;
-  background: var(--cor-superficie);
-  border: 2px solid var(--cor-borda);
-  border-radius: var(--raio);
+  width: 22px;
+  height: 22px;
+  background: var(--campo-fundo);
+  border: 1.5px solid var(--cor-borda);
+  border-radius: 6px;
   transition:
     background-color var(--dur-curta) ease,
     border-color var(--dur-curta) ease;
 }
 
 .marcar-caixa svg {
-  width: 18px;
-  height: 18px;
+  width: 15px;
+  height: 15px;
   color: var(--botao-texto);
   opacity: 0;
   transform: scale(0.5);
@@ -511,7 +533,7 @@ a {
   transform: scale(1);
 }
 .marcar input:focus-visible + .marcar-caixa {
-  outline: 3px solid var(--cor-risco-atencao);
+  outline: 3px solid var(--cor-primaria);
   outline-offset: 2px;
 }
 .marcar input[aria-invalid='true'] + .marcar-caixa {
@@ -519,45 +541,50 @@ a {
 }
 
 .marcar-texto {
-  padding-top: 1px;
+  padding-top: 0;
+  line-height: 1.4;
 }
 
-/* ---------- Botões: chapados, uma cor, canto de 4px ---------- */
+/* ---------- Botões em pílula ---------- */
 
 .botao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 56px;
-  padding: 0 var(--esp-6);
+  min-height: var(--toque-min);
+  padding: 0 var(--esp-5);
   font-family: var(--fonte-titulo);
-  font-size: 26px;
-  font-weight: var(--peso-titulo);
+  font-size: var(--fs-md);
+  font-weight: 700;
   line-height: 1;
-  letter-spacing: 0.02em;
   color: var(--botao-texto);
   text-decoration: none;
   background: var(--botao-fundo);
   border: none;
-  border-radius: var(--raio);
+  border-radius: var(--raio-botao);
+  box-shadow: 0 1px 2px rgb(20 32 43 / 0.12);
   cursor: pointer;
   transition:
     background-color var(--dur-curta) ease,
+    box-shadow var(--dur-curta) ease,
     transform var(--dur-curta) var(--curva-mola);
 }
 .botao:hover {
   background: color-mix(in srgb, var(--botao-fundo) 86%, var(--cor-texto));
+  box-shadow: var(--sombra-forte);
 }
 
 .botao--claro {
   color: var(--cor-texto);
   background: var(--cor-superficie);
-  border: 2px solid var(--cor-borda);
+  border: 1.5px solid var(--cor-linha);
+  box-shadow: none;
 }
 .botao--claro:hover {
   background: var(--cor-superficie);
-  border-color: var(--cor-texto);
+  border-color: var(--cor-borda);
+  box-shadow: none;
 }
 
 .botao:disabled {
@@ -567,14 +594,14 @@ a {
 /* Carregando: um anel pequeno gira antes do texto */
 .botao.carregando::before {
   content: '';
-  width: 18px;
-  height: 18px;
-  border: 3px solid color-mix(in srgb, currentColor 35%, transparent);
+  width: 16px;
+  height: 16px;
+  border: 2.5px solid color-mix(in srgb, currentColor 35%, transparent);
   border-top-color: currentColor;
   border-radius: 50%;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .botao.carregando::before {
     animation: girar 700ms linear infinite;
   }
@@ -596,20 +623,34 @@ a {
   flex: 1;
 }
 
-/* ---------- Cadastro: barra de etapas ---------- */
+/* ---------- Cadastro: título da etapa e barra de etapas ---------- */
+
+.etapas-topo {
+  display: grid;
+  gap: var(--esp-3);
+  margin-bottom: var(--esp-5);
+}
+
+.etapa-titulo {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--titulo-cor);
+}
 
 .etapas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
-  margin: 0 0 var(--esp-6);
+  margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .etapas-item {
   position: relative;
-  padding-top: 14px;
+  padding-top: 12px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--cor-texto-suave);
   transition: color var(--dur-curta) ease;
@@ -622,8 +663,8 @@ a {
   top: 0;
   left: 0;
   right: 0;
-  height: 6px;
-  border-radius: 2px;
+  height: 5px;
+  border-radius: 999px;
 }
 .etapas-item::before {
   background: var(--trilho);
@@ -649,15 +690,9 @@ a {
   gap: var(--esp-5);
 }
 
-.etapa-titulo {
-  margin: 0;
-  font-size: 40px;
-  color: var(--titulo-cor);
-}
-
 .linha-dupla {
   display: grid;
-  grid-template-columns: 7rem minmax(0, 1fr);
+  grid-template-columns: 6.5rem minmax(0, 1fr);
   gap: var(--esp-3);
   align-items: start;
 }
@@ -665,11 +700,11 @@ a {
 .caixa--cep .cep-girando {
   position: absolute;
   top: 50%;
-  right: 18px;
-  width: 20px;
-  height: 20px;
-  margin-top: -10px;
-  border: 3px solid var(--trilho);
+  right: 16px;
+  width: 18px;
+  height: 18px;
+  margin-top: -9px;
+  border: 2.5px solid var(--trilho);
   border-top-color: var(--cor-primaria);
   border-radius: 50%;
   opacity: 0;
@@ -679,16 +714,16 @@ a {
   opacity: 1;
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media all {
   .caixa--cep.buscando .cep-girando {
     animation: girar 700ms linear infinite;
   }
 }
 
-/* Resumo da etapa Confirmar: um bloco de cor por assunto, sem contorno */
+/* Resumo da etapa Confirmar: um bloco bege por assunto */
 .resumo {
-  padding: var(--esp-4) 20px;
-  background: var(--cor-superficie);
+  padding: var(--esp-3) var(--esp-4);
+  background: var(--pagina-fundo);
   border-radius: var(--raio);
 }
 
@@ -701,35 +736,36 @@ a {
 
 .resumo h4 {
   margin: 0;
-  font-family: var(--fonte-texto);
-  font-size: 18px;
-  font-weight: var(--peso-forte);
+  font-size: 15px;
+  font-weight: 700;
   line-height: 1.3;
   letter-spacing: 0;
 }
 
 .resumo-corrigir {
-  min-height: 44px;
+  min-height: 40px;
   padding: 0 var(--esp-2);
+  font-size: 15px;
   font-weight: 600;
   color: var(--cor-primaria);
   text-decoration: underline;
-  text-decoration-thickness: 2px;
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 3px;
   background: none;
   border: none;
-  border-radius: var(--raio);
+  border-radius: var(--raio-botao);
   cursor: pointer;
 }
 
 .resumo dl {
   display: grid;
-  gap: 6px;
-  margin: var(--esp-2) 0 0;
+  gap: 4px;
+  margin: var(--esp-1) 0 0;
+  font-size: 15px;
 }
 .resumo dl div {
   display: grid;
-  grid-template-columns: 6rem minmax(0, 1fr);
+  grid-template-columns: 5.5rem minmax(0, 1fr);
   gap: var(--esp-2);
 }
 .resumo dt {
@@ -747,25 +783,26 @@ a {
 }
 .pronto p {
   margin: 0;
-  font-size: 18px;
 }
 .pronto .pronto-mapa {
-  padding: var(--esp-4);
-  background: color-mix(in srgb, var(--cor-risco-atencao) 28%, var(--cor-superficie));
+  padding: var(--esp-3) var(--esp-4);
+  font-size: 15px;
+  background: color-mix(in srgb, var(--cor-risco-atencao) 22%, var(--cor-superficie));
   border-radius: var(--raio);
 }
 
 /* ---------- Modo teste (só no computador de quem desenvolve) ---------- */
 
 .modo-teste {
-  margin-top: var(--esp-7);
+  margin-top: var(--esp-6);
   padding: var(--esp-4);
-  background: color-mix(in srgb, var(--cor-borda) 16%, transparent);
+  background: var(--pagina-fundo);
+  border: 1px dashed var(--cor-linha);
   border-radius: var(--raio);
 }
 .modo-teste p {
   margin: 0 0 var(--esp-3);
-  font-size: 15px;
+  font-size: 14px;
   color: var(--cor-texto-suave);
 }
 .modo-teste-botoes {
@@ -774,106 +811,20 @@ a {
   gap: var(--esp-2);
 }
 .modo-teste .botao {
-  flex: 1 1 12rem;
-  min-height: var(--toque-min);
+  flex: 1 1 10rem;
+  min-height: 44px;
   font-family: var(--fonte-texto);
-  font-size: var(--fs-md);
+  font-size: 15px;
   font-weight: 600;
 }
 
-/* ---------- Telas médias: a frase volta ---------- */
+/* ---------- Telas maiores: o cartão ganha mais respiro ---------- */
 
 @media (min-width: 600px) {
-  .cartaz {
-    padding: var(--esp-4) var(--esp-6) 0;
-  }
-  .cartaz-frase {
-    display: block;
-  }
-  .tema {
-    top: var(--esp-4);
-    right: var(--esp-6);
-  }
-  .lado-form {
-    padding: var(--esp-7) var(--esp-6) var(--esp-8);
-  }
-}
-
-/* ---------- Computador: cartaz à esquerda, parado; formulário à direita ---------- */
-
-@media (min-width: 960px) {
   .pagina {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    padding: var(--esp-7) var(--esp-5);
   }
-
-  .cartaz {
-    position: sticky;
-    top: 0;
-    display: flex;
-    flex-direction: column;
-    height: 100svh;
-    padding: 28px clamp(32px, 4vw, 56px);
+  .cartao {
+    padding: var(--esp-6) 36px 36px;
   }
-
-  .cartaz-texto {
-    align-self: stretch;
-    margin-top: 10svh;
-    padding: 0;
-  }
-
-  .manchete {
-    font-size: clamp(64px, 22cqi, 168px);
-  }
-  .manchete--longa {
-    font-size: clamp(52px, 15cqi, 128px);
-  }
-  .manchete--muito-longa {
-    font-size: clamp(44px, 11cqi, 96px);
-  }
-
-  .cartaz-foto {
-    position: absolute;
-    right: 8%;
-    bottom: -7%;
-    width: min(56cqi, 36svh);
-    margin: 0;
-    transform-origin: bottom center;
-  }
-
-  .tema {
-    top: 28px;
-    right: clamp(32px, 4vw, 56px);
-    color: var(--cor-texto);
-  }
-
-  .lado-form {
-    display: grid;
-    align-content: center;
-    justify-items: center;
-    min-height: 100svh;
-    padding: clamp(48px, 10svh, 112px) clamp(32px, 6vw, 112px);
-  }
-}
-
-/* Menos movimento: tudo aparece no lugar, só não viaja */
-@media (prefers-reduced-motion: reduce) {
-  .olho-contorno,
-  .olho-pupila,
-  .olho-risco,
-  .forca-barra::after,
-  .marcar-caixa svg,
-  .etapas-item::after,
-  .botao {
-    transition: none;
-  }
-}
-
-/* Título da etapa em cima da barra de etapas (o login.js troca o texto) */
-.etapas-topo {
-  display: grid;
-  gap: var(--esp-4);
-  margin-bottom: var(--esp-6);
-}
-.etapas-topo .etapas {
-  margin: 0;
 }

@@ -26,31 +26,32 @@
         />
         <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z" />
       </symbol>
+      <symbol id="icone-cubo" viewBox="0 0 24 24">
+        <path d="M12 2.5 3.5 7v10l8.5 4.5 8.5-4.5V7L12 2.5zM12 2.5V12m0 0 8.5-5M12 12 3.5 7M12 12v9.5" />
+      </symbol>
+      <symbol id="icone-fechar" viewBox="0 0 24 24">
+        <path d="M6 6l12 12M18 6 6 18" />
+      </symbol>
     </svg>
 
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 
-    <!-- Os botões de nível da demonstração pintam o topo e a demonstração (CSS com :has no body, funciona até sem script) -->
-      <header class="heroi" id="inicio">
-        <div class="campo" aria-hidden="true">
-          <span class="camada camada--normal"></span>
-          <span class="camada camada--atencao"></span>
-          <span class="camada camada--alerta"></span>
-          <span class="camada camada--perigo"></span>
-        </div>
-
-        <div class="topo">
-          <a class="marca" href="#inicio" aria-label="ALERA, voltar ao início">
-            <svg class="marca-icone" aria-hidden="true" focusable="false">
-              <use href="#logo-gota" />
-            </svg>
-            <span class="marca-texto" aria-hidden="true">A.L.E.R.A</span>
-          </a>
-          <nav class="topo-nav" aria-label="Principal">
-            <a href="#problema">O problema</a>
-            <a href="#como-funciona">Como funciona</a>
-            <a href="#niveis">Os níveis</a>
-          </nav>
+    <!-- Barra do topo: fica grudada em cima. Um botão "Testar o app" só, à direita, no fluxo normal (sem position absolute) -->
+    <header class="barra">
+      <div class="barra-dentro">
+        <a class="marca" href="#inicio" aria-label="ALERA, voltar ao início">
+          <svg class="marca-icone" aria-hidden="true" focusable="false">
+            <use href="#logo-gota" />
+          </svg>
+          <span class="marca-texto" aria-hidden="true">ALERA</span>
+        </a>
+        <nav class="barra-nav" aria-label="Principal">
+          <a href="#problema">O problema</a>
+          <a href="#como-funciona">Como funciona</a>
+          <a href="#niveis">Os níveis</a>
+          <a href="#gadgets">Gadgets</a>
+        </nav>
+        <div class="barra-acoes">
           <!-- Modo escuro: checkbox #tema + label (funciona sem script; com script, js/tema.js lembra a escolha) -->
           <input class="tema-caixa" type="checkbox" id="tema" role="switch" />
           <label class="tema-botao" for="tema">
@@ -65,55 +66,37 @@
             </svg>
             <span class="visualmente-oculto">Modo escuro</span>
           </label>
+          <a class="botao botao--pequeno pressionavel" href="app/login.html">Testar o app</a>
         </div>
+      </div>
+    </header>
 
-        <h1 class="manchete">
-          <span class="manchete-linha">A chuva</span>
-          <span class="manchete-linha">tem endereço</span>
-        </h1>
-
-        <!-- A foto em arco, inclinada, atravessando a costura entre as duas cores -->
-        <figure class="heroi-foto">
-          <div class="heroi-foto-quadro" data-obturador>
-            <img
-              src="assets/img/jf-encosta-aerea-2026.jpg"
-              width="960"
-              height="640"
-              alt="Vista do alto de um morro de Juiz de Fora coberto de casas, com a terra vermelha à mostra onde a encosta desceu."
-              fetchpriority="high"
-            />
-          </div>
-        </figure>
-
-        <div class="faixa">
-          <p class="faixa-texto">
+    <main id="conteudo">
+      <!-- Topo: apresentação à esquerda, a coisa viva (sua rua no WhatsApp) à direita -->
+      <section class="heroi" id="inicio" aria-labelledby="heroi-titulo">
+        <div class="heroi-texto" data-revelar-grupo>
+          <p class="etiqueta"><span class="etiqueta-ponto" aria-hidden="true"></span>Juiz de Fora (MG) · protótipo FIAP 2026</p>
+          <h1 class="heroi-titulo" id="heroi-titulo">A chuva tem endereço</h1>
+          <p class="heroi-apoio">
             Alerta de chuva no WhatsApp, com o nome da sua rua, para quem mora nas áreas de risco
-            de Juiz de Fora.
+            de Juiz de Fora. O ALERA cruza a previsão do tempo com as áreas de risco mapeadas e diz
+            o nível de perigo da sua rua, o que fazer e onde fica o abrigo mais perto.
           </p>
-          <div class="faixa-acao">
+          <div class="heroi-acoes">
             <a class="botao pressionavel" href="app/login.html" data-ima>Testar o app</a>
-            <p class="faixa-legenda">Na foto: encostas de Juiz de Fora em 28 de fevereiro de 2026.</p>
+            <a class="botao botao--contorno pressionavel" href="#como-funciona">Como funciona</a>
           </div>
         </div>
-      </header>
 
-      <main id="conteudo">
-        <!-- A coisa viva: digite a rua, escolha o nível, veja a mensagem -->
-        <section class="sua-rua" id="sua-rua" aria-labelledby="sua-rua-titulo">
-          <div class="campo" aria-hidden="true">
-            <span class="camada camada--normal"></span>
-            <span class="camada camada--atencao"></span>
-            <span class="camada camada--alerta"></span>
-            <span class="camada camada--perigo"></span>
-          </div>
+        <!-- A coisa viva: digite a rua, escolha o nível, veja a mensagem.
+             A chuva do canvas e o brilho do cartão mudam com o nível (CSS com :has, funciona até sem script). -->
+        <div class="sua-rua" id="sua-rua" data-revelar="direita">
           <canvas class="chuva" aria-hidden="true"></canvas>
-
           <div class="sua-rua-grade">
-            <form class="teste" method="post" novalidate data-revelar-grupo>
-              <h2 class="titulo-secao" id="sua-rua-titulo">Qual é a sua rua?</h2>
+            <form class="teste" method="post" novalidate>
+              <h2 class="teste-titulo" id="sua-rua-titulo">Qual é a sua rua?</h2>
               <p class="teste-apoio">
-                Escreva o nome e escolha um nível. A mensagem ao lado é o que chegaria no seu
-                WhatsApp.
+                Escreva o nome e escolha um nível. Ao lado, a mensagem que chegaria no seu WhatsApp.
               </p>
               <div class="teste-campo">
                 <label class="teste-rotulo" for="rua">Sua rua</label>
@@ -139,14 +122,7 @@
                   <span class="nivel-opcao-nome">Atenção</span>
                   <span class="nivel-opcao-regra">30 mm em 24 h</span>
                 </label>
-                <input
-                  class="nivel-radio"
-                  type="radio"
-                  name="nivel"
-                  id="nivel-alerta"
-                  value="alerta"
-                  checked
-                />
+                <input class="nivel-radio" type="radio" name="nivel" id="nivel-alerta" value="alerta" checked />
                 <label class="nivel-opcao nivel-opcao--alerta pressionavel" for="nivel-alerta">
                   <span class="nivel-opcao-nome">Alerta</span>
                   <span class="nivel-opcao-regra">50 mm em 24 h</span>
@@ -159,10 +135,9 @@
               </fieldset>
             </form>
 
-            <!-- A conversa no WhatsApp. data-ui: pedaço de interface (pode ter bordas próprias).
-                 As 4 mensagens já estão no HTML; o CSS mostra a do nível marcado.
+            <!-- A conversa no WhatsApp. As 4 mensagens já estão no HTML; o CSS mostra a do nível marcado.
                  O site.js só troca o nome da rua, sempre com textContent. -->
-            <div class="conversa" data-ui data-revelar="direita">
+            <div class="conversa" aria-live="polite">
               <div class="conversa-topo">
                 <svg class="marca-icone" aria-hidden="true" focusable="false">
                   <use href="#logo-gota" />
@@ -204,297 +179,312 @@ Emergência: Defesa Civil 199.</p>
               </div>
             </div>
           </div>
-        </section>
-
-      <!-- O problema: quadros de cartaz -->
-      <section class="problema" id="problema" aria-labelledby="problema-titulo">
-        <div class="quadros" data-revelar-grupo>
-          <div class="quadro quadro--slogan">
-            <h2 class="quadro-slogan" id="problema-titulo">Qual rua? Qual encosta?</h2>
-          </div>
-          <div class="quadro quadro--numero">
-            <p class="quadro-numero" data-contar>142</p>
-            <p class="quadro-legenda">
-              áreas de risco geológico mapeadas em Juiz de Fora.
-              <a
-                href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Tribuna de Minas, 2024</a
-              >
-            </p>
-          </div>
-          <figure class="quadro quadro--foto">
-            <img
-              src="assets/img/jf-morros-aereo-2026.jpg"
-              width="960"
-              height="540"
-              alt="Morros de Juiz de Fora vistos do alto, com casas na encosta e marcas de terra onde houve deslizamento."
-              loading="lazy"
-            />
-            <figcaption>Morros de Juiz de Fora, 28 fev. 2026.</figcaption>
-          </figure>
         </div>
-        <div class="problema-texto" data-revelar-grupo>
-          <p>
-            Fevereiro de 2026 foi o pior verão da história recente de Juiz de Fora. A chuva caiu
-            sobre uma cidade de morro, com 128 mil pessoas morando em área de risco e bueiro
-            entupido de lixo.
-          </p>
-          <p>
-            O alerta que existe hoje vale para a cidade toda. Ele não diz qual rua ou qual encosta
-            corre risco, e quando todo aviso parece igual, ninguém sai de casa. O ALERA manda o
-            aviso com o nome da sua rua.
-          </p>
+        <div class="heroi-extra" data-revelar-grupo>
+            <ul class="heroi-fatos">
+              <li><strong>142</strong> áreas de risco mapeadas</li>
+              <li><strong>128 mil</strong> pessoas em área de risco</li>
+              <li><strong>4</strong> níveis de alerta</li>
+            </ul>
+            <figure class="heroi-foto cartao-foto">
+              <div class="heroi-foto-quadro" data-revelar="crescer">
+                <img
+                  src="assets/img/jf-encosta-aerea-2026.jpg"
+                  width="960"
+                  height="640"
+                  alt="Vista do alto de um morro de Juiz de Fora coberto de casas, com a terra vermelha à mostra onde a encosta desceu."
+                  fetchpriority="high"
+                />
+              </div>
+              <figcaption>Encostas de Juiz de Fora em 28 de fevereiro de 2026.</figcaption>
+            </figure>
         </div>
       </section>
 
-      <!-- 65: um número só, parado, em vermelho. Nunca usar data-contar aqui. -->
-      <section class="mortes" id="mortes" aria-labelledby="mortes-titulo">
-        <h2 class="mortes-titulo" id="mortes-titulo" data-revelar>Fevereiro de 2026, Juiz de Fora</h2>
-        <div class="mortes-base">
-          <p class="mortes-numero">65</p>
-          <div class="mortes-texto" data-revelar-grupo>
-            <p class="mortes-legenda">
-              pessoas morreram em Juiz de Fora nas chuvas de fevereiro de 2026.
-            </p>
-            <p class="mortes-fonte">
-              Fonte: Polícia Civil, via
-              <a
-                href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba"
-                target="_blank"
-                rel="noopener noreferrer"
-                >DGABC</a
-              >, 1 mar. 2026.
-            </p>
+      <!-- O problema: texto + foto, depois os números em cartões e a comparação cidade x rua -->
+      <section class="secao secao--bege" id="problema" aria-labelledby="problema-titulo">
+        <div class="secao-dentro">
+          <div class="secao-cabeca" data-revelar-grupo>
+            <p class="sobretitulo">O problema</p>
+            <h2 class="titulo-secao" id="problema-titulo">Qual rua? Qual encosta?</h2>
           </div>
-        </div>
-      </section>
 
-      <!-- Os outros números: lista grande + foto que anda devagar -->
-      <section class="numeros" id="numeros" aria-labelledby="numeros-titulo">
-        <div class="numeros-lista">
-          <h2 class="titulo-secao" id="numeros-titulo" data-revelar>O que ficou depois</h2>
-          <ul class="contas" data-revelar-grupo>
-            <li class="conta">
-              <p class="conta-numero">8.854</p>
-              <p class="conta-texto">
-                pessoas desabrigadas ou desalojadas.
-                <span class="conta-fonte"
-                  >Prefeitura, via
-                  <a
-                    href="https://apublica.org/2026/03/eu-vi-a-agua-no-outro-dia-a-lama-juiz-de-fora-tem-8-mil-desabrigados-pelas-chuvas/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Agência Pública</a
-                  ></span
+          <div class="problema-grade">
+            <div class="cartao problema-texto" data-revelar-grupo>
+              <p>
+                Fevereiro de 2026 foi o pior verão da história recente de Juiz de Fora. A chuva caiu
+                sobre uma cidade de morro, com 128 mil pessoas morando em área de risco e bueiro
+                entupido de lixo.
+              </p>
+              <p>
+                O alerta que existe hoje vale para a cidade toda. Ele não diz qual rua ou qual encosta
+                corre risco, e quando todo aviso parece igual, ninguém sai de casa. O ALERA manda o
+                aviso com o nome da sua rua.
+              </p>
+            </div>
+            <figure class="cartao-foto problema-foto" data-revelar>
+              <img
+                src="assets/img/jf-morros-aereo-2026.jpg"
+                width="960"
+                height="540"
+                alt="Morros de Juiz de Fora vistos do alto, com casas na encosta e marcas de terra onde houve deslizamento."
+                loading="lazy"
+              />
+              <figcaption>Morros de Juiz de Fora, 28 fev. 2026.</figcaption>
+            </figure>
+          </div>
+
+          <h3 class="subtitulo" id="numeros">O que ficou depois</h3>
+          <ul class="numeros" data-revelar-grupo>
+            <!-- 65: número parado, nunca usar data-contar aqui -->
+            <li class="cartao numero numero--grave">
+              <p class="numero-rotulo">Fevereiro de 2026, Juiz de Fora</p>
+              <p class="numero-valor">65</p>
+              <p class="numero-texto">pessoas morreram em Juiz de Fora nas chuvas de fevereiro de 2026.</p>
+              <p class="numero-fonte">
+                Fonte: Polícia Civil, via
+                <a
+                  href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >DGABC</a
+                >, 1 mar. 2026.
+              </p>
+            </li>
+            <li class="cartao numero">
+              <p class="numero-rotulo">Desabrigados</p>
+              <p class="numero-valor">8.854</p>
+              <p class="numero-texto">pessoas desabrigadas ou desalojadas.</p>
+              <p class="numero-fonte">
+                Prefeitura, via
+                <a
+                  href="https://apublica.org/2026/03/eu-vi-a-agua-no-outro-dia-a-lama-juiz-de-fora-tem-8-mil-desabrigados-pelas-chuvas/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Agência Pública</a
                 >
               </p>
             </li>
-            <li class="conta">
-              <p class="conta-numero">128 mil</p>
-              <p class="conta-texto">
-                pessoas vivem em áreas de risco na cidade.
-                <span class="conta-fonte"
-                  >Cemaden, via
-                  <a
-                    href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    >Estado de Minas</a
-                  ></span
+            <li class="cartao numero">
+              <p class="numero-rotulo">Área de risco</p>
+              <p class="numero-valor">128 mil</p>
+              <p class="numero-texto">pessoas vivem em áreas de risco na cidade.</p>
+              <p class="numero-fonte">
+                Cemaden, via
+                <a
+                  href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Estado de Minas</a
                 >
               </p>
             </li>
-            <li class="conta">
-              <p class="conta-numero" data-contar>250 t</p>
-              <p class="conta-texto">
-                de lixo tiradas dos bueiros de janeiro a novembro de 2025.
-                <span class="conta-fonte">Prefeitura, via Acessa.com</span>
+            <li class="cartao numero">
+              <p class="numero-rotulo">Risco geológico</p>
+              <p class="numero-valor" data-contar>142</p>
+              <p class="numero-texto">áreas de risco geológico mapeadas em Juiz de Fora.</p>
+              <p class="numero-fonte">
+                <a
+                  href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Tribuna de Minas, 2024</a
+                >
               </p>
+            </li>
+            <li class="cartao numero">
+              <p class="numero-rotulo">Lixo nos bueiros</p>
+              <p class="numero-valor" data-contar>250 t</p>
+              <p class="numero-texto">de lixo tiradas dos bueiros de janeiro a novembro de 2025.</p>
+              <p class="numero-fonte">Prefeitura, via Acessa.com</p>
             </li>
           </ul>
-        </div>
-        <figure class="numeros-foto" data-revelar>
-          <div class="numeros-foto-quadro">
-            <img
-              src="assets/img/zona-da-mata-alagada-2026.jpg"
-              width="1280"
-              height="628"
-              alt="Vista do alto de uma praça e ruas tomadas por água barrenta, com as copas das árvores para fora."
-              loading="lazy"
-              data-deriva="0.08"
-            />
+
+          <!-- Da cidade para a rua: o aviso de hoje x o ALERA, lado a lado -->
+          <div class="comparar" id="comparar">
+            <div class="comparar-texto" data-revelar-grupo>
+              <h3 class="subtitulo" id="comparar-titulo">Da cidade para a rua</h3>
+              <p>
+                O aviso de hoje fala da cidade inteira, igual para quem mora no alto do morro e para
+                quem mora no centro. O ALERA fala com cada rua, porque o risco de uma encosta não é o
+                da outra.
+              </p>
+            </div>
+            <div class="comparar-pares" data-revelar-grupo>
+              <div class="cartao comparar-par">
+                <p class="comparar-rotulo">O aviso de hoje (exemplo)</p>
+                <p class="comparar-palavra">Cidade</p>
+                <p class="comparar-exemplo">“Chuva forte em Juiz de Fora. Fique atento.”</p>
+              </div>
+              <div class="cartao comparar-par comparar-par--rua">
+                <p class="comparar-rotulo">O ALERA (exemplo)</p>
+                <p class="comparar-palavra">Sua rua</p>
+                <p class="comparar-exemplo">“Rua Exemplo: chuva forte em até 24 horas. Evite a rua.”</p>
+              </div>
+            </div>
+            <figure class="cartao-foto comparar-foto" data-revelar>
+              <img
+                src="assets/img/zona-da-mata-alagada-2026.jpg"
+                width="1280"
+                height="628"
+                alt="Vista do alto de uma praça e ruas tomadas por água barrenta, com as copas das árvores para fora."
+                loading="lazy"
+              />
+              <figcaption>Praça alagada na Zona da Mata mineira, 26 fev. 2026. Imagem de vídeo do CanalGov.</figcaption>
+            </figure>
           </div>
-          <figcaption>
-            Praça alagada na Zona da Mata mineira, 26 fev. 2026. Imagem de vídeo do CanalGov.
-          </figcaption>
-        </figure>
+        </div>
       </section>
 
-      <!-- Duas palavras gigantes comparadas: a cidade x a sua rua -->
-      <section class="comparar" id="comparar" aria-labelledby="comparar-titulo">
-        <div class="comparar-topo" data-revelar-grupo>
-          <h2 class="comparar-titulo" id="comparar-titulo">Da cidade para a rua</h2>
-          <p>
-            O aviso de hoje fala da cidade inteira, igual para quem mora no alto do morro e para
-            quem mora no centro. O ALERA fala com cada rua, porque o risco de uma encosta não é o
-            da outra. Do lado esquerdo, o aviso de hoje; do direito, o ALERA.
-          </p>
-        </div>
-        <div class="comparar-pares">
-          <div class="comparar-par" data-revelar>
-            <p class="comparar-palavra">Cidade</p>
+      <!-- Como funciona: três passos lado a lado -->
+      <section class="secao" id="como-funciona" aria-labelledby="como-titulo">
+        <div class="secao-dentro">
+          <div class="secao-cabeca secao-cabeca--linha" data-revelar-grupo>
+            <div>
+              <p class="sobretitulo">Como funciona</p>
+              <h2 class="titulo-secao" id="como-titulo">Como o aviso chega</h2>
+            </div>
+            <p>
+              Começa sem instalar nada, só com o seu celular. Esta é a Fase 1 do projeto, o ALERA
+              Web: três passos entre a nuvem e o seu WhatsApp.
+            </p>
           </div>
-          <div class="comparar-par comparar-par--rua" data-revelar>
-            <p class="comparar-palavra">Sua rua</p>
-          </div>
+          <ol class="passos" data-revelar-grupo>
+            <li class="cartao passo">
+              <p class="passo-numero" aria-hidden="true">1</p>
+              <h3 class="passo-nome">Cadastre sua rua</h3>
+              <p>
+                Você informa o telefone e a rua onde mora. É com isso que o aviso deixa de ser da
+                cidade e passa a ser seu.
+              </p>
+              <figure class="passo-foto">
+                <img
+                  src="assets/img/jf-vista-morro-imperador.jpg"
+                  width="1280"
+                  height="960"
+                  alt="Juiz de Fora vista do alto do Morro do Imperador: prédios do centro e, ao fundo, os morros em volta da cidade."
+                  loading="lazy"
+                />
+                <figcaption>Juiz de Fora vista do Morro do Imperador.</figcaption>
+              </figure>
+            </li>
+            <li class="cartao passo">
+              <p class="passo-numero" aria-hidden="true">2</p>
+              <h3 class="passo-nome">Script + IA</h3>
+              <p>
+                O ALERA cruza a previsão de chuva com as 142 áreas de risco mapeadas da cidade e
+                decide o nível de cada rua.
+              </p>
+              <figure class="passo-foto">
+                <img
+                  src="assets/img/zona-da-mata-rio-2026.jpg"
+                  width="1280"
+                  height="624"
+                  alt="Vista do alto de uma cidade de morro com as ruas cobertas de água barrenta."
+                  loading="lazy"
+                />
+                <figcaption>Cidade alagada na Zona da Mata mineira, 26 fev. 2026.</figcaption>
+              </figure>
+            </li>
+            <li class="cartao passo">
+              <p class="passo-numero" aria-hidden="true">3</p>
+              <h3 class="passo-nome">Chega no WhatsApp</h3>
+              <p>
+                Com o nome da sua rua, o nível de risco, o que fazer e o abrigo mais perto. Sem app
+                novo para instalar.
+              </p>
+              <figure class="passo-foto">
+                <img
+                  src="assets/img/chuva-rua-vicosa.jpg"
+                  width="1280"
+                  height="854"
+                  alt="Chuva forte à noite numa rua, com a água refletindo os faróis dos carros."
+                  loading="lazy"
+                />
+                <figcaption>Chuva numa rua de Viçosa (MG). Foto de arquivo.</figcaption>
+              </figure>
+            </li>
+          </ol>
         </div>
       </section>
 
-      <!-- Como funciona: painéis que abrem (details com o mesmo name: abre um por vez) -->
-      <section class="como" id="como-funciona" aria-labelledby="como-titulo">
-        <div class="como-topo" data-revelar-grupo>
-          <h2 class="titulo-secao" id="como-titulo">Como o aviso chega</h2>
-          <p>
-            Começa sem instalar nada, só com o seu celular. Esta é a Fase 1 do projeto, o ALERA
-            Web: três passos entre a nuvem e o seu WhatsApp.
-          </p>
-        </div>
-        <ol class="paineis" data-revelar>
-          <li class="painel painel--1">
-            <details name="passos" open>
-              <summary class="painel-nome">Cadastre sua rua</summary>
-              <div class="painel-corpo">
-                <p>
-                  Você informa o telefone e a rua onde mora. É com isso que o aviso deixa de ser
-                  da cidade e passa a ser seu.
-                </p>
-              </div>
-            </details>
-          </li>
-          <li class="painel painel--2">
-            <details name="passos">
-              <summary class="painel-nome">Script + IA</summary>
-              <div class="painel-corpo">
-                <p>
-                  O ALERA cruza a previsão de chuva com as 142 áreas de risco mapeadas da cidade e
-                  decide o nível de cada rua.
-                </p>
-                <figure class="painel-foto">
-                  <img
-                    src="assets/img/zona-da-mata-rio-2026.jpg"
-                    width="1280"
-                    height="624"
-                    alt="Vista do alto de uma cidade de morro com as ruas cobertas de água barrenta."
-                    loading="lazy"
-                  />
-                  <figcaption>Cidade alagada na Zona da Mata mineira, 26 fev. 2026.</figcaption>
-                </figure>
-              </div>
-            </details>
-          </li>
-          <li class="painel painel--3">
-            <details name="passos">
-              <summary class="painel-nome">Chega no WhatsApp</summary>
-              <div class="painel-corpo">
-                <p>
-                  Com o nome da sua rua, o nível de risco, o que fazer e o abrigo mais perto.
-                  Sem app novo para instalar.
-                </p>
-                <figure class="painel-foto">
-                  <img
-                    src="assets/img/chuva-rua-vicosa.jpg"
-                    width="1280"
-                    height="854"
-                    alt="Chuva forte à noite numa rua, com a água refletindo os faróis dos carros."
-                    loading="lazy"
-                  />
-                  <figcaption>Chuva numa rua de Viçosa (MG). Foto de arquivo.</figcaption>
-                </figure>
-              </div>
-            </details>
-          </li>
-        </ol>
-      </section>
-
-      <!-- Assinatura de rolagem: os 4 níveis em campos de cor inteiros.
-           Cada campo gruda no topo (sticky) e o próximo sobe por cima: a página "sobe de nível". -->
-      <section class="niveis" id="niveis" aria-labelledby="niveis-titulo">
-        <div class="niveis-topo" data-revelar-grupo>
-          <h2 class="titulo-secao" id="niveis-titulo">Quatro níveis, quatro cores</h2>
-          <p>
-            Cada nível tem uma cor, uma regra e uma ordem clara. Os limites em milímetros e no
-            sensor são de demonstração e ainda não foram validados.
-          </p>
-        </div>
-
-        <article class="nivel nivel--normal" data-revelar aria-labelledby="nivel-titulo-normal">
-          <h3 class="nivel-nome" id="nivel-titulo-normal">Normal</h3>
-          <div class="nivel-corpo" data-revelar-grupo>
-            <p class="nivel-ordem">
-              Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu
-              rachaduras, ligue 199.
+      <!-- Os 4 níveis em cartões, cada um com a sua cor no topo -->
+      <section class="secao secao--bege" id="niveis" aria-labelledby="niveis-titulo">
+        <div class="secao-dentro">
+          <div class="secao-cabeca secao-cabeca--linha" data-revelar-grupo>
+            <div>
+              <p class="sobretitulo">Os níveis</p>
+              <h2 class="titulo-secao" id="niveis-titulo">Quatro níveis, quatro cores</h2>
+            </div>
+            <p>
+              Cada nível tem uma cor, uma regra e uma ordem clara. Os limites em milímetros e no
+              sensor são de demonstração e ainda não foram validados.
             </p>
-            <dl class="nivel-regras">
-              <dt>Nível</dt>
-              <dd>1 de 4</dd>
-              <dt>Quando</dt>
-              <dd>Nenhuma chuva forte na previsão.</dd>
-              <dt>No sensor da Fase 2</dt>
-              <dd>Tudo abaixo dos limites.</dd>
-              <dt>Na rua</dt>
-              <dd>LED verde aceso.</dd>
-            </dl>
           </div>
-        </article>
 
-        <article class="nivel nivel--atencao" data-revelar aria-labelledby="nivel-titulo-atencao">
-          <h3 class="nivel-nome" id="nivel-titulo-atencao">Atenção</h3>
-          <div class="nivel-corpo" data-revelar-grupo>
-            <p class="nivel-ordem">
-              Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro.
-            </p>
-            <dl class="nivel-regras">
-              <dt>Nível</dt>
-              <dd>2 de 4</dd>
-              <dt>Quando</dt>
-              <dd>Previsão de 30 mm ou mais em 24 horas.</dd>
-              <dt>No sensor da Fase 2</dt>
-              <dd>Umidade do solo a partir de 60%, ou 30 mm em 24 horas.</dd>
-              <dt>Na rua</dt>
-              <dd>LED amarelo aceso.</dd>
-            </dl>
-          </div>
-        </article>
+          <div class="niveis" data-revelar-grupo>
+            <article class="cartao nivel nivel--normal" aria-labelledby="nivel-titulo-normal">
+              <div class="nivel-topo">
+                <h3 class="nivel-nome" id="nivel-titulo-normal">Normal</h3>
+                <p class="nivel-conta">1 de 4</p>
+              </div>
+              <p class="nivel-ordem">
+                Sem chuva forte prevista. Depois de muita chuva o solo ainda pode ceder: viu
+                rachaduras, ligue 199.
+              </p>
+              <dl class="nivel-regras">
+                <dt>Quando</dt>
+                <dd>Nenhuma chuva forte na previsão.</dd>
+                <dt>No sensor da Fase 2</dt>
+                <dd>Tudo abaixo dos limites.</dd>
+                <dt>Na rua</dt>
+                <dd>LED verde aceso.</dd>
+              </dl>
+            </article>
 
-        <article class="nivel nivel--alerta" data-revelar aria-labelledby="nivel-titulo-alerta">
-          <h3 class="nivel-nome" id="nivel-titulo-alerta">Alerta</h3>
-          <div class="nivel-corpo" data-revelar-grupo>
-            <p class="nivel-ordem">
-              Chuva forte prevista em até 24 horas. Evite a rua e deixe os documentos à mão.
-            </p>
-            <dl class="nivel-regras">
-              <dt>Nível</dt>
-              <dd>3 de 4</dd>
-              <dt>Quando</dt>
-              <dd>Previsão de 50 mm ou mais em 24 horas.</dd>
-              <dt>No sensor da Fase 2</dt>
-              <dd>Umidade do solo a partir de 80%, ou 50 mm em 24 horas.</dd>
-              <dt>Na rua</dt>
-              <dd>LED vermelho aceso.</dd>
-            </dl>
-          </div>
-        </article>
+            <article class="cartao nivel nivel--atencao" aria-labelledby="nivel-titulo-atencao">
+              <div class="nivel-topo">
+                <h3 class="nivel-nome" id="nivel-titulo-atencao">Atenção</h3>
+                <p class="nivel-conta">2 de 4</p>
+              </div>
+              <p class="nivel-ordem">
+                Chuva prevista para hoje. Confira seu abrigo e tire o lixo da frente do bueiro.
+              </p>
+              <dl class="nivel-regras">
+                <dt>Quando</dt>
+                <dd>Previsão de 30 mm ou mais em 24 horas.</dd>
+                <dt>No sensor da Fase 2</dt>
+                <dd>Umidade do solo a partir de 60%, ou 30 mm em 24 horas.</dd>
+                <dt>Na rua</dt>
+                <dd>LED amarelo aceso.</dd>
+              </dl>
+            </article>
 
-        <article class="nivel nivel--perigo" data-revelar aria-labelledby="nivel-titulo-perigo">
-          <h3 class="nivel-nome" id="nivel-titulo-perigo">Perigo</h3>
-          <div class="nivel-corpo nivel-corpo--app">
-            <div class="nivel-perigo-texto" data-revelar-grupo>
+            <article class="cartao nivel nivel--alerta" aria-labelledby="nivel-titulo-alerta">
+              <div class="nivel-topo">
+                <h3 class="nivel-nome" id="nivel-titulo-alerta">Alerta</h3>
+                <p class="nivel-conta">3 de 4</p>
+              </div>
+              <p class="nivel-ordem">
+                Chuva forte prevista em até 24 horas. Evite a rua e deixe os documentos à mão.
+              </p>
+              <dl class="nivel-regras">
+                <dt>Quando</dt>
+                <dd>Previsão de 50 mm ou mais em 24 horas.</dd>
+                <dt>No sensor da Fase 2</dt>
+                <dd>Umidade do solo a partir de 80%, ou 50 mm em 24 horas.</dd>
+                <dt>Na rua</dt>
+                <dd>LED vermelho aceso.</dd>
+              </dl>
+            </article>
+
+            <article class="cartao nivel nivel--perigo" aria-labelledby="nivel-titulo-perigo">
+              <div class="nivel-topo">
+                <h3 class="nivel-nome" id="nivel-titulo-perigo">Perigo</h3>
+                <p class="nivel-conta">4 de 4</p>
+              </div>
               <p class="nivel-ordem">Risco agora. Saia de casa e vá para o abrigo.</p>
               <dl class="nivel-regras">
-              <dt>Nível</dt>
-              <dd>4 de 4</dd>
                 <dt>Quando</dt>
                 <dd>Alerta oficial da Defesa Civil para a área.</dd>
                 <dt>No sensor da Fase 2</dt>
@@ -502,215 +492,304 @@ Emergência: Defesa Civil 199.</p>
                 <dt>Na rua</dt>
                 <dd>LED vermelho e sirene tocando.</dd>
               </dl>
-            </div>
+            </article>
+          </div>
+        </div>
+      </section>
 
-            <!-- Prévia da tela de alerta do app no nível Perigo (pedaço de interface: data-ui) -->
-            <div class="app" data-ui data-revelar="direita">
-              <div class="app-topo">
-                <a class="app-marca" href="app/app.html">
-                  <svg class="marca-icone" aria-hidden="true" focusable="false">
-                    <use href="#logo-gota" />
-                  </svg>
-                  A.L.E.R.A
-                </a>
-                <a class="app-ligar" href="tel:199">Ligar 199</a>
-              </div>
-              <nav class="app-abas" aria-label="Telas do app">
-                <a class="app-aba app-aba--ativa" href="app/app.html#alerta">Alerta</a>
-                <a class="app-aba" href="app/app.html#missoes">Missões</a>
-                <a class="app-aba" href="app/app.html#ranking">Ranking</a>
-                <a class="app-aba" href="app/app.html#cadastro">Meus dados</a>
-              </nav>
-              <div class="app-faixa">
-                <p class="app-rua">Rua Exemplo</p>
-                <p class="app-apoio">Bairro Exemplo · atualizado há 5 min</p>
-              </div>
-              <div class="app-corpo">
-                <p class="app-selo">Perigo</p>
-                <p class="app-ordem">Risco agora. Saia de casa e vá para o abrigo.</p>
-                <svg
-                  class="app-mapa"
-                  viewBox="0 0 320 200"
-                  role="img"
-                  aria-label="Mapa: saia de casa, vire à direita na Rua da Paz e suba a Av. Exemplo até o abrigo. A Rua Exemplo está alagada."
-                >
-                  <rect class="mapa-chao" x="0" y="0" width="320" height="200" />
-                  <line class="mapa-rua" x1="60" y1="0" x2="60" y2="200" />
-                  <line class="mapa-rua" x1="0" y1="150" x2="320" y2="150" />
-                  <line class="mapa-rua" x1="250" y1="0" x2="250" y2="200" />
-                  <line class="mapa-perigo" x1="0" y1="40" x2="320" y2="40" />
-                  <path class="mapa-caminho" d="M60 100 V150 H250 V110" />
-                  <circle class="mapa-ponto" cx="60" cy="100" r="9" />
-                  <path class="mapa-ponto" d="M238 98 L250 86 L262 98 V110 H238 Z" />
-                  <text class="mapa-rotulo" x="96" y="26">Rua Exemplo · alagada</text>
-                  <text class="mapa-rotulo" x="118" y="176">Rua da Paz</text>
-                  <text class="mapa-rotulo" x="76" y="105">Você</text>
-                  <text class="mapa-rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
+      <!-- O app: prévia da tela de Perigo + missões e ranking -->
+      <section class="secao" id="gamificacao" aria-labelledby="jogo-titulo">
+        <div class="secao-dentro jogo">
+          <!-- Prévia da tela de alerta do app no nível Perigo -->
+          <div class="app" data-revelar="esquerda">
+            <div class="app-topo">
+              <a class="app-marca" href="app/app.html">
+                <svg class="marca-icone" aria-hidden="true" focusable="false">
+                  <use href="#logo-gota" />
                 </svg>
-                <div class="app-destino">
-                  <div>
-                    <p class="app-destino-nome">Escola Municipal Exemplo</p>
-                    <p class="app-apoio">600 m · 8 min a pé · aberto agora</p>
-                  </div>
-                  <a class="app-botao" href="app/app.html#rota">Ver rota segura</a>
+                ALERA
+              </a>
+              <a class="app-ligar" href="tel:199">Ligar 199</a>
+            </div>
+            <nav class="app-abas" aria-label="Telas do app">
+              <a class="app-aba app-aba--ativa" href="app/app.html#alerta">Alerta</a>
+              <a class="app-aba" href="app/app.html#missoes">Missões</a>
+              <a class="app-aba" href="app/app.html#ranking">Ranking</a>
+              <a class="app-aba" href="app/app.html#cadastro">Meus dados</a>
+            </nav>
+            <div class="app-faixa">
+              <p class="app-rua">Rua Exemplo</p>
+              <p class="app-apoio">Bairro Exemplo · atualizado há 5 min</p>
+            </div>
+            <div class="app-corpo">
+              <p class="app-selo">Perigo</p>
+              <p class="app-ordem">Risco agora. Saia de casa e vá para o abrigo.</p>
+              <svg
+                class="app-mapa"
+                viewBox="0 0 320 200"
+                role="img"
+                aria-label="Mapa: saia de casa, vire à direita na Rua da Paz e suba a Av. Exemplo até o abrigo. A Rua Exemplo está alagada."
+              >
+                <rect class="mapa-chao" x="0" y="0" width="320" height="200" />
+                <line class="mapa-rua" x1="60" y1="0" x2="60" y2="200" />
+                <line class="mapa-rua" x1="0" y1="150" x2="320" y2="150" />
+                <line class="mapa-rua" x1="250" y1="0" x2="250" y2="200" />
+                <line class="mapa-perigo" x1="0" y1="40" x2="320" y2="40" />
+                <path class="mapa-caminho" d="M60 100 V150 H250 V110" />
+                <circle class="mapa-ponto" cx="60" cy="100" r="9" />
+                <path class="mapa-ponto" d="M238 98 L250 86 L262 98 V110 H238 Z" />
+                <text class="mapa-rotulo" x="96" y="26">Rua Exemplo · alagada</text>
+                <text class="mapa-rotulo" x="118" y="176">Rua da Paz</text>
+                <text class="mapa-rotulo" x="76" y="105">Você</text>
+                <text class="mapa-rotulo" x="230" y="104" text-anchor="end">Abrigo</text>
+              </svg>
+              <div class="app-destino">
+                <div>
+                  <p class="app-destino-nome">Escola Municipal Exemplo</p>
+                  <p class="app-apoio">600 m · 8 min a pé · aberto agora</p>
+                </div>
+                <a class="app-botao" href="app/app.html#rota">Ver rota segura</a>
+              </div>
+            </div>
+            <p class="app-legenda">Prévia da tela de alerta do app no nível Perigo.</p>
+          </div>
+
+          <div class="jogo-lado">
+            <div class="secao-cabeca" data-revelar-grupo>
+              <p class="sobretitulo">No app</p>
+              <h2 class="titulo-secao" id="jogo-titulo">Cuidar da rua vale ponto</h2>
+              <p>
+                No app, cuidar da rua vira missão. Cada missão vale pontos para você e para a sua rua,
+                e as ruas disputam um ranking.
+              </p>
+            </div>
+            <ul class="missoes" data-revelar-grupo>
+              <li class="cartao missao">
+                <h3 class="missao-nome">Limpar o bueiro</h3>
+                <p>Tire o lixo da boca de lobo da sua rua.</p>
+                <p class="pontos">+50 pontos</p>
+              </li>
+              <li class="cartao missao">
+                <h3 class="missao-nome">Reportar lixo</h3>
+                <p>Avise onde tem lixo acumulado ou bueiro entupido.</p>
+                <p class="pontos">+20 pontos</p>
+              </li>
+              <li class="cartao missao">
+                <h3 class="missao-nome">Plantar uma muda na encosta</h3>
+                <p>Raiz ajuda a segurar o solo do barranco.</p>
+                <p class="pontos">+80 pontos</p>
+              </li>
+              <li class="cartao missao">
+                <h3 class="missao-nome">Salvar seu abrigo</h3>
+                <p>Deixe o abrigo mais perto salvo no celular.</p>
+                <p class="pontos">+10 pontos</p>
+              </li>
+            </ul>
+            <div class="cartao ranking" data-revelar>
+              <h3 class="ranking-titulo">Ranking por rua</h3>
+              <ol class="ranking-lista">
+                <li><span>Rua das Flores</span> <span class="pontos">1.240 pts</span></li>
+                <li><span>Rua Exemplo</span> <span class="pontos">980 pts</span></li>
+                <li><span>Rua da Paz</span> <span class="pontos">760 pts</span></li>
+              </ol>
+              <p class="ranking-nota">Valores simulados: os pontos e o ranking são exemplos.</p>
+            </div>
+            <a class="link-seta" href="app/app.html">Ver as missões no app</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fase 2: os gadgets. Cada um abre um modelo 3D em CSS (dialog) -->
+      <section class="secao secao--bege" id="gadgets" aria-labelledby="gadgets-titulo">
+        <div class="secao-dentro">
+          <div class="secao-cabeca secao-cabeca--linha" data-revelar-grupo>
+            <div>
+              <p class="sobretitulo">Fase 2</p>
+              <h2 class="titulo-secao" id="gadgets-titulo">Gadgets ALERA</h2>
+            </div>
+            <p>
+              Os gadgets entram aos poucos, área por área. O dado medido entra no mesmo alerta do
+              WhatsApp do morador, e os gadgets também enviam notificações para a Defesa Civil e para
+              a Secretaria de Obras de Juiz de Fora.
+            </p>
+          </div>
+
+          <div class="gadgets">
+            <article class="cartao gadget" aria-labelledby="gadget-sensor-titulo" data-revelar>
+              <div class="gadget-cabeca">
+                <div>
+                  <h3 class="gadget-nome" id="gadget-sensor-titulo">Sensor ALERA</h3>
+                  <p>Fica na encosta e mede o risco ali mesmo, antes da terra descer.</p>
+                </div>
+                <button class="botao botao--pequeno botao--brilho pressionavel" type="button" data-abrir-modelo="modelo-sensor">
+                  <svg class="botao-icone" aria-hidden="true" focusable="false"><use href="#icone-cubo" /></svg>
+                  Ver em 3D
+                </button>
+              </div>
+
+              <!-- Fluxo: o que o sensor mede → ESP32 decide → como avisa -->
+              <div class="fluxo">
+                <div class="fluxo-grupo">
+                  <h4 class="fluxo-titulo">O que mede</h4>
+                  <ul class="fluxo-lista">
+                    <li><strong>Umidade do solo</strong> sensor capacitivo, em %</li>
+                    <li><strong>Pluviômetro</strong> chuva acumulada em 24 h e 72 h</li>
+                    <li><strong>Acelerômetro MPU-6050</strong> detecta se o terreno inclinou</li>
+                  </ul>
+                </div>
+                <div class="fluxo-esp">
+                  <strong>ESP32</strong>
+                  <span>compara as medidas com os limites e define o nível de alerta</span>
+                </div>
+                <div class="fluxo-grupo">
+                  <h4 class="fluxo-titulo">Como avisa</h4>
+                  <ul class="fluxo-lista">
+                    <li><strong>LEDs na rua</strong> verde, amarelo e vermelho, sem internet</li>
+                    <li><strong>Sirene</strong> toca no nível de perigo</li>
+                    <li><strong>WhatsApp</strong> o aviso da Fase 1, também para Defesa Civil e Obras</li>
+                  </ul>
                 </div>
               </div>
+
+              <h4 class="fluxo-titulo">Limites de cada nível</h4>
+              <ul class="limites">
+                <li><span class="selo selo--normal">Normal</span> tudo abaixo dos limites</li>
+                <li><span class="selo selo--atencao">Atenção</span> umidade ≥ 60% ou 30 mm em 24 h</li>
+                <li><span class="selo selo--alerta">Alerta</span> umidade ≥ 80% ou 50 mm em 24 h</li>
+                <li><span class="selo selo--perigo">Perigo</span> terreno inclinou ≥ 2°: sair de casa</li>
+              </ul>
+              <p class="nota">Valores de demonstração, ainda não validados.</p>
+            </article>
+
+            <article class="cartao gadget" aria-labelledby="gadget-bueiro-titulo" data-revelar>
+              <div class="gadget-cabeca">
+                <div>
+                  <h3 class="gadget-nome" id="gadget-bueiro-titulo">Bueiro ALERA</h3>
+                  <p>Um cesto segura o lixo e o sensor avisa a Secretaria de Obras quando é hora de limpar.</p>
+                </div>
+                <button class="botao botao--pequeno botao--brilho pressionavel" type="button" data-abrir-modelo="modelo-bueiro">
+                  <svg class="botao-icone" aria-hidden="true" focusable="false"><use href="#icone-cubo" /></svg>
+                  Ver em 3D
+                </button>
+              </div>
+
+              <!-- Desenho em corte (SVG): as cores vêm dos tokens via CSS -->
+              <figure class="corte">
+                <svg
+                  viewBox="0 0 480 300"
+                  role="img"
+                  aria-label="Corte do Bueiro ALERA: sob a grade da rua fica o sensor (1); abaixo dele, o cesto de tela com lixo (2); no fundo, a água e a boia (3) ao lado da saída para a galeria. O sensor é ligado ao ESP32 na calçada (4), que manda o aviso no WhatsApp."
+                >
+                  <text class="ib-rotulo" x="40" y="26">rua</text>
+                  <rect class="ib-rua" x="20" y="36" width="270" height="10" />
+                  <rect class="ib-grade" x="80" y="32" width="120" height="18" />
+                  <rect class="ib-fenda" x="88" y="37" width="10" height="8" />
+                  <rect class="ib-fenda" x="108" y="37" width="10" height="8" />
+                  <rect class="ib-fenda" x="128" y="37" width="10" height="8" />
+                  <rect class="ib-fenda" x="148" y="37" width="10" height="8" />
+                  <rect class="ib-fenda" x="168" y="37" width="10" height="8" />
+                  <rect class="ib-fenda" x="188" y="37" width="8" height="8" />
+                  <rect class="ib-caixa" x="40" y="46" width="200" height="236" />
+                  <rect class="ib-agua" x="42" y="226" width="196" height="54" />
+                  <rect class="ib-galeria" x="240" y="236" width="50" height="20" />
+                  <text class="ib-rotulo" x="244" y="276">galeria</text>
+                  <line class="ib-ligacao" x1="140" y1="74" x2="140" y2="130" />
+                  <rect class="ib-cesto" x="70" y="130" width="140" height="80" />
+                  <rect class="ib-lixo" x="82" y="186" width="30" height="18" rx="4" />
+                  <rect class="ib-lixo" x="118" y="190" width="22" height="14" rx="4" />
+                  <rect class="ib-lixo" x="150" y="182" width="32" height="20" rx="4" />
+                  <rect class="ib-sensor" x="124" y="58" width="32" height="16" />
+                  <circle class="ib-boia" cx="214" cy="222" r="10" />
+                  <line class="ib-fio" x1="156" y1="66" x2="320" y2="88" />
+                  <rect class="ib-esp" x="320" y="60" width="140" height="56" rx="10" />
+                  <text class="ib-esp-texto" x="390" y="86">ESP32</text>
+                  <text class="ib-esp-sub" x="390" y="104">na calçada</text>
+                  <line class="ib-seta" x1="390" y1="116" x2="390" y2="156" />
+                  <path class="ib-ponta" d="M383 152 L390 162 L397 152 Z" />
+                  <rect class="ib-whats" x="320" y="164" width="140" height="56" rx="10" />
+                  <text class="ib-whats-texto" x="390" y="190">WhatsApp</text>
+                  <text class="ib-whats-sub" x="390" y="208">Obras e Defesa Civil</text>
+                  <g class="ib-numero">
+                    <circle cx="106" cy="66" r="11" />
+                    <text x="106" y="70">1</text>
+                  </g>
+                  <g class="ib-numero">
+                    <circle cx="56" cy="170" r="11" />
+                    <text x="56" y="174">2</text>
+                  </g>
+                  <g class="ib-numero">
+                    <circle cx="214" cy="252" r="11" />
+                    <text x="214" y="256">3</text>
+                  </g>
+                  <g class="ib-numero">
+                    <circle cx="322" cy="58" r="11" />
+                    <text x="322" y="62">4</text>
+                  </g>
+                </svg>
+              </figure>
+              <ol class="legenda-numerada">
+                <li><strong>Sensor ultrassônico:</strong> mede a altura do lixo e da água</li>
+                <li><strong>Cesto de tela:</strong> segura o lixo antes da galeria</li>
+                <li><strong>Chave boia:</strong> dispara se a água subir demais</li>
+                <li><strong>ESP32:</strong> lê os sensores e envia o aviso</li>
+              </ol>
+              <ul class="gadget-itens">
+                <li>Notifica a Secretaria de Obras para limpar antes da chuva</li>
+                <li>Notifica a Defesa Civil se o bueiro entupir</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- Chamada final: um cartão azul-noite, tudo no fluxo normal (nada sobreposto) -->
+      <section class="secao" id="testar" aria-labelledby="chamada-titulo">
+        <div class="secao-dentro">
+          <div class="chamada" data-revelar>
+            <div>
+              <h2 class="chamada-titulo" id="chamada-titulo">Quer testar o ALERA?</h2>
+              <p class="chamada-nota">O app é uma prévia: a rua, o abrigo e os pontos são de exemplo.</p>
+            </div>
+            <div class="chamada-botoes">
+              <a class="botao botao--brilho pressionavel" href="app/login.html">Testar o app</a>
+              <a class="botao botao--claro pressionavel" href="#sua-rua">Testar com a sua rua</a>
             </div>
           </div>
-        </article>
+        </div>
       </section>
 
-      <!-- Gamificação: título que fica parado à esquerda, missões passando à direita -->
-      <section class="jogo" id="gamificacao" aria-labelledby="jogo-titulo">
-        <div class="jogo-topo" data-revelar-grupo>
-          <h2 class="titulo-secao" id="jogo-titulo">Cuidar da rua vale ponto</h2>
-          <p>
-            No app, cuidar da rua vira missão. Cada missão vale pontos para você e para a sua rua,
-            e as ruas disputam um ranking.
-          </p>
-          <a class="link-seta" href="app/app.html">Ver as missões no app</a>
-        </div>
-        <div class="jogo-lista">
-          <ul class="missoes" data-revelar-grupo>
-            <li class="missao">
-              <h3 class="missao-nome">Limpar o bueiro</h3>
-              <p>Tire o lixo da boca de lobo da sua rua.</p>
-              <p class="pontos">+50 pontos</p>
+      <!-- Equipe -->
+      <section class="secao secao--curta" id="quem-somos" aria-labelledby="equipe-titulo">
+        <div class="secao-dentro equipe">
+          <div class="secao-cabeca" data-revelar-grupo>
+            <p class="sobretitulo">Equipe</p>
+            <h2 class="titulo-secao" id="equipe-titulo">Quem fez</h2>
+            <p>Somos os MonkeyNerds, estudantes da FIAP, no Challenge 2026.</p>
+          </div>
+          <ul class="equipe-lista" data-revelar-grupo>
+            <li class="cartao pessoa pessoa--normal">
+              <span class="pessoa-iniciais" aria-hidden="true">DS</span>
+              <span class="pessoa-nome">Daniel Souza Gomes</span>
             </li>
-            <li class="missao">
-              <h3 class="missao-nome">Reportar lixo</h3>
-              <p>Avise onde tem lixo acumulado ou bueiro entupido.</p>
-              <p class="pontos">+20 pontos</p>
+            <li class="cartao pessoa pessoa--atencao">
+              <span class="pessoa-iniciais" aria-hidden="true">VS</span>
+              <span class="pessoa-nome">Victor Santos Ferreira de Morais</span>
             </li>
-            <li class="missao">
-              <h3 class="missao-nome">Plantar uma muda na encosta</h3>
-              <p>Raiz ajuda a segurar o solo do barranco.</p>
-              <p class="pontos">+80 pontos</p>
+            <li class="cartao pessoa pessoa--alerta">
+              <span class="pessoa-iniciais" aria-hidden="true">DG</span>
+              <span class="pessoa-nome">Diego Ramos Pereira Gonzalez</span>
             </li>
-            <li class="missao">
-              <h3 class="missao-nome">Salvar seu abrigo</h3>
-              <p>Deixe o abrigo mais perto salvo no celular.</p>
-              <p class="pontos">+10 pontos</p>
+            <li class="cartao pessoa pessoa--perigo">
+              <span class="pessoa-iniciais" aria-hidden="true">DO</span>
+              <span class="pessoa-nome">Diego Alejandro Ribeiro Olalla</span>
             </li>
           </ul>
-          <div class="ranking" data-revelar>
-            <h3 class="ranking-titulo">Ranking por rua</h3>
-            <ol class="ranking-lista">
-              <li><span>Rua das Flores</span> <span class="pontos">1.240 pts</span></li>
-              <li><span>Rua Exemplo</span> <span class="pontos">980 pts</span></li>
-              <li><span>Rua da Paz</span> <span class="pontos">760 pts</span></li>
-            </ol>
-            <p class="ranking-nota">Valores simulados: os pontos e o ranking são exemplos.</p>
-          </div>
         </div>
-      </section>
-
-      <!-- Fase 2: os gadgets, como lista em tamanho de cartaz -->
-      <section class="gadgets" id="gadgets" aria-labelledby="gadgets-titulo">
-        <div class="gadget gadget--titulo" data-revelar-grupo>
-          <h2 class="gadget-nome" id="gadgets-titulo">Fase 2: os gadgets</h2>
-          <p>
-            Entram aos poucos, área por área. O que eles medem entra no mesmo alerta do WhatsApp do
-            morador e também vai para a Defesa Civil e para a Secretaria de Obras de Juiz de Fora.
-          </p>
-        </div>
-        <ul class="gadgets-lista" data-revelar-grupo>
-          <li class="gadget">
-            <h3 class="gadget-nome">Sensor na encosta</h3>
-            <p>O Sensor ALERA fica no barranco e mede o risco ali mesmo, antes da terra descer.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">Umidade do solo</h3>
-            <p>Um sensor capacitivo mede, em porcentagem, quanta água a terra já segurou.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">Pluviômetro</h3>
-            <p>Soma a chuva das últimas 24 e 72 horas.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">Acelerômetro</h3>
-            <p>O MPU-6050 percebe quando o terreno inclinou.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">ESP32</h3>
-            <p>A placa compara as medidas com os limites e define o nível do alerta.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">LED e sirene</h3>
-            <p>LEDs verde, amarelo e vermelho na rua, que funcionam sem internet. A sirene toca no perigo.</p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">Bueiro ALERA</h3>
-            <p>
-              Um cesto de tela segura o lixo antes da galeria. Um sensor ultrassônico mede o lixo e a
-              água, e uma chave boia dispara se a água subir demais. O ESP32 fica na calçada.
-            </p>
-          </li>
-          <li class="gadget">
-            <h3 class="gadget-nome">Aviso para a prefeitura</h3>
-            <p>
-              O bueiro avisa a Secretaria de Obras quando é hora de limpar, antes da chuva, e a
-              Defesa Civil se ele entupir.
-            </p>
-          </li>
-        </ul>
-      </section>
-
-      <!-- Chamada final: pergunta nas duas pontas, duas respostas no meio -->
-      <section class="chamada" id="testar" aria-labelledby="chamada-titulo">
-        <h2 class="chamada-titulo" id="chamada-titulo">
-          <span>Quer testar</span>
-          <span>o ALERA?</span>
-        </h2>
-        <div class="chamada-meio" data-revelar-grupo>
-          <div class="chamada-botoes">
-            <a class="botao pressionavel" href="app/login.html">Testar o app</a>
-            <span class="chamada-ou">ou</span>
-            <a class="botao botao--branco pressionavel" href="#sua-rua">Testar com a sua rua</a>
-          </div>
-          <p class="chamada-nota">O app é uma prévia: a rua, o abrigo e os pontos são de exemplo.</p>
-        </div>
-      </section>
-
-      <!-- Equipe: quadros nas cores dos níveis -->
-      <section class="equipe" id="quem-somos" aria-labelledby="equipe-titulo">
-        <div class="equipe-topo" data-revelar-grupo>
-          <h2 class="titulo-secao" id="equipe-titulo">Quem fez</h2>
-          <p>Somos os MonkeyNerds, estudantes da FIAP, no Challenge 2026.</p>
-        </div>
-        <ul class="equipe-lista" data-revelar-grupo>
-          <li class="pessoa pessoa--normal">
-            <span class="pessoa-iniciais" aria-hidden="true">DS</span>
-            <span class="pessoa-nome">Daniel Souza Gomes</span>
-          </li>
-          <li class="pessoa pessoa--atencao">
-            <span class="pessoa-iniciais" aria-hidden="true">VS</span>
-            <span class="pessoa-nome">Victor Santos Ferreira de Morais</span>
-          </li>
-          <li class="pessoa pessoa--alerta">
-            <span class="pessoa-iniciais" aria-hidden="true">DG</span>
-            <span class="pessoa-nome">Diego Ramos Pereira Gonzalez</span>
-          </li>
-          <li class="pessoa pessoa--perigo">
-            <span class="pessoa-iniciais" aria-hidden="true">DO</span>
-            <span class="pessoa-nome">Diego Alejandro Ribeiro Olalla</span>
-          </li>
-        </ul>
       </section>
     </main>
 
     <footer class="rodape">
-      <div class="rodape-divisao">
-        <figure class="rodape-foto">
-          <img
-            src="assets/img/jf-vista-morro-imperador.jpg"
-            width="1280"
-            height="960"
-            alt="Juiz de Fora vista do alto do Morro do Imperador: prédios do centro e, ao fundo, os morros em volta da cidade."
-            loading="lazy"
-          />
-          <figcaption>Juiz de Fora vista do Morro do Imperador.</figcaption>
-        </figure>
+      <div class="rodape-dentro">
         <div class="rodape-menu">
           <p class="rodape-marca">
             <svg class="marca-icone" aria-hidden="true" focusable="false">
@@ -736,171 +815,315 @@ Emergência: Defesa Civil 199.</p>
             <p>MonkeyNerds · FIAP<br />Challenge 2026</p>
           </div>
         </div>
-      </div>
 
-      <div class="rodape-fontes">
-        <details class="fontes">
-          <summary><h2 class="fontes-titulo">Referências</h2></summary>
-          <ul class="fontes-lista">
-            <li>
-              AGÊNCIA PÚBLICA.
-              <a
-                href="https://apublica.org/2026/03/eu-vi-a-agua-no-outro-dia-a-lama-juiz-de-fora-tem-8-mil-desabrigados-pelas-chuvas/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >“Eu vi a água... no outro dia, a lama”: Juiz de Fora tem 8 mil desabrigados pelas chuvas</a
-              >. mar. 2026.
-            </li>
-            <li>
-              GAZETA DIGITAL.
-              <a
-                href="https://www.gazetadigital.com.br/editorias/brasil/juiz-de-fora-para-sobreviventes-sistemas-de-alertas-nao-funcionaram/838490"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Juiz de Fora: para sobreviventes, sistemas de alertas não funcionaram</a
-              >. fev. 2026.
-            </li>
-            <li>
-              MINISTÉRIO PÚBLICO FEDERAL.
-              <a
-                href="https://www.mpf.mp.br/o-mpf/unidades/pr-mg/noticias/mpf-apura-falhas-na-prevencao-e-na-resposta-a-desastres-climaticos-em-juiz-de-fora-e-uba-mg"
-                target="_blank"
-                rel="noopener noreferrer"
-                >MPF apura falhas na prevenção e na resposta a desastres climáticos em Juiz de Fora e Ubá (MG)</a
-              >. 2026.
-            </li>
-            <li>
-              ACESSA.COM.
-              <a
-                href="https://www.acessa.com/cidade/2026/10/341533-chuvas-intensas-colocam-juiz-de-fora-em-alerta-para-deslizamentos-apos-media-de-uma-ocorrencia-por-hora.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Chuvas intensas colocam Juiz de Fora em alerta para deslizamentos</a
-              >. out. 2026.
-            </li>
-            <li>
-              O TEMPO.
-              <a
-                href="https://www.otempo.com.br/tempo/2026/10/3/juiz-de-fora-mg-em-alerta-vermelho-para-mais-de-100-mm-de-chuva-e-risco-de-grandes-deslizamentos-diz-inmet"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Juiz de Fora em alerta vermelho para mais de 100 mm de chuva e risco de grandes deslizamentos</a
-              >. out. 2026.
-            </li>
-            <li>
-              TRIBUNA DE MINAS. Temporal em Juiz de Fora expõe falhas em drenagem de diferentes vias. 9
-              fev. 2026.
-            </li>
-            <li>
-              ACESSA.COM. Juiz de Fora recolhe mais de 35 toneladas de lixo das bocas de lobo em
-              novembro. 6 dez. 2025.
-            </li>
-            <li>
-              TRIBUNA DE MINAS.
-              <a
-                href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Juiz de Fora é a terceira cidade de Minas com mais áreas de risco geológico</a
-              >. 10 fev. 2024.
-            </li>
-            <li>
-              ALMA PRETA. Juiz de Fora é a 9ª cidade do país com mais pessoas em áreas de risco, aponta
-              Cemaden. 27 fev. 2026.
-            </li>
-            <li>
-              TRIBUNA DE MINAS. Áreas de risco devem permanecer isoladas mesmo com trégua das chuvas.
-              28 fev. 2026.
-            </li>
-            <li>
-              ESTADO DE MINAS.
-              <a
-                href="https://www.em.com.br/trends/2026/02/7358972-como-funciona-o-alerta-da-defesa-civil-que-chega-por-sms-no-seu-celular.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Como funciona o alerta da Defesa Civil que chega por SMS no seu celular</a
-              >. fev. 2026.
-            </li>
-            <li>
-              TELETIME.
-              <a
-                href="https://teletime.com.br/20/07/2026/mg-sp-e-am-lideram-alertas-extremos-da-defesa-civil-no-primeiro-semestre/"
-                target="_blank"
-                rel="noopener noreferrer"
-                >MG, SP e AM lideram alertas extremos da Defesa Civil no primeiro semestre</a
-              >. 20 jul. 2026.
-            </li>
-            <li>
-              DGABC.
-              <a
-                href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Após chuvas em MG, mortes passam de 70 em Juiz de Fora e Ubá</a
-              >. 1 mar. 2026.
-            </li>
-            <li>
-              ESTADO DE MINAS.
-              <a
-                href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html"
-                target="_blank"
-                rel="noopener noreferrer"
-                >Minas tem 3 das 10 cidades com mais pessoas em áreas de risco no país</a
-              >. 25 fev. 2026.
-            </li>
-            <li>
-              N/ LUGARES FUTUROS.
-              <a href="https://n-lf.com" target="_blank" rel="noopener noreferrer"
-                >Consultoria de place branding, placemaking e futuros estratégicos</a
-              >. Acesso em: 29 out. 2026.
-            </li>
-            <li>
-              TRIBUNA DE MINAS. Que Juiz de Fora queremos ser? Projeto amplia debate sobre identidade e
-              futuro da cidade. 14 set. 2026.
-            </li>
-          </ul>
-        </details>
-
-        <p class="creditos">
-          Fotos:
-          <a href="https://commons.wikimedia.org/w/index.php?curid=185213423" target="_blank" rel="noopener noreferrer"
-            >“28.02.2026 - Visita a áreas afetadas pelas chuvas no município de Juiz de Fora”</a
-          >
-          e
-          <a href="https://commons.wikimedia.org/w/index.php?curid=185213443" target="_blank" rel="noopener noreferrer"
-            >outra foto da mesma visita</a
-          >, de Lula Oficial,
-          <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>;
-          <a
-            href="https://commons.wikimedia.org/wiki/File:Enchentes_e_deslizamentos_na_Zona_da_Mata_mineira_04.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            >“Enchentes e deslizamentos na Zona da Mata mineira 04”</a
-          >
-          e
-          <a
-            href="https://commons.wikimedia.org/wiki/File:Enchentes_e_deslizamentos_na_Zona_da_Mata_mineira_03.jpg"
-            target="_blank"
-            rel="noopener noreferrer"
-            >“03”</a
-          >, de CanalGov,
-          <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>;
-          <a
-            href="https://commons.wikimedia.org/wiki/File:Chuva_na_rua_em_Vi%C3%A7osa_02.JPG"
-            target="_blank"
-            rel="noopener noreferrer"
-            >“Chuva na rua em Viçosa 02”</a
-          >, de Mateus S. Figueiredo,
-          <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>;
-          <a href="https://commons.wikimedia.org/w/index.php?curid=70444242" target="_blank" rel="noopener noreferrer"
-            >“Vista de Juiz de Fora MG a partir do Morro do Imperador”</a
-          >, de HVL,
-          <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
-          Todas via Wikimedia Commons.
-        </p>
-        <p class="rodape-legal">ALERA é um protótipo de estudantes. O envio de alertas ainda não funciona de verdade.</p>
+        <div class="rodape-fontes">
+          <details class="fontes">
+            <summary><h2 class="fontes-titulo">Referências</h2></summary>
+            <ul class="fontes-lista">
+              <li>
+                AGÊNCIA PÚBLICA.
+                <a
+                  href="https://apublica.org/2026/03/eu-vi-a-agua-no-outro-dia-a-lama-juiz-de-fora-tem-8-mil-desabrigados-pelas-chuvas/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >“Eu vi a água... no outro dia, a lama”: Juiz de Fora tem 8 mil desabrigados pelas chuvas</a
+                >. mar. 2026.
+              </li>
+              <li>
+                GAZETA DIGITAL.
+                <a
+                  href="https://www.gazetadigital.com.br/editorias/brasil/juiz-de-fora-para-sobreviventes-sistemas-de-alertas-nao-funcionaram/838490"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Juiz de Fora: para sobreviventes, sistemas de alertas não funcionaram</a
+                >. fev. 2026.
+              </li>
+              <li>
+                MINISTÉRIO PÚBLICO FEDERAL.
+                <a
+                  href="https://www.mpf.mp.br/o-mpf/unidades/pr-mg/noticias/mpf-apura-falhas-na-prevencao-e-na-resposta-a-desastres-climaticos-em-juiz-de-fora-e-uba-mg"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >MPF apura falhas na prevenção e na resposta a desastres climáticos em Juiz de Fora e Ubá (MG)</a
+                >. 2026.
+              </li>
+              <li>
+                ACESSA.COM.
+                <a
+                  href="https://www.acessa.com/cidade/2026/10/341533-chuvas-intensas-colocam-juiz-de-fora-em-alerta-para-deslizamentos-apos-media-de-uma-ocorrencia-por-hora.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Chuvas intensas colocam Juiz de Fora em alerta para deslizamentos</a
+                >. out. 2026.
+              </li>
+              <li>
+                O TEMPO.
+                <a
+                  href="https://www.otempo.com.br/tempo/2026/10/3/juiz-de-fora-mg-em-alerta-vermelho-para-mais-de-100-mm-de-chuva-e-risco-de-grandes-deslizamentos-diz-inmet"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Juiz de Fora em alerta vermelho para mais de 100 mm de chuva e risco de grandes deslizamentos</a
+                >. out. 2026.
+              </li>
+              <li>
+                TRIBUNA DE MINAS. Temporal em Juiz de Fora expõe falhas em drenagem de diferentes vias. 9
+                fev. 2026.
+              </li>
+              <li>
+                ACESSA.COM. Juiz de Fora recolhe mais de 35 toneladas de lixo das bocas de lobo em
+                novembro. 6 dez. 2025.
+              </li>
+              <li>
+                TRIBUNA DE MINAS.
+                <a
+                  href="https://tribunademinas.com.br/especiais/biosfera/10-02-2024/juiz-de-fora-risco-geologico.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Juiz de Fora é a terceira cidade de Minas com mais áreas de risco geológico</a
+                >. 10 fev. 2024.
+              </li>
+              <li>
+                ALMA PRETA. Juiz de Fora é a 9ª cidade do país com mais pessoas em áreas de risco, aponta
+                Cemaden. 27 fev. 2026.
+              </li>
+              <li>
+                TRIBUNA DE MINAS. Áreas de risco devem permanecer isoladas mesmo com trégua das chuvas.
+                28 fev. 2026.
+              </li>
+              <li>
+                ESTADO DE MINAS.
+                <a
+                  href="https://www.em.com.br/trends/2026/02/7358972-como-funciona-o-alerta-da-defesa-civil-que-chega-por-sms-no-seu-celular.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Como funciona o alerta da Defesa Civil que chega por SMS no seu celular</a
+                >. fev. 2026.
+              </li>
+              <li>
+                TELETIME.
+                <a
+                  href="https://teletime.com.br/20/07/2026/mg-sp-e-am-lideram-alertas-extremos-da-defesa-civil-no-primeiro-semestre/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >MG, SP e AM lideram alertas extremos da Defesa Civil no primeiro semestre</a
+                >. 20 jul. 2026.
+              </li>
+              <li>
+                DGABC.
+                <a
+                  href="https://www.dgabc.com.br/Noticia/4287974/apos-chuvas-em-mg-mortes-passam-de-70-em-juiz-de-fora-e-uba"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Após chuvas em MG, mortes passam de 70 em Juiz de Fora e Ubá</a
+                >. 1 mar. 2026.
+              </li>
+              <li>
+                ESTADO DE MINAS.
+                <a
+                  href="https://www.em.com.br/gerais/2026/02/7362607-minas-tem-3-das-10-cidades-com-mais-pessoas-em-areas-de-risco-no-pais.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  >Minas tem 3 das 10 cidades com mais pessoas em áreas de risco no país</a
+                >. 25 fev. 2026.
+              </li>
+              <li>
+                N/ LUGARES FUTUROS.
+                <a href="https://n-lf.com" target="_blank" rel="noopener noreferrer"
+                  >Consultoria de place branding, placemaking e futuros estratégicos</a
+                >. Acesso em: 29 out. 2026.
+              </li>
+              <li>
+                TRIBUNA DE MINAS. Que Juiz de Fora queremos ser? Projeto amplia debate sobre identidade e
+                futuro da cidade. 14 set. 2026.
+              </li>
+            </ul>
+          </details>
+  
+          <p class="creditos">
+            Fotos:
+            <a href="https://commons.wikimedia.org/w/index.php?curid=185213423" target="_blank" rel="noopener noreferrer"
+              >“28.02.2026 - Visita a áreas afetadas pelas chuvas no município de Juiz de Fora”</a
+            >
+            e
+            <a href="https://commons.wikimedia.org/w/index.php?curid=185213443" target="_blank" rel="noopener noreferrer"
+              >outra foto da mesma visita</a
+            >, de Lula Oficial,
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>;
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Enchentes_e_deslizamentos_na_Zona_da_Mata_mineira_04.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              >“Enchentes e deslizamentos na Zona da Mata mineira 04”</a
+            >
+            e
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Enchentes_e_deslizamentos_na_Zona_da_Mata_mineira_03.jpg"
+              target="_blank"
+              rel="noopener noreferrer"
+              >“03”</a
+            >, de CanalGov,
+            <a href="https://creativecommons.org/licenses/by/4.0" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>;
+            <a
+              href="https://commons.wikimedia.org/wiki/File:Chuva_na_rua_em_Vi%C3%A7osa_02.JPG"
+              target="_blank"
+              rel="noopener noreferrer"
+              >“Chuva na rua em Viçosa 02”</a
+            >, de Mateus S. Figueiredo,
+            <a href="https://creativecommons.org/licenses/by-sa/4.0" target="_blank" rel="noopener noreferrer">CC BY-SA 4.0</a>;
+            <a href="https://commons.wikimedia.org/w/index.php?curid=70444242" target="_blank" rel="noopener noreferrer"
+              >“Vista de Juiz de Fora MG a partir do Morro do Imperador”</a
+            >, de HVL,
+            <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
+            Todas via Wikimedia Commons.
+          </p>
+          <p class="rodape-legal">ALERA é um protótipo de estudantes. O envio de alertas ainda não funciona de verdade.</p>
+        </div>
       </div>
     </footer>
+
+    <!-- Modelos 3D dos gadgets. Tudo em CSS 3D (caixas de 6 faces montadas com spans).
+         O site.js gira o modelo (arrastar ou setas) e liga o "Separar peças".
+         A lista de peças ao lado é a alternativa em texto do desenho. -->
+    <dialog class="modelo" id="modelo-sensor" aria-labelledby="modelo-sensor-titulo">
+      <div class="modelo-cabeca">
+        <div>
+          <p class="sobretitulo">Fase 2 · modelo 3D</p>
+          <h2 class="modelo-titulo" id="modelo-sensor-titulo">Sensor ALERA na encosta</h2>
+        </div>
+        <button class="modelo-fechar" type="button" data-fechar-modelo aria-label="Fechar o modelo 3D">
+          <svg aria-hidden="true" focusable="false"><use href="#icone-fechar" /></svg>
+        </button>
+      </div>
+      <div class="modelo-corpo">
+        <div
+          class="palco"
+          tabindex="0"
+          autofocus
+          role="group"
+          aria-roledescription="modelo 3D"
+          aria-label="Modelo 3D do Sensor ALERA. Arraste ou use as setas do teclado para girar."
+          aria-describedby="modelo-sensor-pecas"
+        >
+          <div class="cena cena--sensor" aria-hidden="true">
+            <div class="peca peca--chao"><span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span></div>
+            <div class="peca peca--poste">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+            </div>
+            <div class="peca peca--gabinete">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">1</span><span class="rotulo3d-nome">Haste e caixa</span><span class="rotulo3d-uso">protege a eletrônica</span></span>
+            </div>
+            <div class="peca peca--umidade">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">2</span><span class="rotulo3d-nome">Umidade do solo</span><span class="rotulo3d-uso">quanta água a terra segurou</span></span>
+            </div>
+            <div class="peca peca--pluvio">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">3</span><span class="rotulo3d-nome">Pluviômetro</span><span class="rotulo3d-uso">chuva de 24 h e 72 h</span></span>
+            </div>
+            <div class="peca peca--mpu">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">4</span><span class="rotulo3d-nome">MPU-6050</span><span class="rotulo3d-uso">percebe o terreno inclinar</span></span>
+            </div>
+            <div class="peca peca--esp">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">5</span><span class="rotulo3d-nome">ESP32</span><span class="rotulo3d-uso">define o nível do alerta</span></span>
+            </div>
+            <div class="peca peca--leds">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">6</span><span class="rotulo3d-nome">LEDs</span><span class="rotulo3d-uso">o nível na rua, sem internet</span></span>
+            </div>
+            <div class="peca peca--sirene">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">7</span><span class="rotulo3d-nome">Sirene</span><span class="rotulo3d-uso">toca no perigo</span></span>
+            </div>
+          </div>
+          <p class="palco-dica" aria-hidden="true">Arraste para girar</p>
+        </div>
+        <div class="modelo-lado">
+          <div class="modelo-controles">
+            <button class="botao botao--pequeno pressionavel" type="button" data-separar aria-pressed="false">Separar peças</button>
+            <button class="botao botao--pequeno botao--contorno pressionavel" type="button" data-girar-inicio>Voltar à posição</button>
+          </div>
+          <h3 class="modelo-subtitulo">Peças</h3>
+          <ol class="modelo-pecas" id="modelo-sensor-pecas">
+            <li><strong>Haste e caixa</strong> ficam presas na encosta e protegem a eletrônica da chuva.</li>
+            <li><strong>Sensor de umidade (capacitivo)</strong> fica enterrado e mede, em %, quanta água a terra já segurou.</li>
+            <li><strong>Pluviômetro</strong> soma a chuva das últimas 24 e 72 horas.</li>
+            <li><strong>Acelerômetro MPU-6050</strong> percebe quando o terreno inclinou.</li>
+            <li><strong>ESP32</strong> compara as medidas com os limites e define o nível do alerta.</li>
+            <li><strong>LEDs verde, amarelo e vermelho</strong> mostram o nível na rua, sem internet.</li>
+            <li><strong>Sirene</strong> toca no nível de perigo.</li>
+          </ol>
+          <p class="nota">Modelo ilustrativo de um protótipo da Fase 2: formas e medidas não são as do aparelho final.</p>
+        </div>
+      </div>
+    </dialog>
+
+    <dialog class="modelo" id="modelo-bueiro" aria-labelledby="modelo-bueiro-titulo">
+      <div class="modelo-cabeca">
+        <div>
+          <p class="sobretitulo">Fase 2 · modelo 3D</p>
+          <h2 class="modelo-titulo" id="modelo-bueiro-titulo">Bueiro ALERA em corte</h2>
+        </div>
+        <button class="modelo-fechar" type="button" data-fechar-modelo aria-label="Fechar o modelo 3D">
+          <svg aria-hidden="true" focusable="false"><use href="#icone-fechar" /></svg>
+        </button>
+      </div>
+      <div class="modelo-corpo">
+        <div
+          class="palco"
+          tabindex="0"
+          autofocus
+          role="group"
+          aria-roledescription="modelo 3D"
+          aria-label="Modelo 3D do Bueiro ALERA. Arraste ou use as setas do teclado para girar."
+          aria-describedby="modelo-bueiro-pecas"
+        >
+          <div class="cena cena--bueiro" aria-hidden="true">
+            <div class="peca peca--poco"><span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f ba"></span></span></div>
+            <div class="peca peca--agua"><span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span></span></div>
+            <div class="peca peca--calcada"><span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span></div>
+            <div class="peca peca--grade">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">1</span><span class="rotulo3d-nome">Grade da rua</span><span class="rotulo3d-uso">a água entra por aqui</span></span>
+            </div>
+            <div class="peca peca--ultra">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">2</span><span class="rotulo3d-nome">Sensor ultrassônico</span><span class="rotulo3d-uso">mede o lixo e a água</span></span>
+            </div>
+            <div class="peca peca--cesto">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">3</span><span class="rotulo3d-nome">Cesto de tela</span><span class="rotulo3d-uso">segura o lixo</span></span>
+            </div>
+            <div class="peca peca--boia">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">4</span><span class="rotulo3d-nome">Chave boia</span><span class="rotulo3d-uso">dispara se a água subir</span></span>
+            </div>
+            <div class="peca peca--esp-calcada">
+              <span class="caixa"><span class="f fr"></span><span class="f tr"></span><span class="f di"></span><span class="f es"></span><span class="f to"></span><span class="f ba"></span></span>
+              <span class="rotulo3d"><span class="rotulo3d-num">5</span><span class="rotulo3d-nome">ESP32 na calçada</span><span class="rotulo3d-uso">lê os sensores e avisa</span></span>
+            </div>
+          </div>
+          <p class="palco-dica" aria-hidden="true">Arraste para girar</p>
+        </div>
+        <div class="modelo-lado">
+          <div class="modelo-controles">
+            <button class="botao botao--pequeno pressionavel" type="button" data-separar aria-pressed="false">Separar peças</button>
+            <button class="botao botao--pequeno botao--contorno pressionavel" type="button" data-girar-inicio>Voltar à posição</button>
+          </div>
+          <h3 class="modelo-subtitulo">Peças</h3>
+          <ol class="modelo-pecas" id="modelo-bueiro-pecas">
+            <li><strong>Grade da rua</strong> por onde a água da rua entra no bueiro.</li>
+            <li><strong>Sensor ultrassônico</strong> fica sob a grade e mede a altura do lixo e da água.</li>
+            <li><strong>Cesto de tela</strong> segura o lixo antes da galeria.</li>
+            <li><strong>Chave boia</strong> dispara se a água subir demais.</li>
+            <li><strong>ESP32 na calçada</strong> lê os sensores e avisa a Secretaria de Obras e a Defesa Civil.</li>
+          </ol>
+          <p class="nota">Modelo ilustrativo de um protótipo da Fase 2: formas e medidas não são as do aparelho final.</p>
+        </div>
+      </div>
+    </dialog>
 
     <script src="js/movimento.js"></script>
     <script src="js/site.js"></script>

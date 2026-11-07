@@ -17,17 +17,22 @@
 //   Movimento.aviso(texto, { tipo: 'ok' | 'erro' | 'info', tempo: 3500 })
 //   Movimento.tremer(elemento) tremidinha de erro (campo inválido, senha errada)
 //   Movimento.vibrar(ms)       vibração curta no celular, se o aparelho deixar
-//   Movimento.reduzido()       true quando a pessoa pediu menos movimento
+//   Movimento.reduzido()       hoje sempre false: as animações rodam sempre (ver abaixo)
 
 const Movimento = (() => {
   const raiz = document.documentElement
-  const pedeMenos = matchMedia('(prefers-reduced-motion: reduce)')
-  const reduzido = () => pedeMenos.matches
+  // Decisão do dono do projeto: as animações rodam sempre, mesmo quando o sistema
+  // pede "menos movimento" (Windows com efeitos de animação desligados, por exemplo).
+  // Se um dia quiserem respeitar esse pedido, é só voltar para:
+  // matchMedia('(prefers-reduced-motion: reduce)').matches
+  const reduzido = () => false
 
   // A partir daqui, o CSS sabe que o script rodou e desliga a "segurança" de 2,5 s
   raiz.classList.add('movimento-pronto')
 
   // ---------- Entrada ao rolar ----------
+
+  const vigiadoPor = new WeakMap() // moldura vigiada → elemento que anima
 
   const observador =
     'IntersectionObserver' in window
@@ -35,9 +40,11 @@ const Movimento = (() => {
           (entradas) => {
             entradas.forEach((entrada) => {
               if (!entrada.isIntersecting) return
-              entrada.target.classList.add('revelado')
+              // Para o obturador, quem é vigiado é a moldura (ver observar); quem anima é a foto
+              const alvo = vigiadoPor.get(entrada.target) || entrada.target
+              alvo.classList.add('revelado')
               observador.unobserve(entrada.target)
-              if (entrada.target.hasAttribute('data-contar')) contar(entrada.target)
+              if (alvo.hasAttribute('data-contar')) contar(alvo)
             })
           },
           // Dispara um pouco antes do fim da tela, para não ver o bloco "esperando"
@@ -55,7 +62,14 @@ const Movimento = (() => {
     )
     alvos.forEach((alvo) => {
       if (alvo.hasAttribute('data-revelar-grupo')) prepararGrupo(alvo)
-      if (observador && !reduzido()) observador.observe(alvo)
+      // O obturador começa com clip-path em 100%: para o navegador ele tem área visível zero
+      // e nunca "entra na tela". Por isso vigiamos a moldura dele (o elemento pai)
+      let vigiado = alvo
+      if (alvo.hasAttribute('data-obturador') && alvo.parentElement) {
+        vigiado = alvo.parentElement
+        vigiadoPor.set(vigiado, alvo)
+      }
+      if (observador && !reduzido()) observador.observe(vigiado)
       else {
         alvo.classList.add('revelado')
         if (alvo.hasAttribute('data-contar')) alvo.classList.add('contado')

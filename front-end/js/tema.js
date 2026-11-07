@@ -55,9 +55,8 @@
         // navegação privada sem storage: troca só nesta página
       }
 
-      const semAnimacao =
-        !document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches
-      if (semAnimacao) return aplicar(novo)
+      // Navegador sem View Transitions (Firefox antigo, por exemplo): só troca
+      if (!document.startViewTransition) return aplicar(novo)
 
       // O círculo nasce no meio do botão e cresce até cobrir a tela inteira
       const botao = document.querySelector(`label[for="tema"]`) || caixa
