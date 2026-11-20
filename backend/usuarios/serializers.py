@@ -10,7 +10,7 @@ from locais import servicos as servicos_locais
 from locais.models import Abrigo, Bairro
 from locais.serializers import campo_latitude, campo_longitude
 
-from . import geocodificacao
+from . import servicos
 from .models import Usuario, normalizar_email
 
 # Igual ao texto da caixa de consentimento em front-end/app/login.html
@@ -94,7 +94,7 @@ class CadastroSerializer(serializers.Serializer):
         return valor
 
     def create(self, dados):
-        posicao = geocodificacao.localizar(
+        posicao = servicos.localizar(
             dados['logradouro'], dados['numero'], dados['bairro'], dados['cidade'], dados['cep']
         )
         latitude, longitude = posicao or (None, None)
@@ -264,7 +264,7 @@ class MeuPerfilSerializer(serializers.ModelSerializer):
 
         # Se a pessoa já marcou o ponto no mapa, vale o que ela marcou
         if endereco_mudou and not posicao_enviada:
-            posicao = geocodificacao.localizar(
+            posicao = servicos.localizar(
                 usuario.logradouro, usuario.numero, nome_do_bairro, nome_da_cidade, usuario.cep
             )
             usuario.latitude, usuario.longitude = posicao or (None, None)

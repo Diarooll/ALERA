@@ -74,7 +74,6 @@ INSTALLED_APPS = [
     'locais',
     'alertas',
     'missoes',
-    'sensores',
 ]
 
 MIDDLEWARE = [

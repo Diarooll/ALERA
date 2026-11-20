@@ -11,7 +11,6 @@ API em Django e Django REST Framework. Já existem as contas, o login, o cadastr
 | `locais/` | Ruas, áreas de risco e abrigos |
 | `alertas/` | Previsões, regras de risco e histórico de níveis |
 | `missoes/` | Missões, pontos e ranking |
-| `sensores/` | Leituras do ESP32 (Fase 2) |
 
 ## Como rodar no Windows (PowerShell)
 
@@ -42,10 +41,10 @@ python manage.py test
 
 ## Simulação de uso
 
-`simulacao/simular.py` conta a história de um dia de chuva pela API, do jeito que o site faz. O admin cadastra abrigos e desenha a área de risco. Uma moradora se cadastra, marca a casa e salva o abrigo. O admin emite Alerta e depois Perigo, e o app da moradora mostra cada mudança. No caminho, o script também confere as permissões e a renovação do login.
+`scripts/simular.py` conta a história de um dia de chuva pela API, do jeito que o site faz. O admin cadastra abrigos e desenha a área de risco. Uma moradora se cadastra, marca a casa e salva o abrigo. O admin emite Alerta e depois Perigo, e o app da moradora mostra cada mudança. No caminho, o script também confere as permissões e a renovação do login.
 
 ```powershell
-.venv\Scripts\python.exe simulacao\simular.py
+.venv\Scripts\python.exe scripts\simular.py
 ```
 
 - Usa um banco temporário e um servidor numa porta livre, e apaga tudo no fim: o `db.sqlite3` não é tocado.
