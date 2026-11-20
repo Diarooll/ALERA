@@ -103,8 +103,7 @@ backend/
 ├── usuarios/  # moradores e login
 ├── locais/    # ruas, áreas de risco e abrigos
 ├── alertas/   # previsões, regras de risco e histórico de níveis
-├── missoes/   # missões, pontos e ranking
-└── sensores/  # leituras do ESP32 (Fase 2)
+└── missoes/   # missões, pontos e ranking
 ```
 
 ## Fora desta etapa
