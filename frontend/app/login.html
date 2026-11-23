@@ -58,7 +58,7 @@
         </header>
 
         <!-- A frase de cima. No cadastro ela vira o nome da rua da pessoa (login.js) -->
-        <div class="cartao-cabeca">
+        <div class="cartao-cabeca" role="region" aria-labelledby="manchete">
           <h1 class="manchete" id="manchete">A chuva tem endereço</h1>
           <p class="cartaz-frase" id="cartaz-frase">
             Entre para ver o risco da sua rua agora e receber o aviso no WhatsApp.
@@ -136,9 +136,9 @@
             </div>
           </form>
 
-          <!-- Só aparece quando a página roda neste computador (js/api.js) -->
+          <!-- Só aparece neste computador e no protótipo publicado (js/api.js) -->
           <div class="modo-teste" id="modo-teste" hidden>
-            <p>Modo teste: abre as telas sem servidor, só para ver o visual.</p>
+            <p><strong>Modo demonstração:</strong> abre o app com dados de exemplo, sem servidor. Nada do que você fizer é salvo.</p>
             <div class="modo-teste-botoes">
               <button type="button" class="botao botao--claro" data-teste="morador">Entrar como morador</button>
               <button type="button" class="botao botao--claro" data-teste="admin">Entrar como admin</button>

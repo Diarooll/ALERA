@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1E2A5A" />
+    <meta name="description" content="Vitrine dos componentes do ALERA com os estados default, hover, focus, active, disabled e error." />
+    <title>Componentes | A.L.E.R.A</title>
+    <script src="../js/tema.js"></script>
+    <link rel="stylesheet" href="../css/tokens.css" />
+    <link rel="stylesheet" href="../css/base.css" />
+    <link rel="stylesheet" href="../css/movimento.css" />
+    <link rel="stylesheet" href="../css/app.css" />
+    <link rel="stylesheet" href="../css/mapa.css" />
+    <link rel="stylesheet" href="../css/componentes.css" />
+  </head>
+  <body class="vitrine">
+    <svg class="desenhos" width="0" height="0" aria-hidden="true" focusable="false">
+      <symbol id="i-logo" viewBox="-21 -7 108 102">
+        <path
+          d="M26 -4h8v8h-8zM26 6h8v8h-8zM16 16h8v8h-8zM26 16h8v8h-8zM36 16h8v8h-8zM16 26h8v8h-8zM36 26h8v8h-8zM6 36h8v8h-8zM16 36h8v8h-8zM36 36h8v8h-8zM46 36h8v8h-8zM6 46h8v8h-8zM16 46h8v8h-8zM36 46h8v8h-8zM46 46h8v8h-8zM-4 56h8v8h-8zM6 56h8v8h-8zM16 56h8v8h-8zM36 56h8v8h-8zM46 56h8v8h-8zM56 56h8v8h-8zM-4 66h8v8h-8zM6 66h8v8h-8zM16 66h8v8h-8zM26 66h8v8h-8zM36 66h8v8h-8zM46 66h8v8h-8zM56 66h8v8h-8zM6 76h8v8h-8zM16 76h8v8h-8zM36 76h8v8h-8zM46 76h8v8h-8zM16 86h8v8h-8zM26 86h8v8h-8zM36 86h8v8h-8z"
+        />
+        <path d="M-8 2h6v6h-6zM74 -6h6v6h-6zM70 16h6v6h-6zM-20 44h6v6h-6zM80 58h6v6h-6z" />
+      </symbol>
+      <symbol id="i-lua" viewBox="0 0 24 24"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" /></symbol>
+      <symbol id="i-sol" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4" />
+        <path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
+      </symbol>
+    </svg>
+
+    <a class="vitrine__pular" href="#conteudo">Pular para o conteúdo</a>
+
+    <header class="topo">
+      <div class="topo__faixa">
+        <a class="topo__marca pressionavel" href="login.html">
+          <svg class="topo__logo" aria-hidden="true" focusable="false"><use href="#i-logo" /></svg>
+          A.L.E.R.A
+        </a>
+        <nav class="vitrine__nav" aria-label="Componentes">
+          <ul>
+            <li><a href="#botao">Botão</a></li>
+            <li><a href="#campo">Campo de texto</a></li>
+            <li><a href="#selecao">Seleção</a></li>
+            <li><a href="#card">Card</a></li>
+            <li><a href="#composto">Composto</a></li>
+          </ul>
+        </nav>
+        <div class="topo__acoes">
+          <input class="visualmente-oculto" type="checkbox" id="tema" role="switch" />
+          <label class="tema pressionavel" for="tema">
+            <svg class="icone tema__lua" aria-hidden="true" focusable="false"><use href="#i-lua" /></svg>
+            <svg class="icone tema__sol" aria-hidden="true" focusable="false"><use href="#i-sol" /></svg>
+            <span class="visualmente-oculto">Tema escuro</span>
+          </label>
+        </div>
+      </div>
+    </header>
+
+    <main class="vitrine__conteudo" id="conteudo">
+      <header class="vitrine__cabeca">
+        <p class="vitrine__sobretitulo">Design system "Noite de Chuva" · Sprint 2</p>
+        <h1 class="vitrine__titulo">Componentes do fluxo principal</h1>
+        <p class="nota">
+          Os cinco componentes do fluxo "Garantir o abrigo e a rota segura", cada um nos seis estados.
+          As amostras usam o mesmo CSS do app (<code>css/app.css</code> e <code>css/mapa.css</code>).
+          Na linha "Experimente", o componente é de verdade: passe o mouse, aperte, e use
+          <kbd>Tab</kbd> para ver o foco.
+        </p>
+      </header>
+
+      <section class="painel vitrine__tabela-bloco" aria-labelledby="nomes-titulo">
+        <h2 class="bloco-titulo" id="nomes-titulo">Nomes no design system</h2>
+        <div class="vitrine__rolagem">
+          <table class="vitrine__tabela">
+            <caption class="visualmente-oculto">Componente, classe CSS e onde aparece no app</caption>
+            <thead>
+              <tr><th scope="col">Componente</th><th scope="col">Classe</th><th scope="col">Onde aparece</th></tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row">Botão</th><td><code>.botao</code>, <code>.botao--secundario</code>, <code>.botao--erro</code></td><td>Alerta, Escolher abrigo, Meus dados</td></tr>
+              <tr><th scope="row">Campo de texto</th><td><code>.campo</code> + <code>.campo__entrada</code></td><td>Meus dados (rua, número, bairro)</td></tr>
+              <tr><th scope="row">Seleção</th><td><code>.campo__entrada.selecao</code></td><td>Escolher abrigo (filtro "Mostrar")</td></tr>
+              <tr><th scope="row">Card</th><td><code>.abrigo-cartao</code></td><td>Escolher abrigo (lista)</td></tr>
+              <tr><th scope="row">Composto</th><td><code>.campo-cep</code></td><td>Meus dados (CEP com busca automática)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- BOTÃO -->
+      <section class="vitrine__secao" id="botao" aria-labelledby="botao-titulo">
+        <h2 class="vitrine__h2" id="botao-titulo">Botão</h2>
+        <p class="nota">Pílula azul-noite. O secundário usa o azul claro. Altura mínima de 44 px para o toque.</p>
+        <ul class="estados" aria-label="Estados do botão">
+          <li class="estado"><h3 class="estado__nome">Default</h3><button class="botao" type="button" tabindex="-1">Salvar este abrigo</button></li>
+          <li class="estado"><h3 class="estado__nome">Hover</h3><button class="botao e-hover" type="button" tabindex="-1">Salvar este abrigo</button></li>
+          <li class="estado"><h3 class="estado__nome">Focus</h3><button class="botao e-foco" type="button" tabindex="-1">Salvar este abrigo</button></li>
+          <li class="estado"><h3 class="estado__nome">Active</h3><button class="botao e-ativo" type="button" tabindex="-1">Salvar este abrigo</button></li>
+          <li class="estado"><h3 class="estado__nome">Disabled</h3><button class="botao" type="button" disabled>Fechado</button></li>
+          <li class="estado"><h3 class="estado__nome">Error</h3><button class="botao botao--erro" type="button" tabindex="-1">Tentar de novo</button></li>
+        </ul>
+        <div class="vitrine__ao-vivo">
+          <h3 class="estado__nome">Experimente</h3>
+          <button class="botao pressionavel" type="button" id="vivo-botao">Salvar este abrigo</button>
+          <button class="botao botao--secundario pressionavel" type="button">Ver no mapa</button>
+          <span class="campo__ajuda" id="vivo-botao-ajuda" role="status">Clique no primeiro botão: ele simula uma falha e passa para o estado de erro.</span>
+        </div>
+      </section>
+
+      <!-- CAMPO DE TEXTO -->
+      <section class="vitrine__secao" id="campo" aria-labelledby="campo-titulo">
+        <h2 class="vitrine__h2" id="campo-titulo">Campo de texto</h2>
+        <p class="nota">Rótulo sempre visível em cima. A mensagem de erro fica embaixo e é ligada ao campo por <code>aria-describedby</code>.</p>
+        <ul class="estados" aria-label="Estados do campo de texto">
+          <li class="estado">
+            <h3 class="estado__nome">Default</h3>
+            <div class="campo"><label class="campo__rotulo" for="c-default">Rua</label><input class="campo__entrada" id="c-default" tabindex="-1" placeholder="Rua Halfeld" /></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Hover</h3>
+            <div class="campo"><label class="campo__rotulo" for="c-hover">Rua</label><input class="campo__entrada e-hover" id="c-hover" tabindex="-1" placeholder="Rua Halfeld" /></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Focus</h3>
+            <div class="campo"><label class="campo__rotulo" for="c-foco">Rua</label><input class="campo__entrada e-foco" id="c-foco" tabindex="-1" value="Rua Half" /></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Active</h3>
+            <div class="campo"><label class="campo__rotulo" for="c-ativo">Rua</label><input class="campo__entrada e-ativo" id="c-ativo" tabindex="-1" value="Rua Halfeld" /></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Disabled</h3>
+            <div class="campo"><label class="campo__rotulo" for="c-desativado">Número na rua</label><input class="campo__entrada" id="c-desativado" disabled placeholder="Sem número" /></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Error</h3>
+            <div class="campo">
+              <label class="campo__rotulo" for="c-erro">Rua</label>
+              <input class="campo__entrada" id="c-erro" tabindex="-1" aria-invalid="true" aria-describedby="c-erro-msg" />
+              <span class="campo__erro" id="c-erro-msg">Informe a rua.</span>
+            </div>
+          </li>
+        </ul>
+        <div class="vitrine__ao-vivo">
+          <h3 class="estado__nome">Experimente</h3>
+          <div class="campo vitrine__campo-vivo">
+            <label class="campo__rotulo" for="vivo-campo">Bairro</label>
+            <input class="campo__entrada" id="vivo-campo" aria-describedby="vivo-campo-erro" autocomplete="off" />
+            <span class="campo__erro" id="vivo-campo-erro" hidden></span>
+          </div>
+          <span class="campo__ajuda">Saia do campo vazio para ver o erro. Digitar apaga o erro.</span>
+        </div>
+      </section>
+
+      <!-- SELEÇÃO -->
+      <section class="vitrine__secao" id="selecao" aria-labelledby="selecao-titulo">
+        <h2 class="vitrine__h2" id="selecao-titulo">Seleção</h2>
+        <p class="nota">Um <code>&lt;select&gt;</code> nativo com o visual do campo: funciona no teclado e no leitor de tela sem código extra.</p>
+        <ul class="estados" aria-label="Estados da seleção">
+          <li class="estado"><h3 class="estado__nome">Default</h3><div class="campo"><label class="campo__rotulo" for="s1">Mostrar</label><select class="campo__entrada selecao" id="s1" tabindex="-1"><option>Todos os abrigos</option></select></div></li>
+          <li class="estado"><h3 class="estado__nome">Hover</h3><div class="campo"><label class="campo__rotulo" for="s2">Mostrar</label><select class="campo__entrada selecao e-hover" id="s2" tabindex="-1"><option>Todos os abrigos</option></select></div></li>
+          <li class="estado"><h3 class="estado__nome">Focus</h3><div class="campo"><label class="campo__rotulo" for="s3">Mostrar</label><select class="campo__entrada selecao e-foco" id="s3" tabindex="-1"><option>Todos os abrigos</option></select></div></li>
+          <li class="estado"><h3 class="estado__nome">Active</h3><div class="campo"><label class="campo__rotulo" for="s4">Mostrar</label><select class="campo__entrada selecao e-ativo" id="s4" tabindex="-1"><option>Só os que recebem gente agora</option></select></div></li>
+          <li class="estado"><h3 class="estado__nome">Disabled</h3><div class="campo"><label class="campo__rotulo" for="s5">Mostrar</label><select class="campo__entrada selecao" id="s5" disabled><option>Nenhum abrigo ainda</option></select></div></li>
+          <li class="estado">
+            <h3 class="estado__nome">Error</h3>
+            <div class="campo">
+              <label class="campo__rotulo" for="s6">Mostrar</label>
+              <select class="campo__entrada selecao" id="s6" tabindex="-1" aria-invalid="true" aria-describedby="s6-msg"><option>Todos os abrigos</option></select>
+              <span class="campo__erro" id="s6-msg">Não deu para carregar os abrigos.</span>
+            </div>
+          </li>
+        </ul>
+        <div class="vitrine__ao-vivo">
+          <h3 class="estado__nome">Experimente</h3>
+          <div class="campo vitrine__campo-vivo">
+            <label class="campo__rotulo" for="vivo-selecao">Mostrar</label>
+            <select class="campo__entrada selecao" id="vivo-selecao">
+              <option value="todos">Todos os abrigos</option>
+              <option value="recebem">Só os que recebem gente agora</option>
+              <option value="vagas">Só os abertos com vaga</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- CARD -->
+      <section class="vitrine__secao" id="card" aria-labelledby="card-titulo">
+        <h2 class="vitrine__h2" id="card-titulo">Card de abrigo</h2>
+        <p class="nota">
+          Cada abrigo da lista. Active é o abrigo escolhido no mapa (faixa à esquerda); disabled é o abrigo fechado;
+          error aparece quando não deu para salvar.
+        </p>
+        <ul class="estados estados--largos" aria-label="Estados do card">
+          <li class="estado">
+            <h3 class="estado__nome">Default</h3>
+            <div class="abrigo-cartao">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">1</span><h4 class="abrigo-cartao__nome">Escola Municipal do Centro</h4></div>
+              <p class="abrigo-cartao__info">Escola · 270 m · 4 min a pé</p>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Hover</h3>
+            <div class="abrigo-cartao e-hover">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">1</span><h4 class="abrigo-cartao__nome">Escola Municipal do Centro</h4></div>
+              <p class="abrigo-cartao__info">Escola · 270 m · 4 min a pé</p>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Focus</h3>
+            <div class="abrigo-cartao e-foco">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">1</span><h4 class="abrigo-cartao__nome">Escola Municipal do Centro</h4></div>
+              <p class="abrigo-cartao__info">Escola · 270 m · 4 min a pé</p>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Active</h3>
+            <div class="abrigo-cartao abrigo-cartao--ativo">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">1</span><h4 class="abrigo-cartao__nome">Escola Municipal do Centro</h4></div>
+              <p class="abrigo-cartao__info">Escola · 270 m · 4 min a pé</p>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Disabled</h3>
+            <div class="abrigo-cartao abrigo-cartao--fechado" aria-disabled="true">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">4</span><h4 class="abrigo-cartao__nome">Centro Comunitário</h4></div>
+              <p class="abrigo-cartao__info">Centro comunitário · fechado</p>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Error</h3>
+            <div class="abrigo-cartao abrigo-cartao--erro">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">1</span><h4 class="abrigo-cartao__nome">Escola Municipal do Centro</h4></div>
+              <p class="abrigo-cartao__erro">Não foi possível salvar. Tente de novo.</p>
+            </div>
+          </li>
+        </ul>
+        <div class="vitrine__ao-vivo">
+          <h3 class="estado__nome">Experimente</h3>
+          <ul class="lista-abrigos-app vitrine__card-vivo">
+            <li class="abrigo-cartao" id="vivo-card">
+              <div class="abrigo-cartao__cabeca"><span class="abrigo-cartao__numero">2</span><h4 class="abrigo-cartao__nome">Ginásio do Bairro</h4></div>
+              <p class="abrigo-cartao__info">Ginásio · poucas vagas · 620 m · 9 min a pé</p>
+              <p class="abrigo-cartao__erro" role="alert"></p>
+              <div class="abrigo-cartao__acoes">
+                <button class="botao botao--secundario pressionavel" type="button" id="vivo-card-ver">Ver no mapa</button>
+                <button class="botao pressionavel" type="button" id="vivo-card-salvar">Salvar este abrigo</button>
+              </div>
+            </li>
+          </ul>
+          <span class="campo__ajuda">"Ver no mapa" liga o active. "Salvar" simula uma falha (error).</span>
+        </div>
+      </section>
+
+      <!-- COMPOSTO -->
+      <section class="vitrine__secao" id="composto" aria-labelledby="composto-titulo">
+        <h2 class="vitrine__h2" id="composto-titulo">Composto: campo de CEP com busca</h2>
+        <p class="nota">
+          Junta rótulo, campo, girador, ajuda e erro. Com 8 números, busca a rua no ViaCEP (active = buscando).
+          Disabled enquanto o endereço é salvo; error quando o CEP não existe.
+        </p>
+        <ul class="estados" aria-label="Estados do campo de CEP">
+          <li class="estado">
+            <h3 class="estado__nome">Default</h3>
+            <div class="campo campo-cep"><label class="campo__rotulo" for="cep1">CEP</label><div class="campo-cep__caixa"><input class="campo__entrada" id="cep1" tabindex="-1" placeholder="36010-000" /><span class="campo-cep__girando" aria-hidden="true"></span></div></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Hover</h3>
+            <div class="campo campo-cep"><label class="campo__rotulo" for="cep2">CEP</label><div class="campo-cep__caixa"><input class="campo__entrada e-hover" id="cep2" tabindex="-1" placeholder="36010-000" /><span class="campo-cep__girando" aria-hidden="true"></span></div></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Focus</h3>
+            <div class="campo campo-cep"><label class="campo__rotulo" for="cep3">CEP</label><div class="campo-cep__caixa"><input class="campo__entrada e-foco" id="cep3" tabindex="-1" value="36010" /><span class="campo-cep__girando" aria-hidden="true"></span></div></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Active</h3>
+            <div class="campo campo-cep">
+              <label class="campo__rotulo" for="cep4">CEP</label>
+              <div class="campo-cep__caixa e-ativo"><input class="campo__entrada e-ativo" id="cep4" tabindex="-1" value="36010-002" /><span class="campo-cep__girando" aria-hidden="true"></span></div>
+              <span class="campo__ajuda">Buscando o endereço deste CEP…</span>
+            </div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Disabled</h3>
+            <div class="campo campo-cep"><label class="campo__rotulo" for="cep5">CEP</label><div class="campo-cep__caixa"><input class="campo__entrada" id="cep5" disabled value="36010-002" /><span class="campo-cep__girando" aria-hidden="true"></span></div></div>
+          </li>
+          <li class="estado">
+            <h3 class="estado__nome">Error</h3>
+            <div class="campo campo-cep">
+              <label class="campo__rotulo" for="cep6">CEP</label>
+              <div class="campo-cep__caixa"><input class="campo__entrada" id="cep6" tabindex="-1" value="00000-000" aria-invalid="true" aria-describedby="cep6-msg" /><span class="campo-cep__girando" aria-hidden="true"></span></div>
+              <span class="campo__erro" id="cep6-msg">Não achamos este CEP.</span>
+            </div>
+          </li>
+        </ul>
+        <div class="vitrine__ao-vivo">
+          <h3 class="estado__nome">Experimente</h3>
+          <div class="campo campo-cep vitrine__campo-vivo">
+            <label class="campo__rotulo" for="vivo-cep">CEP</label>
+            <div class="campo-cep__caixa">
+              <input class="campo__entrada" id="vivo-cep" inputmode="numeric" placeholder="36010-000"
+                aria-describedby="vivo-cep-ajuda vivo-cep-erro" autocomplete="off" />
+              <span class="campo-cep__girando" aria-hidden="true"></span>
+            </div>
+            <span class="campo__ajuda" id="vivo-cep-ajuda" role="status"></span>
+            <span class="campo__erro" id="vivo-cep-erro" hidden></span>
+          </div>
+          <span class="campo__ajuda">Tente 36010-002 (existe) e 00000-000 (não existe).</span>
+        </div>
+      </section>
+    </main>
+
+    <footer class="rodape">
+      <p class="rodape__texto">A.L.E.R.A · MonkeyNerds, FIAP · Sprint 2 de Frontend Design</p>
+      <a class="rodape__link" href="login.html">Abrir o app</a>
+    </footer>
+
+    <script src="../js/endereco.js"></script>
+    <script src="../js/componentes.js"></script>
+  </body>
+</html>
