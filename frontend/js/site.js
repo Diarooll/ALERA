@@ -1,5 +1,5 @@
 // ALERA · site.js
-// Scripts do site (index.html). O site funciona sem eles: as cores dos níveis e a
+// Scripts do site (site.html). O site funciona sem eles: as cores dos níveis e a
 // mensagem trocam só com CSS. Aqui ficam três coisas a mais:
 //   1. o nome da rua digitado entra na mensagem (sempre por textContent)
 //   2. a chuva desenhada no <canvas>, mais forte a cada nível, na cor do nível
@@ -139,7 +139,7 @@
   }
 
   // ---------- 3. Modelos 3D dos gadgets ----------
-  // O modelo é todo em CSS 3D (index.html + site.css). Aqui só:
+  // O modelo é todo em CSS 3D (site.html + site.css). Aqui só:
   //   - abrir e fechar o <dialog> (Esc fecha sozinho, é do próprio <dialog>)
   //   - girar: arrastar com mouse ou dedo (pointer events) ou setas do teclado
   //   - girar devagar sozinho quando ninguém mexe há um tempo
