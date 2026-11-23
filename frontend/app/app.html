@@ -660,6 +660,17 @@
               </div>
               <div class="detalhe__coluna">
                 <h3 class="detalhe__subtitulo">Abrigos, do mais perto ao mais longe</h3>
+                <div class="campo filtro-abrigos">
+                  <label class="campo__rotulo" for="abrigos-filtro">Mostrar</label>
+                  <select class="campo__entrada selecao" id="abrigos-filtro"
+                    aria-describedby="abrigos-filtro-ajuda abrigos-filtro-erro">
+                    <option value="todos">Todos os abrigos</option>
+                    <option value="recebem">Só os que recebem gente agora</option>
+                    <option value="vagas">Só os abertos com vaga</option>
+                  </select>
+                  <span class="campo__ajuda" id="abrigos-filtro-ajuda" role="status"></span>
+                  <span class="campo__erro" id="abrigos-filtro-erro" hidden></span>
+                </div>
                 <ul class="lista-abrigos-app" id="abrigos-lista" data-revelar-grupo></ul>
                 <button class="botao botao--texto pressionavel" type="button" id="abrigos-atualizar">
                   Atualizar lista
@@ -781,10 +792,14 @@
             <h2 class="bloco-titulo">Onde você mora</h2>
             <p class="nota">Com o endereço certo, o alerta chega para a sua rua.</p>
             <div class="campos">
-              <div class="campo">
+              <!-- Componente composto: campo + busca automática no ViaCEP + ajuda + erro -->
+              <div class="campo campo-cep">
                 <label class="campo__rotulo" for="dados-cep">CEP</label>
-                <input class="campo__entrada" id="dados-cep" inputmode="numeric" autocomplete="postal-code"
-                  placeholder="36010-000" aria-describedby="cep-ajuda dados-cep-erro" />
+                <div class="campo-cep__caixa">
+                  <input class="campo__entrada" id="dados-cep" inputmode="numeric" autocomplete="postal-code"
+                    placeholder="36010-000" aria-describedby="cep-ajuda dados-cep-erro" />
+                  <span class="campo-cep__girando" aria-hidden="true"></span>
+                </div>
                 <span class="campo__ajuda" id="cep-ajuda" role="status"></span>
                 <span class="campo__erro" id="dados-cep-erro" hidden></span>
               </div>
@@ -852,6 +867,7 @@
     <footer class="rodape">
       <p class="rodape__texto">A.L.E.R.A · No lugar certo, na hora certa · MonkeyNerds, FIAP</p>
       <a class="rodape__link" href="../site.html">Conheça o projeto</a>
+      <a class="rodape__link" href="componentes.html">Componentes</a>
     </footer>
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"

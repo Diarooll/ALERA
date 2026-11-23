@@ -94,10 +94,70 @@ async function pegar(rota) {
   return resposta.json()
 }
 
+// Modo teste (demonstração): áreas de exemplo em Juiz de Fora. A "Encosta do Centro" é a área
+// do morador de exemplo do app: um alerta emitido para ela aparece no app (localStorage.modoTesteNivel)
+const AREA_DO_MORADOR_EXEMPLO = 1
+
+function nivelDoMoradorExemplo() {
+  try {
+    return localStorage.getItem('modoTesteNivel') || 'alerta'
+  } catch {
+    return 'alerta'
+  }
+}
+
+function dadosDeExemplo() {
+  const area = (id, nome, nivel, latitude, longitude, raio_m) => ({
+    id, nome, nivel, circulos: [{ latitude, longitude, raio_m }],
+  })
+  const agora = Date.now()
+  return {
+    areas: [
+      area(AREA_DO_MORADOR_EXEMPLO, 'Encosta do Centro', nivelDoMoradorExemplo(), -21.7608, -43.3497, 350),
+      area(2, 'Morro do Cristo', 'atencao', -21.7540, -43.3620, 400),
+      area(3, 'Vila Ideal', 'normal', -21.7790, -43.3330, 300),
+      area(4, 'Santa Cândida', 'normal', -21.7420, -43.3300, 450),
+    ],
+    abrigos: [],
+    tipos: [],
+    alertas: [
+      { area: 'Encosta do Centro', nivel_novo: 'alerta', mensagem: NIVEIS.alerta.orientacao,
+        criado_em: new Date(agora - 40 * 60000).toISOString(), origem: 'previsao' },
+      { area: 'Morro do Cristo', nivel_novo: 'atencao', mensagem: NIVEIS.atencao.orientacao,
+        criado_em: new Date(agora - 95 * 60000).toISOString(), origem: 'previsao' },
+    ],
+  }
+}
+
+// No modo teste o alerta fica só nesta tela (e no app do morador de exemplo, neste navegador)
+function registrarAlertaExemplo(areas, nivelId) {
+  const mudaram = areas.filter((area) => area.nivel !== nivelId)
+  mudaram.forEach((area) => {
+    area.nivel = nivelId
+    estado.alertas.unshift({
+      area: area.nome, nivel_novo: nivelId, mensagem: mensagemAtual(),
+      criado_em: new Date().toISOString(), responsavel: 'Defesa Civil (demonstração)',
+    })
+    if (area.id === AREA_DO_MORADOR_EXEMPLO) {
+      try {
+        localStorage.setItem('modoTesteNivel', nivelId)
+      } catch {
+        // sem storage: o app continua com o nível dele
+      }
+    }
+  })
+  desenharTudo()
+  $('#alerta-retorno').textContent = mudaram.length
+    ? `${NIVEIS[nivelId].nome} emitido para ${nomesDasAreas(areas)}. Demonstração: abra o app como morador para ver.`
+    : 'Nada mudou: essas áreas já estavam com esse nível.'
+}
+
 async function carregarTudo() {
   if (modoTesteAtivo()) {
-    mostrarStatus('Modo teste: sem servidor, as áreas e os abrigos reais não carregam.', true)
-    $('#painel-apoio').textContent = 'Defesa Civil · modo teste'
+    // Só na primeira vez: depois as mudanças feitas na tela ficam
+    if (!estado.areas.length) Object.assign(estado, dadosDeExemplo())
+    mostrarStatus('Modo demonstração: dados de exemplo, nada é salvo no servidor.')
+    $('#painel-apoio').textContent = 'Defesa Civil · modo demonstração'
     return desenharTudo()
   }
 
@@ -374,6 +434,7 @@ function desenharHistorico() {
 async function registrarAlerta() {
   const areas = areasEscolhidas()
   const nivelId = nivelEscolhido()
+  if (modoTesteAtivo()) return registrarAlertaExemplo(areas, nivelId)
   $('#alerta-retorno').textContent = 'Enviando…'
 
   try {
