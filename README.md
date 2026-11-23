@@ -49,7 +49,8 @@ Os gadgets entram aos poucos, área por área. O dado medido entra no mesmo aler
 
 Não precisa instalar nada. Abra no navegador:
 
-- `front-end/index.html`: site do projeto
+- `front-end/index.html`: página inicial, leva para o login
+- `front-end/site.html`: site de apresentação do projeto
 - `front-end/app/login.html`: login do app
 
 O login e o cadastro precisam do back-end rodando.

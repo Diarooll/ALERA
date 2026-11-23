@@ -15,7 +15,7 @@ Este documento descreve como o ALERA vai ficar por fora na demo para a FIAP: o q
 ## Mapa de navegação
 
 ```text
-Site (index.html)
+Site (site.html)
   └── Testar o app ──► Login ◄──► Criar conta
                          │
                          ▼
@@ -42,7 +42,7 @@ Defesa Civil ──► Painel no Django Admin ──► Muda o nível da área �
 
 ## Site
 
-**Arquivo:** `front-end/index.html`. **Acesso:** público. **API:** nenhuma.
+**Arquivo:** `front-end/site.html`. **Acesso:** público. **API:** nenhuma.
 
 O site continua estático, com as seções atuais: início, O problema, ALERA Web, Gamificação, Gadgets, Quem somos e Referências.
 

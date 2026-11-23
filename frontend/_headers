@@ -47,7 +47,7 @@
   #                          NÃO rodam. Todo JavaScript fica em arquivo .js.
   #   style-src              CSS: nossos .css, o CSS do Google Fonts e o do
   #                          Leaflet. Bloco <style> dentro do HTML não vale.
-  #   style-src-attr         libera só o atributo style="..." (o index.html
+  #   style-src-attr         libera só o atributo style="..." (o site.html
   #                          usa um, e o redesenho pode usar). Ele muda só a
   #                          aparência do próprio elemento e não lê nada da
   #                          página. O Leaflet muda estilos pelo JavaScript
@@ -127,6 +127,9 @@
 # resposta "não mudou" é rapidinha). Assim, uma versão nova do site
 # chega na hora para todo mundo.
 /
+  Cache-Control: public, max-age=0, must-revalidate
+
+/site.html
   Cache-Control: public, max-age=0, must-revalidate
 
 /app/*
