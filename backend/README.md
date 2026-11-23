@@ -30,6 +30,12 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
+Ou com o uvicorn (reinicia sozinho ao salvar):
+
+```powershell
+uvicorn config.asgi:application --reload --port 8000
+```
+
 - Saúde da API: <http://127.0.0.1:8000/api/saude/>
 - Django Admin: <http://127.0.0.1:8000/admin/>
 

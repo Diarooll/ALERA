@@ -78,6 +78,8 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    # Serve o CSS e o JS do /admin/ quando o servidor é o uvicorn (ele não serve arquivos estáticos)
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     # Política de conteúdo (CSP): veja o bloco "Segurança" no fim deste arquivo
     'django.middleware.csp.ContentSecurityPolicyMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -141,6 +143,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+# Para onde o collectstatic copia os arquivos. Em desenvolvimento não precisa rodar
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 
 # API: toda rota exige login, a menos que libere explicitamente
