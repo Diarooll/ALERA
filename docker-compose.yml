@@ -1,0 +1,32 @@
+# Banco de dados do ALERA para desenvolvimento: PostgreSQL 17 com PostGIS.
+# É a mesma versão do Supabase, onde fica o banco oficial do projeto.
+#
+#   docker compose up -d     liga o banco (fica rodando em segundo plano)
+#   docker compose stop      desliga o banco (os dados continuam guardados)
+#   docker compose down -v   apaga o banco inteiro, com os dados (cuidado)
+#
+# A senha abaixo só vale no seu computador: a porta abre só para 127.0.0.1,
+# então ninguém da rede (nem do Wi-Fi da faculdade) consegue entrar no banco.
+
+services:
+  banco:
+    image: postgis/postgis:17-3.5
+    container_name: alera-banco
+    environment:
+      POSTGRES_DB: alera
+      POSTGRES_USER: alera
+      POSTGRES_PASSWORD: alera-local
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      # Os dados ficam neste volume e não somem quando o container é desligado
+      - alera-dados:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U alera -d alera"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  alera-dados:
