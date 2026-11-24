@@ -171,63 +171,10 @@
   background: var(--app-superficie, var(--cor-superficie));
   color: var(--app-texto, var(--cor-texto));
   scroll-margin: var(--esp-8);
-  border: 1px solid var(--app-linha, var(--cor-linha));
-  transition:
-    box-shadow var(--dur-curta, 240ms) ease,
-    border-color var(--dur-curta, 240ms) ease,
-    transform var(--dur-curta, 240ms) ease;
+  transition: box-shadow var(--dur-curta, 240ms) ease;
 }
-/* Estados do card (Sprint 2): default · hover · focus · active · disabled · error.
-   .e-hover e .e-foco só existem para a vitrine (app/componentes.html) */
-@media (hover: hover) {
-  .abrigo-cartao:not(.abrigo-cartao--fechado):hover {
-    border-color: var(--app-azul, var(--cor-primaria));
-    box-shadow: var(--app-sombra, var(--sombra-card));
-  }
-}
-.abrigo-cartao.e-hover {
-  border-color: var(--app-azul, var(--cor-primaria));
-  box-shadow: var(--app-sombra, var(--sombra-card));
-}
-/* Focus: o teclado chegou num botão do card; o card inteiro ganha o contorno */
-.abrigo-cartao:focus-within,
-.abrigo-cartao.e-foco {
-  border-color: var(--app-azul, var(--cor-primaria));
-  box-shadow: var(--app-foco, var(--foco));
-}
-/* Active: o abrigo escolhido no mapa (faixa à esquerda) */
 .abrigo-cartao--ativo {
-  border-color: var(--app-azul, var(--cor-primaria));
   box-shadow: inset 4px 0 0 var(--app-azul, var(--cor-primaria));
-}
-/* Disabled: abrigo fechado. Fica na lista, mas apagado e sem o botão de salvar */
-.abrigo-cartao--fechado {
-  background: var(--app-fundo, var(--cor-fundo));
-  border-style: dashed;
-}
-/* Error: não deu para salvar este abrigo */
-.abrigo-cartao--erro {
-  border-color: var(--app-erro, var(--cor-erro));
-  box-shadow: inset 4px 0 0 var(--app-erro, var(--cor-erro));
-}
-.abrigo-cartao__erro {
-  margin: 0;
-  color: var(--app-erro, var(--cor-erro));
-  font-weight: 700;
-}
-.abrigo-cartao__erro:empty {
-  display: none;
-}
-/* Filtro da lista (seleção) e aviso quando o filtro não acha nada */
-.filtro-abrigos {
-  margin-bottom: var(--esp-3);
-}
-.lista-abrigos-app__vazio {
-  margin: 0;
-  padding: var(--esp-4);
-  border: 1px dashed var(--app-linha, var(--cor-linha));
-  border-radius: var(--app-raio, var(--raio));
-  color: var(--app-texto-suave, var(--cor-texto-suave));
 }
 .abrigo-cartao--fechado .abrigo-cartao__nome,
 .abrigo-cartao--fechado .abrigo-cartao__numero {
