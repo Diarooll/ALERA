@@ -1,7 +1,7 @@
 /* ALERA · site.css (site público, direção "Software calmo")
    Regras e decisões: docs/redesign/software-calmo.md (e a seção Segurança de cartaz-de-rua.md)
    Linkar depois de tokens.css, base.css e movimento.css.
-   Compacto e informativo: grade, cartões com --raio-card e borda fina (sem sombra), botões com cantos de 4px.
+   Compacto e informativo: grade, cartões com --raio-card e --sombra-card, botões em pílula.
    Azul-noite é a cor principal; o laranja (--cor-brilho) só como brilho em detalhe. */
 
 /* ---------- Tokens só do site ---------- */
@@ -125,7 +125,8 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
     translate var(--dur-curta) var(--curva-saida);
 }
 .botao:hover {
-  filter: brightness(.92);
+  transform: translateY(-1px);
+  box-shadow: var(--sombra-forte);
 }
 .botao--pequeno {
   min-height: 40px;
@@ -226,6 +227,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   background: var(--cartao);
   border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
   transition:
     transform var(--dur-curta) var(--curva-saida),
     box-shadow var(--dur-curta) var(--curva-saida),
@@ -233,7 +235,8 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 }
 @media (hover: hover) and (pointer: fine) {
   .cartao:hover {
-    border-color: var(--cor-borda);
+    transform: translateY(-3px);
+    box-shadow: var(--sombra-forte);
   }
 }
 
@@ -284,7 +287,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .marca-texto {
   font-family: var(--fonte-titulo);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.04em;
 }
 .barra-nav {
@@ -449,13 +452,13 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   isolation: isolate;
   overflow: hidden;
   padding: 24px;
-  border-radius: var(--raio-card);
+  border-radius: 20px;
   color: var(--branco);
   background:
     radial-gradient(110% 70% at 100% 0%, color-mix(in srgb, var(--nivel-cor) 30%, transparent), transparent 62%),
     radial-gradient(80% 60% at 0% 100%, color-mix(in srgb, var(--nivel-cor) 14%, transparent), transparent 70%),
     var(--noite);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--nivel-cor) 45%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--nivel-cor) 45%, transparent), var(--sombra-forte);
   transition: --nivel-cor 600ms var(--curva-saida);
 }
 .chuva {
@@ -613,7 +616,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .conversa-nome {
   display: grid;
   font-family: var(--fonte-titulo);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 15px;
   line-height: 1.2;
 }
@@ -728,7 +731,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .numero-valor {
   font-family: var(--fonte-titulo);
   font-size: clamp(28px, 2.6vw, 38px);
-  font-weight: 700;
+  font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
   color: var(--titulo-cor);
@@ -783,7 +786,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .comparar-palavra {
   font-family: var(--fonte-titulo);
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--titulo-cor);
 }
 .comparar-exemplo {
@@ -826,7 +829,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   color: var(--branco);
   font-family: var(--fonte-titulo);
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--cor-brilho) 25%, transparent);
 }
 .passo-nome {
@@ -929,7 +932,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   align-items: center;
   gap: 8px;
   font-family: var(--fonte-titulo);
-  font-weight: 700;
+  font-weight: 800;
   text-decoration: none;
 }
 .app-marca .marca-icone {
@@ -969,7 +972,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .app-rua {
   font-family: var(--fonte-titulo);
   font-size: 18px;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--titulo-cor);
 }
 .app-apoio {
@@ -1279,7 +1282,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .ib-fio { stroke: var(--cor-brilho); stroke-width: 2; stroke-dasharray: 5 4; fill: none; }
 .ib-esp { fill: var(--noite); }
 .ib-esp-texto, .ib-esp-sub, .ib-whats-texto, .ib-whats-sub, .ib-numero text { text-anchor: middle; font-family: var(--fonte-titulo); }
-.ib-esp-texto { fill: var(--branco); font-size: 18px; font-weight: 700; }
+.ib-esp-texto { fill: var(--branco); font-size: 18px; font-weight: 800; }
 .ib-esp-sub { fill: var(--branco); font-size: 12px; font-family: var(--fonte-texto); }
 .ib-seta { stroke: var(--cor-borda); stroke-width: 2; }
 .ib-ponta { fill: var(--cor-borda); }
@@ -1287,7 +1290,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
 .ib-whats-texto { fill: var(--cor-texto); font-size: 16px; font-weight: 700; }
 .ib-whats-sub { fill: var(--cor-texto-suave); font-size: 11px; font-family: var(--fonte-texto); }
 .ib-numero circle { fill: var(--cor-brilho); }
-.ib-numero text { fill: var(--tinta-escura); font-size: 12px; font-weight: 700; }
+.ib-numero text { fill: var(--tinta-escura); font-size: 12px; font-weight: 800; }
 
 .legenda-numerada {
   display: grid;
@@ -1296,7 +1299,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   font-size: 14px;
 }
 .legenda-numerada li::marker {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--link);
 }
 .gadget-itens {
@@ -1332,11 +1335,12 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   justify-content: space-between;
   gap: 20px;
   padding: 32px;
-  border-radius: var(--raio-card);
+  border-radius: 20px;
   color: var(--branco);
   background:
     radial-gradient(60% 120% at 100% 100%, color-mix(in srgb, var(--cor-brilho) 26%, transparent), transparent 60%),
     var(--noite);
+  box-shadow: var(--sombra-forte);
 }
 .chamada-titulo {
   font-size: var(--fs-secao);
@@ -1386,7 +1390,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   border-radius: 50%;
   font-family: var(--fonte-titulo);
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 800;
 }
 .pessoa--normal .pessoa-iniciais  { background: var(--cor-risco-normal);  color: var(--cor-risco-normal-texto); }
 .pessoa--atencao .pessoa-iniciais { background: var(--cor-risco-atencao); color: var(--cor-risco-atencao-texto); }
@@ -1480,7 +1484,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   max-height: calc(100dvh - 32px);
   padding: 0;
   border: 0;
-  border-radius: var(--raio-card);
+  border-radius: 20px;
   background: var(--cartao);
   color: var(--cor-texto);
   box-shadow: var(--sombra-flutua);
@@ -1557,7 +1561,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   font-size: 14px;
 }
 .modelo-pecas li::marker {
-  font-weight: 700;
+  font-weight: 800;
   color: var(--link);
 }
 .modelo-pecas strong {
@@ -1705,7 +1709,7 @@ h1, h2, h3, h4, p, ul, ol, dl, dd {
   background: var(--cor-brilho);
   color: var(--tinta-escura);
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 800;
 }
 .rotulo3d-nome,
 .rotulo3d-uso {

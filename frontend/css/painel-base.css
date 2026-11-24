@@ -31,7 +31,7 @@
   --app-linha:       var(--cor-linha);
   --app-erro:        var(--cor-erro);
   --app-foco: 0 0 0 3px var(--app-superficie), 0 0 0 6px var(--app-azul);
-  --app-raio: var(--raio);
+  --app-raio: 10px;
   --app-largura: 1120px;
   --app-altura-abas: 64px;
 }
@@ -613,7 +613,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   min-height: var(--toque-min, 44px);
   padding: 0 var(--esp-4);
   border: 2px solid var(--app-linha);
-  border-radius: var(--raio);
+  border-radius: 999px;
   background: var(--app-superficie);
   color: var(--app-texto);
   font: inherit;

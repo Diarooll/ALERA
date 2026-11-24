@@ -90,11 +90,6 @@
         <path d="M12 15C12 11 9 8.500 3 8.500 3 13 6 15 12 15z" />
         <path d="M12 11c0-4.500 3-8 9-8 0 5-3 8-9 8z" />
       </symbol>
-      <symbol id="i-alvo" viewBox="0 0 24 24">
-        <circle cx="12" cy="12" r="8" />
-        <circle cx="12" cy="12" r="3" />
-        <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
-      </symbol>
       <symbol id="i-fechar" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" /></symbol>
       <symbol id="i-seguir" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" /></symbol>
       <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></symbol>
@@ -173,25 +168,15 @@
         <div class="conteudo">
         <div class="campo-nivel" id="campo-nivel" data-nivel="carregando" data-fundo="carregando">
           <div class="campo-nivel__grade">
-            <!-- Rua, selo e área ocupam a coluna toda: ícone + texto em cada linha -->
             <div class="campo-nivel__nome">
-              <div class="campo-nivel__linha">
-                <svg class="icone campo-nivel__icone" aria-hidden="true" focusable="false"><use href="#i-local" /></svg>
-                <p class="campo-nivel__rua" id="alerta-rua"><span class="esqueleto">Carregando sua rua</span></p>
-              </div>
+              <p class="campo-nivel__rua" id="alerta-rua"><span class="esqueleto">Carregando sua rua</span></p>
               <h1 class="campo-nivel__nivel" id="alerta-titulo">
                 <span class="visualmente-oculto">Nível de risco agora: </span
-                ><span class="campo-nivel__selo"
-                  ><svg class="icone campo-nivel__selo-icone" aria-hidden="true" focusable="false"><use href="#i-alerta" /></svg
-                  ><span class="campo-nivel__palavra" id="alerta-nivel"
-                    ><span class="esqueleto">Carregando</span></span
-                  ></span
+                ><span class="campo-nivel__palavra" id="alerta-nivel"
+                  ><span class="esqueleto">Carregando</span></span
                 >
               </h1>
-              <div class="campo-nivel__linha campo-nivel__linha--area">
-                <svg class="icone campo-nivel__icone" aria-hidden="true" focusable="false"><use href="#i-alvo" /></svg>
-                <p class="campo-nivel__onde" id="alerta-apoio"><span class="esqueleto">Buscando a área</span></p>
-              </div>
+              <p class="campo-nivel__onde" id="alerta-apoio"><span class="esqueleto">Buscando a área</span></p>
             </div>
             <div class="campo-nivel__ordem">
               <p class="campo-nivel__fazer" id="alerta-ordem">Buscando o nível de risco da sua rua…</p>

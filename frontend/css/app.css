@@ -60,7 +60,7 @@
   --app-esqueleto:   var(--cor-escuro-linha);
   --app-erro:        var(--cor-escuro-erro);
   --app-bege:        var(--cor-escuro-fundo);
-  --app-sombra:      none;
+  --app-sombra:      0 1px 2px rgb(0 0 0 / .3), 0 4px 16px rgb(0 0 0 / .2);
 }
 
 /* Níveis de risco: fundo e texto sempre juntos, iguais nos dois temas */
@@ -97,7 +97,7 @@ a {
   width: min(100% - 2 * var(--app-margem), var(--app-largura));
   margin-inline: auto;
 }
-/* Títulos pequenos de cartão e formulário: IBM Plex Sans 700 */
+/* Títulos pequenos de cartão e formulário: Source Sans 700 */
 .bloco-titulo {
   margin: 0;
   font-family: var(--fonte-texto);
@@ -110,7 +110,7 @@ a {
   padding: var(--esp-5);
   border-radius: var(--app-raio-card);
   background: var(--app-superficie);
-  border: 1px solid var(--app-linha);
+  box-shadow: var(--app-sombra);
 }
 .nota {
   margin: 0;
@@ -501,9 +501,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   border-radius: var(--app-raio-card);
   background: color-mix(in srgb, var(--fundo-faixa) 7%, var(--app-superficie));
   color: var(--app-texto);
-  border: 1px solid var(--app-linha);
-  /* Sem borda à esquerda: a faixa colorida é a borda, colada na beira do cartão */
-  border-left: 0;
+  box-shadow: var(--app-sombra);
   transition: background-color var(--dur-media) ease;
 }
 /* A faixa colorida da borda esquerda */
@@ -549,60 +547,26 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 }
 .campo-nivel__rua {
   margin: 0;
-  color: var(--app-texto);
-  font-size: var(--fs-lg);
-  font-weight: 700;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-md);
+  font-weight: 600;
   line-height: 1.3;
   overflow-wrap: anywhere;
 }
-/* Coluna da esquerda: rua, selo e área, cada um com ícone, ocupando a altura do cartão */
-.campo-nivel__nome {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: var(--esp-4);
-  height: 100%;
-}
-.campo-nivel__linha {
-  display: flex;
-  align-items: center;
-  gap: var(--esp-3);
-}
-.campo-nivel__icone {
-  width: 26px;
-  height: 26px;
-  color: var(--app-texto-suave);
-}
-.campo-nivel__linha--area {
-  padding-top: var(--esp-4);
-  border-top: 1px solid var(--app-linha);
-}
 .campo-nivel__nivel {
-  margin: 0;
-  font-size: clamp(28px, 3vw, 38px);
+  margin: var(--esp-2) 0 0;
+  font-size: clamp(24px, 2.4vw, 30px);
   line-height: 1.1;
   overflow-wrap: anywhere;
-}
-/* O selo: fundo do nível com o ícone de alerta e a palavra */
-.campo-nivel__selo {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--esp-3);
-  padding: 10px 22px;
-  border-radius: var(--raio-botao);
-  background: var(--selo);
-  color: var(--selo-texto);
-  transition: background-color var(--dur-curta) ease, color var(--dur-curta) ease;
-}
-.campo-nivel__selo-icone {
-  width: 1em;
-  height: 1em;
-  stroke-width: 2.5;
 }
 .campo-nivel__palavra {
   position: relative;
   display: inline-block;
+  padding: 6px 18px 7px;
+  border-radius: var(--raio-botao);
+  background: var(--selo);
+  color: var(--selo-texto);
+  transition: background-color var(--dur-curta) ease, color var(--dur-curta) ease;
 }
 .campo-nivel__palavra .esqueleto {
   background: transparent;
@@ -612,7 +576,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
     animation: palavra-sobe 600ms var(--curva-saida) both;
   }
   /* Perigo: um anel vermelho pulsa devagar em volta do selo */
-  .campo-nivel[data-nivel="perigo"] .campo-nivel__selo::after {
+  .campo-nivel[data-nivel="perigo"] .campo-nivel__palavra::after {
     content: "";
     position: absolute;
     inset: 0;
@@ -629,9 +593,9 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   to   { box-shadow: 0 0 0 12px transparent; }
 }
 .campo-nivel__onde {
-  margin: 0;
-  color: var(--app-texto);
-  font-size: 18px;
+  margin: var(--esp-2) 0 0;
+  color: var(--app-texto-suave);
+  font-size: var(--fs-sm);
   font-weight: 600;
 }
 .campo-nivel__ordem {
@@ -710,7 +674,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
 .alerta__mapa .mapa-leaflet {
   height: 300px;
   border-radius: var(--app-raio-card);
-  border: 1px solid var(--app-linha);
+  box-shadow: var(--app-sombra);
 }
 .alerta__lado {
   display: grid;
@@ -784,6 +748,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   min-height: 64px;
   padding: var(--esp-3) var(--esp-5);
   border-radius: var(--app-raio-card);
+  box-shadow: var(--app-sombra);
   background: var(--cor-texto);
   color: #FFFFFF;
   text-decoration: none;
@@ -837,7 +802,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   padding: var(--esp-4);
   border-radius: var(--app-raio-card);
   background: var(--app-superficie);
-  border: 1px solid var(--app-linha);
+  box-shadow: var(--app-sombra);
   font-size: 15px;
 }
 .niveis__cor {
@@ -954,6 +919,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   border-radius: var(--app-raio-card);
   background: var(--cor-destaque);
   color: #FFFFFF;
+  box-shadow: var(--app-sombra);
 }
 .pontos .pontos__grade {
   width: auto;
@@ -1057,7 +1023,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   width: calc(50% - 4px);
   border-radius: var(--raio-botao);
   background: var(--app-superficie);
-  border: 1px solid var(--app-linha);
+  box-shadow: 0 1px 3px rgb(20 32 43 / .14);
   translate: calc(var(--aba) * 100%) 0;
   transition: translate var(--dur-curta) var(--curva-saida);
 }
@@ -1113,7 +1079,7 @@ body:not(:has(.tela:target, .detalhe:target)) #alerta {
   padding: var(--esp-4) var(--esp-5);
   border-radius: var(--app-raio-card);
   background: var(--app-superficie);
-  border: 1px solid var(--app-linha);
+  box-shadow: var(--app-sombra);
   transition: transform var(--dur-curta) var(--curva-mola);
 }
 .missao:has(.missao__abrir:active) {
@@ -1519,7 +1485,7 @@ body:has(.detalhe:target) {
 }
 .ranking__item--sua {
   background: var(--app-superficie);
-  border: 1px solid var(--app-linha);
+  box-shadow: var(--app-sombra);
 }
 .ranking__posicao {
   grid-area: posicao;
@@ -1868,17 +1834,11 @@ body:has(.detalhe:target) {
   }
   .campo-nivel__grade {
     grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: var(--esp-6);
-    align-items: start;
+    gap: var(--app-vao);
+    align-items: center;
   }
-  /* Rua e selo numa coluna estreita, alinhados no topo com o que fazer: sem vão solto no meio */
-  .campo-nivel__grade { align-items: stretch; }
-  .campo-nivel__nome  { grid-column: 1 / span 4; }
-  .campo-nivel__ordem {
-    grid-column: 5 / span 8;
-    padding-left: var(--esp-6);
-    border-left: 1px solid var(--app-linha);
-  }
+  .campo-nivel__nome  { grid-column: 1 / span 7; }
+  .campo-nivel__ordem { grid-column: 8 / span 5; }
 
   /* Embaixo: mapa em 7 colunas, abrigo e 199 em 5; os níveis na largura toda */
   .alerta {
