@@ -134,7 +134,7 @@ kbd {
   padding: var(--esp-4);
   border-radius: var(--app-raio-card);
   background: var(--app-superficie);
-  box-shadow: var(--app-sombra);
+  border: 1px solid var(--app-linha);
 }
 .estado__nome {
   margin: 0;

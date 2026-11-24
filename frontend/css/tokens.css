@@ -1,10 +1,12 @@
-/* ALERA · tokens.css (v0.3 · "Software calmo")
-   Paleta B · Noite de Chuva (cores iguais à v0.1) · Fontes Plus Jakarta Sans + Source Sans 3
+/* ALERA · tokens.css (v0.4 · "Serviço público")
+   Paleta B · Noite de Chuva (cores iguais à v0.1) · Fonte IBM Plex Sans (títulos e texto)
+   v0.4 (Sprint 2): uma fonte só, cantos de 4px e cartões com borda fina no lugar da sombra.
+   Sombra só no que flutua por cima da tela (janelas, avisos, menus)
    Azul-noite é a cor principal; o laranja (--cor-brilho) só como brilho, em detalhes.
    Arquivo COMPARTILHADO entre o site (index.html) e as páginas de app/ (login, app e admin).
    Linkar ANTES de base.css e de site.css / login.css / app.css. Contraste conferido pela WCAG 2.1. */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Source+Sans+3:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&display=swap");
 
 :root {
   /* Marca */
@@ -31,10 +33,10 @@
   --cor-risco-perigo:             #D7261E; /* vermelho mais forte */
   --cor-risco-perigo-texto:       #FFFFFF; /* 5,02:1 — o único com texto branco, pra se destacar dos outros */
 
-  /* Fontes: Plus Jakarta Sans nos títulos (geométrica, cantos suaves), Source Sans 3 no texto */
-  --fonte-titulo: "Plus Jakarta Sans", system-ui, sans-serif;
-  --fonte-texto:  "Source Sans 3", system-ui, sans-serif;
-  --tracking-titulo: -0.02em;
+  /* Fonte: IBM Plex Sans em tudo. Cara de ferramenta institucional, boa leitura em tela pequena */
+  --fonte-titulo: "IBM Plex Sans", system-ui, sans-serif;
+  --fonte-texto:  "IBM Plex Sans", system-ui, sans-serif;
+  --tracking-titulo: -0.01em;
 
   /* Tamanhos (escala 1,25) */
   --fs-sm:  14px; /* apoio, legendas */
@@ -43,7 +45,7 @@
   --fs-xl:  25px; /* títulos de seção */
   --fs-2xl: 31px; /* título de página no app */
   --fs-3xl: 39px; /* título principal do site */
-  --peso-texto: 400; --peso-forte: 700; --peso-titulo: 800;
+  --peso-texto: 400; --peso-forte: 700; --peso-titulo: 700;
   --altura-texto: 1.5; --altura-titulo: 1.15;
   /* Tamanhos maiores: título do topo do site, números de destaque e títulos de seção.
      Compactos de propósito: mais informação por tela, sem drama */
@@ -55,14 +57,15 @@
   --esp-1: 4px; --esp-2: 8px; --esp-3: 12px; --esp-4: 16px;
   --esp-5: 24px; --esp-6: 32px; --esp-7: 48px; --esp-8: 64px;
 
-  /* Cantos arredondados e suaves. Botões em pílula. */
-  --raio:       12px;
-  --raio-campo: 10px;
-  --raio-card:  16px;
-  --raio-botao: 999px;
+  /* Cantos discretos e iguais em tudo (botões, campos, cartões). Círculos continuam 50% */
+  --raio:       4px;
+  --raio-campo: 4px;
+  --raio-card:  4px;
+  --raio-botao: 4px;
 
-  /* Sombras suaves de software: cartão quase sem sombra, o que flutua com mais */
-  --sombra-card:  0 1px 2px rgb(20 32 43 / .06), 0 4px 16px rgb(20 32 43 / .06);
+  /* Cartão não tem sombra: é separado por borda de 1px (--cor-linha).
+     Sombra só no que flutua por cima da tela */
+  --sombra-card:  none;
   --sombra-forte: 0 8px 24px rgb(20 32 43 / .14);
   --sombra-flutua: 0 12px 32px rgb(20 32 43 / .28);
 
