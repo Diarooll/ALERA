@@ -90,6 +90,7 @@ body:has(#bueiros:target) .menu__link[href="#bueiros"] {
   padding: var(--esp-4);
   border-radius: var(--app-raio);
   background: var(--app-superficie);
+  border: 1px solid var(--app-linha);
 }
 .numero__valor {
   font-family: var(--fonte-titulo);
@@ -109,6 +110,7 @@ body:has(#bueiros:target) .menu__link[href="#bueiros"] {
   border-collapse: collapse;
   border-radius: var(--app-raio);
   background: var(--app-superficie);
+  border: 1px solid var(--app-linha);
   overflow: hidden;
 }
 .tabela th,
@@ -200,6 +202,7 @@ body:has(#bueiros:target) .menu__link[href="#bueiros"] {
   padding: 0 var(--esp-3);
   border-radius: var(--app-raio);
   background: var(--app-superficie);
+  border: 1px solid var(--app-linha);
   font-size: var(--fs-sm);
   font-weight: var(--peso-forte);
   letter-spacing: .04em;
@@ -222,6 +225,7 @@ input:focus-visible + .escolha__opcao {
   padding: var(--esp-4);
   border-radius: var(--app-raio);
   background: var(--app-superficie);
+  border: 1px solid var(--app-linha);
 }
 .previa-alerta__rua,
 .previa-alerta__ordem {

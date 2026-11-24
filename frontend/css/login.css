@@ -82,7 +82,6 @@ a {
   background: var(--cor-superficie);
   border: 1px solid var(--cor-linha);
   border-radius: var(--raio-card);
-  box-shadow: var(--sombra-card);
 }
 
 @media all {
@@ -563,7 +562,6 @@ a {
   background: var(--botao-fundo);
   border: none;
   border-radius: var(--raio-botao);
-  box-shadow: 0 1px 2px rgb(20 32 43 / 0.12);
   cursor: pointer;
   transition:
     background-color var(--dur-curta) ease,
@@ -572,7 +570,6 @@ a {
 }
 .botao:hover {
   background: color-mix(in srgb, var(--botao-fundo) 86%, var(--cor-texto));
-  box-shadow: var(--sombra-forte);
 }
 
 .botao--claro {
