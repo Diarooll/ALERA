@@ -5,23 +5,10 @@ const LOCAL = location.protocol === 'file:' || ['localhost', '127.0.0.1'].includ
 // passa /api/* para o Django no mesmo domínio. Se a API for morar em outro endereço, trocar aqui
 const API_URL = LOCAL ? 'http://127.0.0.1:8000/api' : '/api'
 
-// Protótipo publicado para a avaliação (GitHub Pages): lá não existe API, então o login de
-// verdade não funciona. Também vale com ?demo no endereço, em qualquer lugar (o ?demo é lembrado
-// nesta aba). Fora daqui, como no domínio oficial com a API, o modo teste não aparece.
-const PROTOTIPO_PUBLICADO = (() => {
-  if (location.hostname.endsWith('github.io')) return true
-  try {
-    if (new URLSearchParams(location.search).has('demo')) sessionStorage.setItem('demo', '1')
-    return sessionStorage.getItem('demo') === '1'
-  } catch {
-    return false
-  }
-})()
-
-// Modo teste (no protótipo publicado, "modo demonstração"): abre o app e o painel sem o
-// servidor, com dados de exemplo. Não dá acesso a dado nenhum: quem confere o login de
-// verdade é sempre o servidor, e no modo teste o app nem fala com ele.
-const MODO_TESTE_DISPONIVEL = LOCAL || PROTOTIPO_PUBLICADO
+// Modo teste: deixa abrir o app e o painel sem o servidor, só para testar o visual.
+// Só existe quando a página roda neste computador; em qualquer site publicado ele não
+// aparece e não vale. Não dá acesso a dado nenhum.
+const MODO_TESTE_DISPONIVEL = LOCAL
 
 function modoTesteAtivo() {
   try {

@@ -45,46 +45,15 @@ Os gadgets entram aos poucos, área por área. O dado medido entra no mesmo aler
 - **Sensor ALERA:** fica na encosta e mede a umidade do solo, a chuva acumulada e a inclinação do terreno. Avisa com LEDs na rua, sirene e WhatsApp.
 - **Bueiro ALERA:** um cesto segura o lixo antes da galeria, e o sensor avisa a Secretaria de Obras quando é hora de limpar.
 
-## Sprint 2 de Frontend Design
-
-- **Protótipo publicado:** _(colocar aqui o link do GitHub Pages)_
-- **Fluxos, componentes por página e fluxograma:** [docs/sprint2/FLUXOS.md](docs/sprint2/FLUXOS.md)
-- **Componentes com os 6 estados (default, hover, focus, active, disabled, error):** `frontend/app/componentes.html`
-- **Roteiro do vídeo:** [docs/sprint2/ROTEIRO-VIDEO.md](docs/sprint2/ROTEIRO-VIDEO.md)
-
-Os três fluxos navegáveis:
-
-1. **Garantir o abrigo e a rota segura** (principal): Alerta → Escolher meu abrigo → Salvar → Ver rota segura.
-2. **Criar conta:** Login → Criar conta (3 etapas) → Alerta.
-3. **Emitir alerta (Defesa Civil):** Painel → Emitir alerta → confirmar → o nível muda no app do morador.
-
-### Modo demonstração
-
-O protótipo publicado não tem o back-end, então o login de verdade não funciona lá. Na tela de login aparece o bloco **Modo demonstração**:
-
-- **Entrar como morador** abre o app com dados de exemplo (Rua Halfeld, Centro de Juiz de Fora).
-- **Entrar como admin** abre o painel da Defesa Civil com áreas de exemplo. Um alerta emitido para a "Encosta do Centro" aparece no app do morador.
-
-Nada do modo demonstração vai para o servidor. Ele aparece quando o site roda no computador (arquivo ou `localhost`), no GitHub Pages ou com `?demo` no endereço (ex.: `login.html?demo`).
-
 ## Como abrir
 
 Não precisa instalar nada. Abra no navegador:
 
-- `frontend/index.html`: página inicial, leva para o login
-- `frontend/site.html`: site de apresentação do projeto
-- `frontend/app/login.html`: login do app (use o modo demonstração)
-- `frontend/app/componentes.html`: vitrine dos componentes
+- `front-end/index.html`: página inicial, leva para o login
+- `front-end/site.html`: site de apresentação do projeto
+- `front-end/app/login.html`: login do app
 
-Para rodar com um servidor local (recomendado, por causa do mapa e do ViaCEP), dentro da pasta `frontend`:
-
-```powershell
-python -m http.server 5500
-```
-
-e abra `http://localhost:5500`. No VS Code, a extensão **Live Server** faz o mesmo: clique com o botão direito em `frontend/index.html` > **Open with Live Server**.
-
-O login e o cadastro de verdade precisam do back-end rodando (veja abaixo).
+O login e o cadastro precisam do back-end rodando.
 
 ## Back-end
 

@@ -545,7 +545,7 @@ function desenharAlerta({ anunciar = false } = {}) {
   } else if (estado.erro) {
     hora.textContent = estado.erro
   } else if (estado.conferidoEm) {
-    const teste = modoTesteAtivo() ? ' Modo demonstração: dados de exemplo.' : ''
+    const teste = modoTesteAtivo() ? ' Modo teste: dados de exemplo.' : ''
     const qual = info ? `Nível ${info.numero} de 4` : 'Dados'
     hora.textContent = `${qual} conferido às ${horaCurta(estado.conferidoEm)}. O app confere de novo a cada minuto.${teste}`
   } else {
@@ -694,10 +694,7 @@ function desenharListaAbrigos() {
   else mostrarAviso('#abrigos-aviso', 'Toque num pino ou na lista para escolher.')
 
   const nivel = nivelDoMorador()
-  const filtro = $('#abrigos-filtro')
-  const mostrar = desenharFiltroAbrigos(filtro, nivel)
-
-  mostrar.forEach((abrigo) => {
+  estado.abrigos.forEach((abrigo) => {
     const fechado = abrigo.situacao === 'fechado'
     const salvo = abrigo.id === estado.perfil?.abrigo
 
@@ -715,10 +712,6 @@ function desenharListaAbrigos() {
       cartao.append(elemento('p', 'abrigo-cartao__info', texto))
     }
     if (abrigo.referencia) cartao.append(elemento('p', 'abrigo-cartao__info', abrigo.referencia))
-    // Onde aparece o erro quando não dá para salvar este abrigo (estado error do card)
-    const erro = elemento('p', 'abrigo-cartao__erro')
-    erro.setAttribute('role', 'alert')
-    cartao.append(erro)
 
     const acoes = elemento('div', 'abrigo-cartao__acoes')
 
@@ -732,7 +725,6 @@ function desenharListaAbrigos() {
     const salvar = elemento('button', 'botao pressionavel', salvo ? 'Abrigo salvo' : fechado ? 'Fechado' : 'Salvar este abrigo')
     salvar.type = 'button'
     salvar.disabled = fechado || salvo
-    if (fechado) cartao.setAttribute('aria-disabled', 'true')
     salvar.addEventListener('click', () => salvarAbrigo(abrigo.id, salvar))
 
     acoes.append(ver, salvar)
@@ -740,62 +732,11 @@ function desenharListaAbrigos() {
     lista.append(cartao)
   })
 
-  if (!mostrar.length && estado.abrigos.length) {
-    lista.append(elemento('li', 'lista-abrigos-app__vazio', 'Nenhum abrigo com esse filtro agora. Escolha "Todos os abrigos" para ver a lista toda.'))
-  }
-
   mov.observar(lista.parentElement)
-}
-
-// Seleção "Mostrar": filtra a lista (o mapa continua com todos os pinos).
-// Disabled quando não há abrigo para filtrar; error quando a lista não carregou
-const FILTROS_ABRIGO = {
-  todos: () => true,
-  recebem: (abrigo, nivel) => abrigoRecebe(abrigo, nivel),
-  vagas: (abrigo) => abrigo.situacao === 'aberto',
-}
-
-function desenharFiltroAbrigos(filtro, nivel) {
-  const ajuda = $('#abrigos-filtro-ajuda')
-  const erro = $('#abrigos-filtro-erro')
-  const falhou = Boolean(estado.erro && !estado.abrigos.length)
-
-  filtro.disabled = !estado.abrigos.length
-  if (falhou) filtro.setAttribute('aria-invalid', 'true')
-  else filtro.removeAttribute('aria-invalid')
-  erro.hidden = !falhou
-  erro.textContent = falhou ? 'Não deu para carregar os abrigos. Toque em "Atualizar lista".' : ''
-
-  const regra = FILTROS_ABRIGO[filtro.value] || FILTROS_ABRIGO.todos
-  const mostrar = estado.abrigos.filter((abrigo) => regra(abrigo, nivel))
-  ajuda.textContent = estado.abrigos.length ? `${mostrar.length} de ${estado.abrigos.length} abrigos` : ''
-  return mostrar
-}
-
-$('#abrigos-filtro').addEventListener('change', () => desenharListaAbrigos())
-
-// Error do botão e do card: o botão fica vermelho com "Tentar de novo" e o card mostra o motivo.
-// Some no próximo clique
-function erroNoAbrigo(botao, texto) {
-  const cartao = botao.closest('.abrigo-cartao')
-  botao.classList.add('botao--erro')
-  botao.textContent = 'Tentar de novo'
-  if (!cartao) return
-  cartao.classList.add('abrigo-cartao--erro')
-  cartao.querySelector('.abrigo-cartao__erro').textContent = texto
-}
-
-function limparErroNoAbrigo(botao) {
-  const cartao = botao.closest('.abrigo-cartao')
-  botao.classList.remove('botao--erro')
-  cartao?.classList.remove('abrigo-cartao--erro')
-  const caixa = cartao?.querySelector('.abrigo-cartao__erro')
-  if (caixa) caixa.textContent = ''
 }
 
 async function salvarAbrigo(id, botao) {
   const tinha = !!estado.perfil?.abrigo
-  limparErroNoAbrigo(botao)
   const pronto = carregando(botao, 'Salvando…')
 
   try {
@@ -803,9 +744,7 @@ async function salvarAbrigo(id, botao) {
     if (resultado.saiu) return
     if (!resultado.ok) {
       pronto()
-      const texto = primeiroErro(resultado.erros, 'abrigo') || 'Não foi possível salvar o abrigo. Tente de novo.'
-      erroNoAbrigo(botao, texto)
-      mov.aviso(texto, { tipo: 'erro' })
+      mov.aviso(primeiroErro(resultado.erros, 'abrigo') || 'Não foi possível salvar o abrigo. Tente de novo.', { tipo: 'erro' })
       return
     }
 
@@ -818,7 +757,6 @@ async function salvarAbrigo(id, botao) {
     mov.vibrar(tinha ? 12 : [12, 60, 24])
   } catch {
     pronto()
-    erroNoAbrigo(botao, `Não foi possível salvar. ${textoSemConexao()}`)
     mov.aviso(`Não foi possível salvar o abrigo. ${textoSemConexao()}`, { tipo: 'erro' })
   }
 }
@@ -1141,20 +1079,15 @@ campo.cep.addEventListener('input', async () => {
   const ajuda = $('#cep-ajuda')
   if (campo.cep.value.length !== 9) {
     ajuda.textContent = ''
-    campo.cep.removeAttribute('aria-busy')
     return
   }
 
   const cep = campo.cep.value
   ajuda.textContent = 'Buscando o endereço deste CEP…'
-  // Buscando: o girador aparece dentro do campo (estado "active" do componente composto)
-  campo.cep.setAttribute('aria-busy', 'true')
   const achado = await buscarCep(cep)
   if (campo.cep.value !== cep) return
-  campo.cep.removeAttribute('aria-busy')
   if (!achado) {
-    ajuda.textContent = ''
-    erroNoCampo(campo.cep, 'Não achamos este CEP. Confira os números ou preencha a rua, o bairro e a cidade.')
+    ajuda.textContent = 'Não achamos este CEP. Preencha a rua, o bairro e a cidade.'
     return
   }
 
@@ -1189,14 +1122,6 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
   if (errosAqui.length) return mostrarErros(errosAqui)
 
   const pronto = carregando($('#dados-salvar'), 'Salvando…')
-  // Enquanto salva, os campos ficam desativados (estado disabled): ninguém muda o que já foi
-  const entradas = [...Object.values(campo)]
-  const travados = entradas.filter((entrada) => !entrada.disabled)
-  travados.forEach((entrada) => (entrada.disabled = true))
-  const destravar = () => {
-    travados.forEach((entrada) => (entrada.disabled = false))
-    campo.numero.disabled = campo.semNumero.checked
-  }
   try {
     const resultado = await salvarPerfil({
       cep: campo.cep.value.replace(/\D/g, ''),
@@ -1209,7 +1134,6 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
     if (resultado.saiu) return
 
     if (!resultado.ok) {
-      destravar() // antes de pôr o foco no campo com erro
       // O servidor manda {campo: ['texto']}: cada erro vai para baixo do seu campo
       const doServidor = Object.entries(CAMPOS_DO_SERVIDOR)
         .map(([nome, entrada]) => [entrada, primeiroErro(resultado.erros, nome)])
@@ -1238,7 +1162,6 @@ $('#form-endereco').addEventListener('submit', async (evento) => {
   } catch {
     mov.aviso(`Não foi possível salvar. ${textoSemConexao()}`, { tipo: 'erro', tempo: 6000 })
   } finally {
-    destravar()
     pronto()
   }
 })

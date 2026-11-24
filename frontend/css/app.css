@@ -173,41 +173,13 @@ a {
     color var(--dur-curta) ease,
     transform var(--dur-curta) var(--curva-mola);
 }
-/* Estados do botão (Sprint 2): default · hover · focus · active · disabled · error.
-   As classes .e-hover, .e-foco e .e-ativo só existem para a vitrine (app/componentes.html)
-   mostrar o estado parado, com o mesmo CSS que o app usa. */
 @media (hover: hover) {
   .botao:hover { background: var(--app-azul-hover); }
   .botao--secundario:hover { background: var(--app-tom); filter: brightness(.94); }
 }
-.botao.e-hover { background: var(--app-azul-hover); }
-.botao--secundario.e-hover { background: var(--app-tom); filter: brightness(.94); }
-.botao:focus-visible,
-.botao.e-foco {
+.botao:focus-visible {
   outline: 2px solid transparent;
   box-shadow: var(--app-foco);
-}
-/* Active: enquanto aperta, escurece e afunda (o afundar vem do .pressionavel) */
-.botao:active:not(:disabled),
-.botao.e-ativo {
-  background: var(--app-azul-hover);
-  filter: brightness(.85);
-  transform: scale(.96);
-}
-.botao--secundario:active:not(:disabled),
-.botao--secundario.e-ativo {
-  background: var(--app-tom);
-}
-/* Error: a ação falhou. O texto do botão diz o que fazer ("Tentar de novo") */
-.botao--erro,
-.botao--erro:hover {
-  background: var(--app-erro);
-  color: #FFFFFF;
-  filter: none;
-}
-:root[data-tema="escuro"] .botao--erro,
-:root[data-tema="escuro"] .botao--erro:hover {
-  color: var(--cor-escuro-sobre-azul);
 }
 .botao--secundario {
   background: var(--app-tom);
@@ -1592,79 +1564,17 @@ body:has(.detalhe:target) {
 .campo__entrada::placeholder {
   color: var(--app-texto-suave);
 }
-/* Estados do campo de texto e da seleção: default · hover · focus · active · disabled · error */
-.campo__entrada:hover:not(:disabled),
-.campo__entrada.e-hover {
-  border-color: var(--app-texto);
-}
-.campo__entrada:focus-visible,
-.campo__entrada.e-foco {
+.campo__entrada:focus-visible {
   outline: 2px solid transparent;
   border-color: var(--app-azul);
   box-shadow: var(--app-foco);
 }
-/* Active: no clique (e na seleção aberta) a borda engrossa na cor principal */
-.campo__entrada:active:not(:disabled),
-.campo__entrada.e-ativo {
-  border-color: var(--app-azul);
-  box-shadow: inset 0 0 0 1px var(--app-azul);
-}
 .campo__entrada:disabled {
   background: var(--app-fundo);
-  color: var(--app-texto-suave);
-  border-style: dashed;
-  cursor: not-allowed;
 }
 .campo__entrada[aria-invalid="true"] {
   border-color: var(--app-erro);
   box-shadow: inset 0 0 0 1px var(--app-erro);
-}
-.campo__entrada[aria-invalid="true"]:focus-visible,
-.campo__entrada[aria-invalid="true"].e-foco {
-  box-shadow: inset 0 0 0 1px var(--app-erro), var(--app-foco);
-}
-
-/* Seleção (<select>): o mesmo campo, com a setinha desenhada no CSS */
-.selecao {
-  appearance: none;
-  padding-right: calc(var(--esp-3) + 28px);
-  background-image:
-    linear-gradient(45deg, transparent 50%, currentColor 50%),
-    linear-gradient(135deg, currentColor 50%, transparent 50%);
-  background-position:
-    right 20px center,
-    right 14px center;
-  background-size: 6px 6px, 6px 6px;
-  background-repeat: no-repeat;
-  cursor: pointer;
-}
-
-/* Campo composto do CEP: campo + girador de busca + ajuda + erro.
-   Buscando (aria-busy) é o estado active do composto: o girador aparece dentro do campo */
-.campo-cep__caixa {
-  position: relative;
-}
-.campo-cep__girando {
-  position: absolute;
-  top: 50%;
-  right: var(--esp-3);
-  width: 18px;
-  height: 18px;
-  margin-top: -9px;
-  border: 2px solid var(--app-azul);
-  border-right-color: transparent;
-  border-radius: 50%;
-  opacity: 0;
-  pointer-events: none;
-}
-.campo-cep__caixa:has(.campo__entrada[aria-busy="true"]) .campo-cep__girando,
-.campo-cep__caixa.e-ativo .campo-cep__girando {
-  opacity: 1;
-  animation: girar .7s linear infinite;
-}
-.campo__ajuda--erro {
-  color: var(--app-erro);
-  font-weight: 700;
 }
 .campo__erro {
   color: var(--app-erro);
