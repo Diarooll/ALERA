@@ -22,7 +22,13 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-Crie o arquivo `backend/.env` com `DJANGO_DEBUG=true`. Depois:
+Ligue o banco (PostgreSQL no Docker). Precisa do [Docker Desktop](https://www.docker.com/products/docker-desktop/) aberto. Na pasta raiz do projeto:
+
+```powershell
+docker compose up -d
+```
+
+Copie `backend/.env.example` para `backend/.env`. Ele já aponta o `DATABASE_URL` para esse banco. Sem o Docker, apague a linha do `DATABASE_URL` no `.env` e o projeto usa um SQLite local. Depois:
 
 ```powershell
 python manage.py migrate
