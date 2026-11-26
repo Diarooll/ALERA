@@ -45,43 +45,120 @@ Os gadgets entram aos poucos, área por área. O dado medido entra no mesmo aler
 - **Sensor ALERA:** fica na encosta e mede a umidade do solo, a chuva acumulada e a inclinação do terreno. Avisa com LEDs na rua, sirene e WhatsApp.
 - **Bueiro ALERA:** um cesto segura o lixo antes da galeria, e o sensor avisa a Secretaria de Obras quando é hora de limpar.
 
-## Como abrir
+## Como rodar
 
-Não precisa instalar nada. Abra no navegador:
+### O que precisa ter instalado
 
-- `front-end/index.html`: página inicial, leva para o login
-- `front-end/site.html`: site de apresentação do projeto
-- `front-end/app/login.html`: login do app
+- [Python 3.12+](https://www.python.org/downloads/)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/), para o banco PostgreSQL. É opcional: sem ele o projeto usa um SQLite local.
+- [Git](https://git-scm.com/)
 
-O login e o cadastro precisam do back-end rodando.
+### 1. Baixar o projeto
 
-## Back-end
+```bash
+git clone https://github.com/Diarooll/ALERA.git
+cd ALERA
+```
 
-Fica em `backend/` (Django + Django REST Framework). Na primeira vez, dentro dessa pasta:
+### 2. Ligar o banco (PostgreSQL no Docker)
+
+Com o Docker Desktop aberto, na pasta raiz do projeto:
+
+```bash
+docker compose up -d
+```
+
+Sobe um PostgreSQL 17 com PostGIS em `127.0.0.1:5432`. Para desligar: `docker compose stop`.
+
+### 3. Preparar o back-end (primeira vez)
+
+Entre na pasta `backend`, crie o ambiente virtual e instale as dependências.
+
+**Windows (PowerShell):**
 
 ```powershell
+cd backend
 python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-Set-Content .env 'DJANGO_DEBUG=true'
-.venv\Scripts\python.exe manage.py migrate
-.venv\Scripts\python.exe manage.py createsuperuser
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+Copy-Item .env.example .env
 ```
 
-O `createsuperuser` cria a conta de administrador: você escolhe o e-mail e a senha na hora, e eles não ficam no código. Contas de morador nascem na tela de cadastro.
+**macOS / Linux:**
 
-Para rodar a API em `http://127.0.0.1:8000`:
-
-```powershell
-.venv\Scripts\python.exe manage.py runserver
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
 ```
 
-Cada conta tem a própria senha, guardada só como hash. Depois do login, a conta de administrador abre o painel e a de morador abre o app.
+O `.env` já aponta para o banco do Docker. Sem o Docker, apague a linha `DATABASE_URL` do `.env` e o projeto usa um SQLite local.
 
-Sem configuração, os dados ficam em um arquivo SQLite local. Para usar PostgreSQL, defina a variável de ambiente `DATABASE_URL`. Em produção, deixe `DJANGO_DEBUG` desligado e defina `DATABASE_URL`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS`.
+Crie as tabelas e a conta de administrador:
 
-Para rodar os testes: `.venv\Scripts\python.exe manage.py test`.
+```bash
+python manage.py migrate
+python manage.py createsuperuser
+```
 
+O `createsuperuser` pede o e-mail e a senha do administrador na hora; eles não ficam no código. Contas de morador nascem na tela de cadastro.
 
+### 4. Rodar a API
+
+Com o ambiente virtual ativo, dentro de `backend`:
+
+```bash
+python manage.py runserver
+```
+
+A API fica em `http://127.0.0.1:8000`.
+
+- Saúde da API: <http://127.0.0.1:8000/api/saude/>
+- Django Admin: <http://127.0.0.1:8000/admin/>
+
+### 5. Abrir o front-end
+
+Em outro terminal, na pasta raiz do projeto:
+
+```bash
+python -m http.server 5520 --bind 127.0.0.1 --directory frontend
+```
+
+E abra no navegador:
+
+- <http://127.0.0.1:5520/index.html>: página inicial, leva para o login
+- <http://127.0.0.1:5520/site.html>: site de apresentação do projeto
+- <http://127.0.0.1:5520/app/login.html>: login do app
+
+Também dá para abrir os arquivos de `frontend/` direto no navegador ou pelo Live Server do VS Code (porta 5500). O login e o cadastro precisam da API rodando. Depois do login, a conta de administrador abre o painel e a de morador abre o app.
+
+### Nas próximas vezes
+
+```bash
+docker compose up -d          # na raiz
+cd backend
+.venv\Scripts\Activate.ps1     # Windows  (no macOS/Linux: source .venv/bin/activate)
+python manage.py runserver
+```
+
+E o servidor do front-end, como no passo 5.
+
+### Testes e simulação
+
+Dentro de `backend`, com o ambiente virtual ativo:
+
+```bash
+python manage.py test           # testes automáticos
+python scripts/simular.py       # simula um dia de chuva pela API, do cadastro ao alerta de Perigo
+```
+
+A simulação usa um banco temporário e não mexe nos seus dados.
+
+### Produção
+
+Em produção, deixe `DJANGO_DEBUG` desligado e defina `DATABASE_URL`, `DJANGO_SECRET_KEY`, `DJANGO_ALLOWED_HOSTS` e `CORS_ALLOWED_ORIGINS`. A lista completa de variáveis e as regras de segurança estão em [`backend/README.md`](backend/README.md).
 
 ## Equipe
 
