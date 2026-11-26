@@ -1,0 +1,79 @@
+# Testes automáticos do back-end.
+# A cada PR (e a cada merge na main), o GitHub liga um PostgreSQL igual ao do
+# docker-compose.yml, cria as tabelas e roda todos os testes do Django.
+# Se algum teste falhar, o PR fica com um X vermelho antes de alguém fazer o merge.
+
+name: Testes do back-end
+
+on:
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/testes-backend.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/testes-backend.yml'
+
+# Um PR que recebe um push novo cancela a rodada antiga, que já ficou velha
+concurrency:
+  group: testes-backend-${{ github.ref }}
+  cancel-in-progress: true
+
+# O teste só lê o código: não precisa de permissão para mudar nada no repositório
+permissions:
+  contents: read
+
+jobs:
+  testes:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      banco:
+        image: postgis/postgis:17-3.5
+        env:
+          POSTGRES_DB: alera
+          POSTGRES_USER: alera
+          POSTGRES_PASSWORD: alera-local
+        ports:
+          - 5432:5432
+        # Espera o banco ficar pronto antes de começar os testes
+        options: >-
+          --health-cmd "pg_isready -U alera -d alera"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+
+    env:
+      DJANGO_DEBUG: 'true'
+      DATABASE_URL: postgres://alera:alera-local@127.0.0.1:5432/alera
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v5
+
+      - name: Instalar o Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Instalar as bibliotecas
+        run: pip install -r requirements.txt
+
+      - name: Conferir se falta alguma migração
+        # Falha se alguém mudou um model e esqueceu de rodar o makemigrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Criar as tabelas
+        run: python manage.py migrate
+
+      - name: Rodar os testes
+        run: python manage.py test
