@@ -69,7 +69,7 @@ python manage.py test
 | --- | --- | --- |
 | `DJANGO_DEBUG` | Não | `true` só em desenvolvimento |
 | `DJANGO_SECRET_KEY` | Fora do modo de desenvolvimento | Chave secreta do Django. Sem ela, no desenvolvimento, cada computador cria a sua em `backend/.chave-local`, que não vai para o Git |
-| `DATABASE_URL` | Fora do modo de desenvolvimento | Conexão com o PostgreSQL, como `postgres://usuario:senha@host:5432/alera` |
+| `DATABASE_URL` | Fora do modo de desenvolvimento | Conexão com o PostgreSQL, como `postgres://usuario:senha@host:5432/alera`. No Supabase, veja "Banco na hospedagem" abaixo |
 | `DJANGO_ALLOWED_HOSTS` | Fora do modo de desenvolvimento | Domínios da API, separados por vírgula |
 | `CORS_ALLOWED_ORIGINS` | Quando o front-end chamar a API | Endereços do front-end, separados por vírgula, como `http://127.0.0.1:5500` |
 | `DJANGO_NUM_PROXIES` | Quando houver proxy na frente da API | Quantos proxies de confiança repassam o IP de quem acessa. Padrão `0`. Na hospedagem atrás de um proxy, normalmente `1`; sem isso, o limite de tentativas conta todo mundo como um só IP |
@@ -92,5 +92,15 @@ Para conferir: `python manage.py check --deploy` com as variáveis de produção
 Ligar qualquer um dos dois também faz o Django acreditar no cabeçalho `X-Forwarded-Proto` que o proxy manda para dizer se o visitante usou HTTPS. Se o site entrar em loop de redirecionamento, falta essa configuração. Para o servidor de origem não ser acessado sem passar pela Cloudflare, o ideal é a hospedagem só aceitar conexões dela (Cloudflare Tunnel ou firewall com a lista de IPs da Cloudflare).
 
 Cada endereço IPv6 de um mesmo bloco `/64` conta como um só, porque cada pessoa costuma receber um bloco inteiro e poderia trocar de endereço a cada tentativa.
+
+## Banco na hospedagem (Supabase)
+
+O endereço fica no botão **Connect** do painel do Supabase. Para a API, que fica ligada o tempo todo, use nesta ordem:
+
+1. **Direct connection** (`db.<projeto>.supabase.co`, porta 5432), se a hospedagem tiver IPv6.
+2. **Session pooler** (`aws-...pooler.supabase.com`, porta 5432), se a hospedagem só tiver IPv4.
+3. **Transaction pooler** (porta 6543) só se não der para usar as outras. O `settings.py` reconhece a porta 6543 e desliga o que esse modo não aceita: guardar a conexão, cursor no servidor e consulta preparada.
+
+Com `DJANGO_DEBUG=false`, a conexão com o PostgreSQL exige SSL (`sslmode=require`). Para conferir também o certificado do Supabase, acrescente `?sslmode=verify-full&sslrootcert=<arquivo>` no fim do `DATABASE_URL`; o que vier no endereço vale mais que o padrão. Fora do pooler de transação, a conexão fica guardada por 1 minuto e é conferida antes de ser reusada. Se o banco não responder, o pedido desiste em 10 segundos. Na lista de conexões do banco, a API aparece como `alera-api`.
 
 Sem `DATABASE_URL`, o modo de desenvolvimento usa um SQLite local, apenas para começar rápido. O banco oficial do projeto é o PostgreSQL no Supabase. As tabelas são criadas com `python manage.py migrate`, sem SQL à parte: mudanças no banco entram por novas migrações.
