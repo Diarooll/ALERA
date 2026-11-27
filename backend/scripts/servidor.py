@@ -22,7 +22,7 @@ from django.core.management import call_command  # noqa: E402
 
 from usuarios import servicos  # noqa: E402
 
-# Responde "não achei" sem sair do computador
+# Responde "não achei" sem sair do   computador
 servicos.localizar = lambda *args, **kwargs: None
 
 porta = sys.argv[1]

@@ -11,6 +11,7 @@
 services:
   banco:
     image: postgis/postgis:17-3.5
+    platform: linux/amd64
     container_name: alera-banco
     environment:
       POSTGRES_DB: alera
