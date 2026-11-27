@@ -126,6 +126,44 @@ DATABASES = {
     'default': dj_database_url.parse(DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}"),
 }
 
+# Porta do pooler de transação do Supabase. As outras formas de conexão usam a 5432
+PORTA_DO_POOLER_DE_TRANSACAO = 6543
+
+
+def ajustar_conexao_postgres(banco, debug):
+    """Ajustes da conexão com o PostgreSQL. O SQLite não usa nenhum deles.
+
+    Uma opção escrita no próprio DATABASE_URL (como ?sslmode=verify-full) vale mais que
+    o padrão daqui.
+    """
+    if banco['ENGINE'] != 'django.db.backends.postgresql':
+        return
+    opcoes = banco.setdefault('OPTIONS', {})
+    # Desiste em 10 segundos se o banco não responder, em vez de travar o pedido
+    opcoes.setdefault('connect_timeout', 10)
+    # Nome que aparece na lista de conexões do banco (no Supabase, em Database > Roles)
+    opcoes.setdefault('application_name', 'alera-api')
+    # Fora do desenvolvimento, só conecta com criptografia: sem ela, a senha do banco e os
+    # dados dos moradores passariam abertos pela internet até o Supabase
+    if not debug:
+        opcoes.setdefault('sslmode', 'require')
+
+    if int(banco.get('PORT') or 0) == PORTA_DO_POOLER_DE_TRANSACAO:
+        # No pooler de transação, cada consulta pode cair numa conexão diferente do banco.
+        # Por isso a conexão não fica guardada, e nada pode depender da conexão anterior:
+        # nem cursor aberto no servidor, nem consulta preparada
+        banco['CONN_MAX_AGE'] = 0
+        banco['DISABLE_SERVER_SIDE_CURSORS'] = True
+        opcoes['prepare_threshold'] = None
+    else:
+        # Guarda a conexão por 1 minuto, em vez de abrir uma nova a cada pedido (abrir
+        # leva tempo, ainda mais com SSL), e confere se ela ainda vale antes de reusar
+        banco['CONN_MAX_AGE'] = 60
+        banco['CONN_HEALTH_CHECKS'] = True
+
+
+ajustar_conexao_postgres(DATABASES['default'], DEBUG)
+
 
 AUTH_USER_MODEL = 'usuarios.Usuario'
 
